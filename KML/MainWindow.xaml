@@ -1,0 +1,223 @@
+﻿<Window x:Class="KML.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="KML - Kerbal Markup Lister" Height="600" Width="800" Icon="Images/Astronaut.ico" MinWidth="450" MinHeight="300" Background="Gray" ResizeMode="CanResizeWithGrip" Loaded="Window_Loaded">
+    <Grid>
+        <StackPanel VerticalAlignment="Top">
+            <StackPanel.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="Gray" Offset="0"/>
+                    <GradientStop Color="White" Offset="1"/>
+                </LinearGradientBrush>
+            </StackPanel.Background>
+            <ToolBar Height="59" UseLayoutRounding="False" KeyboardNavigation.TabNavigation="Continue">
+                <ToolBar.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="Gray" Offset="0"/>
+                        <GradientStop Color="White" Offset="1"/>
+                    </LinearGradientBrush>
+                </ToolBar.Background>
+                <Button Click="ButtonOpen_Click" ToolTip="Open persistence file...">
+                    <Image Source="Images\Open48.png"/>
+                </Button>
+                <Separator/>
+                <Button Click="ButtonSave_Click" ToolTip="Save persistence file...">
+                    <Image Source="Images\Save48.png"/>
+                </Button>
+                <Separator/>
+                <Button Click="ButtonSearch_Click" ToolTip="Search..." IsEnabled="False" Opacity="0.25">
+                    <Image Source="Images\Search48.png"/>
+                </Button>
+                <Separator/>
+                <Button Click="ButtonPrevious_Click" ToolTip="Previous item">
+                    <Image Source="Images\Previous48.png"/>
+                </Button>
+                <Separator/>
+                <Button Click="ButtonNext_Click" ToolTip="Next item">
+                    <Image Source="Images\Next48.png"/>
+                </Button>
+                <Separator/>
+                <Button Click="ButtonAdd_Click" ToolTip="Add item..." IsEnabled="False" Opacity="0.25">
+                    <Image Source="Images\Add48.png"/>
+                </Button>
+                <Separator/>
+                <Button Click="ButtonDelete_Click" ToolTip="Delete item..." IsEnabled="False" Opacity="0.25">
+                    <Image Source="Images\Delete48.png"/>
+                </Button>
+                <Separator/>
+            </ToolBar>
+        </StackPanel>
+        <TabControl x:Name="Tabs" Margin="0,59,0,23" TabStripPlacement="Left" Background="White">
+            <TabItem x:Name="TreeTab">
+                <TabItem.Header>
+                    <Image Width="48" Source="Images\Tree48.png" ToolTip="KML Tree"/>
+                </TabItem.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TreeView x:Name="Tree" Background="LightGray"/>
+                    <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="White"/>
+                    <ListView x:Name="TreeDetails" Grid.Column="2" IsSynchronizedWithCurrentItem="True" Background="LightGray">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.View>
+                            <GridView AllowsColumnReorder="False">
+                                <GridViewColumn Width="120" DisplayMemberBinding="{Binding Name}">
+                                    <GridViewColumnHeader HorizontalContentAlignment="Left">Attribute</GridViewColumnHeader>
+                                </GridViewColumn>
+                                <GridViewColumn Width="200">
+                                    <GridViewColumnHeader HorizontalContentAlignment="Left">Value</GridViewColumnHeader>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Margin="-6,-10,-6,-10" Text="{Binding Value}"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="VesselsTab">
+                <TabItem.Header>
+                    <Image Width="48" Source="Images\ApolloCsm48.png" ToolTip="Vessels"/>
+                </TabItem.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Orientation="Horizontal">
+                        <ToggleButton ToolTip="Toggle Debris" IsChecked="True" Click="VesselsFilterDebris_Click">
+                            <Image Source="Images\Trash16.png"/>
+                        </ToggleButton>
+                        <ToggleButton ToolTip="Toggle Probes" IsChecked="True" Click="VesselsFilterProbes_Click">
+                            <Image Source="Images\Satellite16.png"/>
+                        </ToggleButton>
+                        <ToggleButton ToolTip="Toggle Rovers" IsChecked="True" Click="VesselsFilterRovers_Click">
+                            <Image Source="Images\Rover16.png"/>
+                        </ToggleButton>
+                        <ToggleButton ToolTip="Toggle Landers" IsChecked="True" Click="VesselsFilterLanders_Click">
+                            <Image Source="Images\LunarModule16.png"/>
+                        </ToggleButton>
+                        <ToggleButton ToolTip="Toggle Ships" IsChecked="True" Click="VesselsFilterShips_Click">
+                            <Image Source="Images\ApolloCsm16.png"/>
+                        </ToggleButton>
+                        <ToggleButton ToolTip="Toggle Stations" IsChecked="True" Click="VesselsFilterStations_Click">
+                            <Image Source="Images\Station16.png"/>
+                        </ToggleButton>
+                        <ToggleButton ToolTip="Toggle Bases" IsChecked="True" Click="VesselsFilterBases_Click">
+                            <Image Source="Images\Radar16.png"/>
+                        </ToggleButton>
+                        <ToggleButton ToolTip="Toggle EVA" IsChecked="True" Click="VesselsFilterEVA_Click">
+                            <Image Source="Images\Astronaut16.png"/>
+                        </ToggleButton>
+                        <ToggleButton ToolTip="Toggle Flags" IsChecked="True" Click="VesselsFilterFlags_Click">
+                            <Image Source="Images\Flag16.png"/>
+                        </ToggleButton>
+                        <ToggleButton ToolTip="Toggle SpaceObjects" IsChecked="True" Click="VesselsFilterSpaceObjects_Click">
+                            <Image Source="Images\GlobeGray16.png"/>
+                        </ToggleButton>
+                        <ToggleButton ToolTip="Toggle Others" IsChecked="True" Click="VesselsFilterOthers_Click">
+                            <Image Source="Images\Document16.png"/>
+                        </ToggleButton>
+                        <Label x:Name="VesselsCount" Height="16" Padding="0, 0" Margin="3, 0, 3, 0">(0 Vessels)</Label>
+                    </StackPanel>
+                    <ListView x:Name="VesselsList" Margin="0,20,0,0" Background="LightGray"/>
+                    <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="White"/>
+                    <Border Grid.Column="2" BorderThickness="1" BorderBrush="Gray" Background="LightGray">
+                        <ScrollViewer HorizontalScrollBarVisibility="Visible">
+                            <Canvas x:Name="VesselsDetails"/>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="KerbalsTab">
+                <TabItem.Header>
+                    <Image Width="48" Source="Images\Astronaut48.png" ToolTip="Kerbals"/>
+                </TabItem.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Orientation="Horizontal">
+                        <ToggleButton ToolTip="Toggle Crew" IsChecked="True" Click="KerbalsFilterCrew_Click">
+                            <Image Source="Images\Astronaut16.png"/>
+                        </ToggleButton>
+                        <ToggleButton ToolTip="Toggle Applicants" IsChecked="True" Click="KerbalsFilterApplicants_Click">
+                            <Image Source="Images\Student16.png"/>
+                        </ToggleButton>
+                        <ToggleButton ToolTip="Toggle Tourists" IsChecked="True" Click="KerbalsFilterTourists_Click">
+                            <Image Source="Images\Photographer16.png"/>
+                        </ToggleButton>
+                        <ToggleButton ToolTip="Toggle Pilots" IsChecked="True" Click="KerbalsFilterPilots_Click">
+                            <Image Source="Images\ApolloCsm16.png"/>
+                        </ToggleButton>
+                        <ToggleButton ToolTip="Toggle Engineeers" IsChecked="True" Click="KerbalsFilterEngineers_Click">
+                            <Image Source="Images\Wrench16.png"/>
+                        </ToggleButton>
+                        <ToggleButton ToolTip="Toggle Scientists" IsChecked="True" Click="KerbalsFilterScientists_Click">
+                            <Image Source="Images\Science16.png"/>
+                        </ToggleButton>
+                        <ToggleButton ToolTip="Toggle Others" IsChecked="True" Click="KerbalsFilterOthers_Click">
+                            <Image Source="Images\Document16.png"/>
+                        </ToggleButton>
+                        <Label x:Name="KerbalsCount" Height="16" Padding="0, 0" Margin="3, 0, 3, 0">(0 Kerbals)</Label>
+                    </StackPanel>
+                    <ListView x:Name="KerbalsList" Background="LightGray" Margin="0,20,0,0"/>
+                    <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="White"/>
+                    <ListView x:Name="KerbalsDetails" Grid.Column="2" IsSynchronizedWithCurrentItem="True" Background="LightGray">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.View>
+                            <GridView AllowsColumnReorder="False">
+                                <GridViewColumn Width="120" DisplayMemberBinding="{Binding Name}">
+                                    <GridViewColumnHeader HorizontalContentAlignment="Left">Attribute</GridViewColumnHeader>
+                                </GridViewColumn>
+                                <GridViewColumn Width="200">
+                                    <GridViewColumnHeader HorizontalContentAlignment="Left">Value</GridViewColumnHeader>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox Margin="-6,-10,-6,-10" Text="{Binding Value}"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="WarningsTab">
+                <TabItem.Header>
+                    <Image Width="48" Source="Images\Warning48.png" ToolTip="Warnings"/>
+                </TabItem.Header>
+                <Grid>
+                    <ListView x:Name="WarningsList" Background="LightGray"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <StatusBar Height="23" VerticalAlignment="Bottom" Background="Gray">
+            <Label Content="KML - Kerbal Markup Lister" Padding="0"/>
+            <Separator/>
+            <Label Content="Version 0.5" Padding="0"/>
+            <Separator/>
+            <Label Content="© 2016 Oliver Pola (Mythos)" Padding="0"/>
+            <Separator/>
+            <Hyperlink NavigateUri="http://www.gnu.org/licenses/gpl.html" RequestNavigate="Hyperlink_RequestNavigate">GPL License</Hyperlink>
+            <Separator/>
+            <Hyperlink NavigateUri="http://forum.kerbalspaceprogram.com/index.php?/search/&amp;q=KML&amp;sortby=relevancy&amp;search_in=titles" RequestNavigate="Hyperlink_RequestNavigate">KSP Forum</Hyperlink>
+        </StatusBar>
+    </Grid>
+</Window>
