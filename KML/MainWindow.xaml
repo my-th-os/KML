@@ -217,6 +217,8 @@
             <Separator/>
             <Hyperlink NavigateUri="http://www.gnu.org/licenses/gpl.html" RequestNavigate="Hyperlink_RequestNavigate">GPL License</Hyperlink>
             <Separator/>
+            <Hyperlink NavigateUri="https://github.com/my-th-os/KML" RequestNavigate="Hyperlink_RequestNavigate">Git Source</Hyperlink>
+            <Separator/>
             <Hyperlink NavigateUri="http://forum.kerbalspaceprogram.com/index.php?/search/&amp;q=KML&amp;sortby=relevancy&amp;search_in=titles" RequestNavigate="Hyperlink_RequestNavigate">KSP Forum</Hyperlink>
         </StatusBar>
     </Grid>
