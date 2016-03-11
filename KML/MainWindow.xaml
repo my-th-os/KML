@@ -219,7 +219,7 @@
             <Separator/>
             <Hyperlink NavigateUri="https://github.com/my-th-os/KML" RequestNavigate="Hyperlink_RequestNavigate">Git Source</Hyperlink>
             <Separator/>
-            <Hyperlink NavigateUri="http://forum.kerbalspaceprogram.com/index.php?/search/&amp;q=KML&amp;sortby=relevancy&amp;search_in=titles" RequestNavigate="Hyperlink_RequestNavigate">KSP Forum</Hyperlink>
+            <Hyperlink NavigateUri="http://forum.kerbalspaceprogram.com/index.php?/topic/133971-win-kml-persistence-file-editor/" RequestNavigate="Hyperlink_RequestNavigate">KSP Forum</Hyperlink>
         </StatusBar>
     </Grid>
 </Window>

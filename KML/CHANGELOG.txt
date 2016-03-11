@@ -1,0 +1,18 @@
+Version 0.6 - in progress
+- link to KSP forum thread
+
+Version 0.5 - 2016-03-11
+- open SFS files 
+- open CRAFT files 
+- check and identify SFS files 
+- save SFS files edited or exactly as loaded 
+- save CRAFT files edited or exactly as loaded 
+- backup of overwritten files 
+- display file structure in a "KML" tree 
+- display all vessels in a sorted and filtered list 
+- display all kerbals in a sorted and filtered list 
+- display vessel's part attachment structure 
+- refill part resources (context menu) 
+- repair broken docking ports (context menu) 
+- repair broken grappling devices (context menu) 
+- tested with KSP 1.0.5 
