@@ -684,14 +684,14 @@ namespace KML
 
         private static void RepairGrappleAttachment(KmlPart part, int attachmentIndex)
         {
-            int lastIndex = -1;
+            KmlAttrib lastItem = null;
             // Repair part 'attN = grapple, <attachmentIndex>'
             for (int i = 0; i < part.Attribs.Count; i++)
             {
                 KmlAttrib attrib = part.Attribs[i];
                 if (attrib.Name.ToLower() == "attn")
                 {
-                    lastIndex = i;
+                    lastItem = attrib;
                     if (attrib.Value.ToLower().StartsWith("grapple,") || attrib.Value.EndsWith(", " + attachmentIndex))
                     {
                         attrib.Value = "grapple, " + attachmentIndex;
@@ -700,13 +700,22 @@ namespace KML
                 }
                 else if (attrib.Name.ToLower() == "srfn")
                 {
-                    lastIndex = i;
+                    lastItem = attrib;
                 }
             }
             // If we got here we didn't find it
             KmlAttrib newAttrib = new KmlAttrib("attN = grapple, " + attachmentIndex);
-            part.Attribs.Insert(lastIndex + 1, newAttrib);
-            part.AllItems.Insert(lastIndex + 1, newAttrib);
+            if (lastItem != null)
+            {
+                // TODO KmlPartDock.RepairGrappleAttachment(): There is no Insert method that manages both lists yet
+                part.Attribs.Insert(part.Attribs.IndexOf(lastItem) + 1, newAttrib);
+                part.AllItems.Insert(part.AllItems.IndexOf(lastItem) + 1, newAttrib);
+            }
+            else
+            {
+                // Add method manages the Attribs and AllItems lists
+                part.Add(newAttrib);
+            }
         }
 
         private string TranslateDockedVesselType(string nr)

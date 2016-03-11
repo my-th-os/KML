@@ -214,6 +214,8 @@ namespace KML
         /// </summary>
         public bool Visited { get; set; }
 
+        private string CraftName { get; set; }
+
         /// <summary>
         /// Creates a KmlPart as a copy of a given KmlNode.
         /// </summary>
@@ -275,7 +277,13 @@ namespace KML
             if (item is KmlAttrib)
             {
                 KmlAttrib attrib = (KmlAttrib)item;
-                if (attrib.Name.ToLower() == "uid")
+                if (attrib.Name.ToLower() == "part")
+                {
+                    CraftName = attrib.Value;
+                    attrib.AttribValueChanged += PartName_Changed;
+                    attrib.CanBeDeleted = false;
+                }
+                else if (attrib.Name.ToLower() == "uid")
                 {
                     Uid = attrib.Value;
                     attrib.AttribValueChanged += Uid_Changed;
@@ -765,8 +773,19 @@ namespace KML
             if (Name.Length > 0)
             {
                 s += " (" + Name + ")";
+            } 
+            else if (CraftName.Length > 0)
+            {
+                // In *.craft files there is no Name but a PartName
+                s += " (" + CraftName + ")";
             }
             return Tag + s;
+        }
+
+        private void PartName_Changed(object sender, System.Windows.RoutedEventArgs e)
+        {
+            CraftName = GetAttribWhereValueChanged(sender).Value;
+            InvokeToStringChanged();
         }
 
         private void Resources_Changed(object sender, System.Windows.RoutedEventArgs e)

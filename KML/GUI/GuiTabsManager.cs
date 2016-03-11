@@ -98,8 +98,12 @@ namespace KML
             KerbalsManager.Load(TreeManager);
             WarningsManager.AfterTreeLoad();
 
-            // Show warnings tab if there are any
-            if (Syntax.Messages.Count > 0)
+            // Supress vessels, kerbals and warnings for *.craft files
+            string ext = System.IO.Path.GetExtension(filename).ToLower();
+            bool isCraftFile = ext == ".craft";
+
+            // Show warnings tab if there are any and its not a craft file
+            if (Syntax.Messages.Count > 0 && !isCraftFile)
             {
                 WarningsTab.Visibility = System.Windows.Visibility.Visible;
                 Tabs.SelectedItem = WarningsTab;
@@ -107,20 +111,32 @@ namespace KML
             }
             else
             {
-                if (Tabs.SelectedItem == WarningsTab)
-                {
-                    Tabs.SelectedItem = TreeTab;
-                    TreeManager.Focus();
-                }
-                else
-                {
-                    IGuiManager mgr = GetActiveGuiManager();
-                    if (mgr != null)
-                    {
-                        mgr.Focus();
-                    }
-                }
                 WarningsTab.Visibility = System.Windows.Visibility.Collapsed;
+            }
+
+            // Show vessels and kerbals list if its not a craft file
+            if (isCraftFile)
+            {
+                VesselsTab.Visibility = System.Windows.Visibility.Collapsed;
+                KerbalsTab.Visibility = System.Windows.Visibility.Collapsed;
+            }
+            else
+            {
+                VesselsTab.Visibility = System.Windows.Visibility.Visible;
+                KerbalsTab.Visibility = System.Windows.Visibility.Visible;
+            }
+
+            if(Tabs.SelectedItem != null && (Tabs.SelectedItem as TabItem).Visibility != System.Windows.Visibility.Visible)
+            {
+                // Switch to another tab when hidden
+                Tabs.SelectedItem = TreeTab;
+                TreeManager.Focus();
+            }
+
+            IGuiManager mgr = GetActiveGuiManager();
+            if (mgr != null)
+            {
+                mgr.Focus();
             }
         }
 

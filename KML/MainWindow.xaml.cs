@@ -117,16 +117,19 @@ namespace KML
 
         private void ButtonSave_Click(object sender, RoutedEventArgs e)
         {
-            // Save only after a file was loaded
+            // Save only after a file was loaded with same extension
             if (Filename != null)
             {
+                // dlg.DefaultExt supresses the dot, so store in local var for reusage
+                string ext = System.IO.Path.GetExtension(Filename);
+
                 SaveFileDialog dlg = new SaveFileDialog();
                 dlg.FileName = System.IO.Path.GetFileName(Filename);
                 dlg.InitialDirectory = System.IO.Path.GetDirectoryName(Filename);
                 dlg.AddExtension = true;
-                dlg.DefaultExt = System.IO.Path.GetExtension(Filename);
+                dlg.DefaultExt = ext;
                 dlg.OverwritePrompt = true;
-                dlg.Filter = "KSP persistence file|*.sfs;*.craft";
+                dlg.Filter = "KSP persistence file|*" + ext;
                 if (dlg.ShowDialog() == true)
                 {
                     Save(dlg.FileName);
