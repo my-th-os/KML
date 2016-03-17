@@ -188,7 +188,7 @@ namespace KML
             }
             catch (Exception e)
             {
-                System.Windows.MessageBox.Show("Error loading from " + filename + "\n\n" + e.Message);
+                DlgMessage.Show("Error loading from " + filename + "\n\n" + e.Message);
             }
 
             return list;
@@ -268,7 +268,7 @@ namespace KML
             }
             catch (Exception e)
             {
-                System.Windows.MessageBox.Show("Error saving to " + filename + "\n\n" + e.Message);
+                DlgMessage.Show("Error saving to " + filename + "\n\n" + e.Message);
             }
         }
     }

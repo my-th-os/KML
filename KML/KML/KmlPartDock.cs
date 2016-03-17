@@ -319,7 +319,7 @@ namespace KML
                 {
                     if (Parent == null || !(Parent is KmlVessel))
                     {
-                        System.Windows.MessageBox.Show("Could not search for connected parts, parent vessel is not valid");
+                        DlgMessage.Show("Could not search for connected parts, parent vessel is not valid");
                     }
                     else
                     {
@@ -354,13 +354,13 @@ namespace KML
                             }
                         }
                         // To avoid getting to here there are returns spread above
-                        // System.Windows.MessageBox.Show("Didn't find another part in all parts of the vessel to fix this dock with");
+                        // DlgMessage.Show("Didn't find another part in all parts of the vessel to fix this dock with");
                         RepairClearDocking(this);
                     }
                 }
                 else if (!(DockedPart is KmlPartDock))
                 {
-                    System.Windows.MessageBox.Show("Don't know how to repair this docking connection, this one is no dock: " + DockedPart);
+                    DlgMessage.Show("Don't know how to repair this docking connection, this one is no dock: " + DockedPart);
                 }
                 else
                 {
@@ -386,7 +386,7 @@ namespace KML
                 {
                     if (Parent == null || !(Parent is KmlVessel))
                     {
-                        System.Windows.MessageBox.Show("Could not search for connected parts, parent vessel is not valid");
+                        DlgMessage.Show("Could not search for connected parts, parent vessel is not valid");
                     }
                     else
                     {
@@ -411,7 +411,7 @@ namespace KML
                             }
                         }
                         // To avoid getting to here there are returns spread above
-                        // System.Windows.MessageBox.Show("Didn't find another part in all parts of the vessel to fix this grappling device with");
+                        // DlgMessage.Show("Didn't find another part in all parts of the vessel to fix this grappling device with");
                         RepairClearDocking(this);
                     }
                 }
@@ -461,7 +461,7 @@ namespace KML
                     events.GetChildNode("UndockSameVessel").GetAttrib("active").Value = "False";
                     if (module.GetChildNode("DOCKEDVESSEL") == null)
                     {
-                        System.Windows.MessageBox.Show("Couldn't find sub-node DOCKEDVESSEL, you should try to copy it from older save files.");
+                        DlgMessage.Show("Couldn't find sub-node DOCKEDVESSEL, you should try to copy it from older save files.");
                     }
                     else
                     {
@@ -470,7 +470,7 @@ namespace KML
                 }
                 catch (NullReferenceException)
                 {
-                    System.Windows.MessageBox.Show("Couldn't fix docker node, there are sub-nodes missing.\n"+
+                    DlgMessage.Show("Couldn't fix docker node, there are sub-nodes missing.\n"+
                         "You should copy a MODULE node from a functional 'Docked (docker)' part.\n"+
                         "Docker should be: " + docker);
                 }
@@ -486,13 +486,13 @@ namespace KML
                 }
                 catch (NullReferenceException)
                 {
-                    System.Windows.MessageBox.Show("Couldn't fix dockee node, there are sub-nodes missing.\n" +
+                    DlgMessage.Show("Couldn't fix dockee node, there are sub-nodes missing.\n" +
                         "You should copy a MODULE node from a functional 'Docked (dockee)' part.\n" +
                         "Dockee should be: " + dockee);
                 }
                 if (dockerOk && dockeeOk)
                 {
-                    System.Windows.MessageBox.Show("Successfully repaired docker-dockee. Please save and reload to see the rebuilt part structure.");
+                    DlgMessage.Show("Successfully repaired docker-dockee. Please save and reload to see the rebuilt part structure.");
                     // TODO KmlPartDock:RepairDockerDockee(): Refresh structure without save / reload
                 }
             }
@@ -541,7 +541,7 @@ namespace KML
                 }
                 catch (NullReferenceException)
                 {
-                    System.Windows.MessageBox.Show("Couldn't fix same vessel docking node, there are sub-nodes missing.\n" +
+                    DlgMessage.Show("Couldn't fix same vessel docking node, there are sub-nodes missing.\n" +
                         "You should copy a MODULE node from a functional 'Docked (same vessel)' part.\n" +
                         "Same vessel dock should be: " + same);
                 }
@@ -557,13 +557,13 @@ namespace KML
                 }
                 catch (NullReferenceException)
                 {
-                    System.Windows.MessageBox.Show("Couldn't fix dockee node, there are sub-nodes missing.\n" +
+                    DlgMessage.Show("Couldn't fix dockee node, there are sub-nodes missing.\n" +
                         "You should copy a MODULE node from a functional 'Docked (dockee)' part.\n" +
                         "Dockee should be: " + dockee);
                 }
                 if (sameOk && dockeeOk)
                 {
-                    System.Windows.MessageBox.Show("Successfully repaired same vessel docking. Please save and reload to see the rebuilt part structure.");
+                    DlgMessage.Show("Successfully repaired same vessel docking. Please save and reload to see the rebuilt part structure.");
                     // TODO KmlPartDock:RepairDockerDockee(): Refresh structure without save / reload
                 }
             }
@@ -600,12 +600,12 @@ namespace KML
                     events.GetChildNode("Undock").GetAttrib("active").Value = "False";
                     events.GetChildNode("UndockSameVessel").GetAttrib("active").Value = "False";
                 }
-                System.Windows.MessageBox.Show("Successfully reset docking to ready. Please save and reload to see the rebuilt part structure.");
+                DlgMessage.Show("Successfully reset docking to ready. Please save and reload to see the rebuilt part structure.");
                 // TODO KmlPartDock:RepairClearDocking(): Refresh structure without save / reload
             }
             catch (NullReferenceException)
             {
-                System.Windows.MessageBox.Show("Couldn't reset docking node, there are sub-nodes missing.\n" +
+                DlgMessage.Show("Couldn't reset docking node, there are sub-nodes missing.\n" +
                     "You should copy a MODULE node from a functional state 'Ready' part.\n");
             }
         }
@@ -621,7 +621,7 @@ namespace KML
             int partIndex = -1;
             if (grapple.Parent == null || !(grapple.Parent is KmlVessel))
             {
-                System.Windows.MessageBox.Show("Could not search for connected parts, parent vessel is not valid");
+                DlgMessage.Show("Could not search for connected parts, parent vessel is not valid");
             }
             else
             {
@@ -639,12 +639,12 @@ namespace KML
                     events.GetChildNode("ReleaseSameVessel").GetAttrib("active").Value = "False";
                     if (module.GetChildNode("DOCKEDVESSEL") == null)
                     {
-                        System.Windows.MessageBox.Show("Couldn't find sub-node DOCKEDVESSEL, you should try to copy it from older save file.");
+                        DlgMessage.Show("Couldn't find sub-node DOCKEDVESSEL, you should try to copy it from older save file.");
                         dockedVesselOk = false;
                     }
                     if (module.GetChildNode("DOCKEDVESSEL_other") == null)
                     {
-                        System.Windows.MessageBox.Show("Couldn't find sub-node DOCKEDVESSEL_other, you should try to copy it from older save file.");
+                        DlgMessage.Show("Couldn't find sub-node DOCKEDVESSEL_other, you should try to copy it from older save file.");
                         dockedVesselOk = false;
                     }
                     module = grapple.GetChildNode("MODULE", "ModuleAnimateGeneric");
@@ -669,13 +669,13 @@ namespace KML
                     if (dockedVesselOk)
                     {
                         // Maybe RepairGrappleAttachment()  will cause a message to save and reload
-                        System.Windows.MessageBox.Show("Successfully repaired grappling. Please save and reload to see the rebuilt part structure.");
+                        DlgMessage.Show("Successfully repaired grappling. Please save and reload to see the rebuilt part structure.");
                         // TODO KmlPartDock:RepairGrappling(): Refresh structure without save / reload
                     }
                 }
                 catch (NullReferenceException)
                 {
-                    System.Windows.MessageBox.Show("Couldn't fix grappling node, there are sub-nodes missing.\n" +
+                    DlgMessage.Show("Couldn't fix grappling node, there are sub-nodes missing.\n" +
                         "You should copy a MODULE node from a functional state 'Grappled' part.\n" +
                         "grappled part should be: " + part);
                 }

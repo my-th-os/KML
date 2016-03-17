@@ -802,7 +802,7 @@ namespace KML
             {
                 ParentPartIndex = p;
                 // TODO KmlPart.ParentPart_Changed(): Rebuild the whole part structure
-                System.Windows.MessageBox.Show("You need to save and reload to see the changed parent part in the structure");
+                DlgMessage.Show("You need to save and reload to see the changed parent part in the structure");
             }
         }
 
@@ -815,14 +815,14 @@ namespace KML
         {
             // TODO KmlPart.AttachmentSurface_Changed(): Reassign AttachedToSurfaceIndex
             // TODO KmlPart.AttachmentSurface_Changed(): Rebuild the whole part structure
-            System.Windows.MessageBox.Show("You need to save and reload to see the changed surface attachment in the structure");
+            DlgMessage.Show("You need to save and reload to see the changed surface attachment in the structure");
         }
 
         private void AttachmentNode_Changed(object sender, System.Windows.RoutedEventArgs e)
         {
             // TODO KmlPart.AttachmentNode_Changed(): Delete old index from appropiate list, add new one
             // TODO KmlPart.AttachmentNode_Changed(): Rebuild the whole part structure
-            System.Windows.MessageBox.Show("You need to save and reload to see the changed node attachment in the structure");
+            DlgMessage.Show("You need to save and reload to see the changed node attachment in the structure");
         }
     }
 }

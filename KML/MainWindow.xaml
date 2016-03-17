@@ -1,7 +1,7 @@
 ﻿<Window x:Class="KML.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="KML - Kerbal Markup Lister" Height="600" Width="800" Icon="Images/Astronaut.ico" MinWidth="450" MinHeight="300" Background="Gray" ResizeMode="CanResizeWithGrip" Loaded="Window_Loaded">
+        Title="KML - Kerbal Markup Lister" Height="600" Width="800" MinWidth="450" MinHeight="300" Background="Gray" ResizeMode="CanResizeWithGrip" Loaded="Window_Loaded" Icon="Images/Astronaut.ico">
     <Grid>
         <StackPanel VerticalAlignment="Top">
             <StackPanel.Background>

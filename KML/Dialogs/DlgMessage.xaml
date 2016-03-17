@@ -1,0 +1,10 @@
+﻿<Window x:Class="KML.DlgMessage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="KML Message" Height="160" Width="320" Icon="/KML;component/Images/Astronaut.ico" Background="LightGray" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" MinWidth="320" MinHeight="160">
+    <Grid>
+        <TextBox x:Name="TextMessage" Text="This is a message" VerticalScrollBarVisibility="Auto" IsUndoEnabled="False" IsReadOnly="True" TextWrapping="Wrap" Margin="0,0,0,48"/>
+        <Button x:Name="ButtonOk" Content="Ok" IsDefault="True" IsCancel="True" Height="48" VerticalAlignment="Bottom" Click="ButtonOk_Click"/>
+
+    </Grid>
+</Window>
