@@ -13,6 +13,11 @@ namespace KML
     /// </summary>
     class GuiWarningsManager : IGuiManager
     {
+        /// <summary>
+        /// Get true if the warnings list is empty, false if there are warnings.
+        /// </summary>
+        public bool IsEmpty { get { return WarningsList.Items.Count == 0; } }
+
         private GuiTabsManager Master { get; set; }
         private ListView WarningsList { get; set; }
 
@@ -47,6 +52,10 @@ namespace KML
                 node.MouseDoubleClick += WarningsNode_MouseDoubleClick;
                 WarningsList.Items.Add(node);
             }
+            // All current messages are shown in the list, 
+            // so they are handled and can be cleared from the list.
+            // Future messages will be shown in a DlgMessage.
+            Syntax.Messages.Clear();
         }
 
         /// <summary>

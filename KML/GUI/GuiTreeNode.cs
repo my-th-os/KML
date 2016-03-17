@@ -401,6 +401,7 @@ namespace KML
         private void DockRepair_Click(object sender, RoutedEventArgs e)
         {
             ((sender as MenuItem).DataContext as KmlPartDock).Repair();
+            DlgMessage.ShowAndClear(Syntax.Messages);
             // TODO GuiTreeNode.DockRepair_Click(): Need to refresh view?
         }
 

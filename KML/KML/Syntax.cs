@@ -11,7 +11,7 @@ namespace KML
     /// generation and identification.
     /// The message classes are capsulated within this class.
     /// </summary>
-    class Syntax
+    public class Syntax
     {
         /// <summary>
         /// This class encapsules all data of a message.
@@ -53,26 +53,27 @@ namespace KML
             /// <returns>A display string</returns>
             public string ToString(bool withNewLine)
             {
-                string s = "";
+                StringBuilder s = new StringBuilder();
                 if (Parent != null)
                 {
-                    s += Parent.ToString() + " -> ";
+                    s.Append(Parent.ToString());
+                    s.Append(" -> ");
                 }
                 else
                 {
-                    s += "ROOT -> ";
+                    s.Append("ROOT -> ");
                 }
-                s += Source.ToString();
+                s.Append(Source.ToString());
                 if (withNewLine)
                 {
-                    s += ":\n";
+                    s.Append(":\n");
                 }
                 else
                 {
-                    s += ": ";
+                    s.Append(": ");
                 }
-                s += Text;
-                return s;
+                s.Append(Text);
+                return s.ToString();
             }
 
             /// <summary>
@@ -123,6 +124,27 @@ namespace KML
         /// Get a list of all messages.
         /// </summary>
         public static List<Message> Messages = new List<Message>();
+
+        /// <summary>
+        /// Generate a info message.
+        /// </summary>
+        /// <param name="parent">The parent KmlNode from message source</param>
+        /// <param name="source">The source KmlItem where the message came from</param>
+        /// <param name="message">The message text</param>
+        public static void Info(KmlNode parent, KmlItem source, string message)
+        {
+            Messages.Add(new Message(parent, source, message));
+        }
+
+        /// <summary>
+        /// Generate a info message.
+        /// </summary>
+        /// <param name="source">The source KmlNode where the message came from</param>
+        /// <param name="message">The message text</param>
+        public static void Info(KmlNode source, string message)
+        {
+            Messages.Add(new Message(source.Parent, source, message));
+        }
 
         /// <summary>
         /// Generate a warning message.

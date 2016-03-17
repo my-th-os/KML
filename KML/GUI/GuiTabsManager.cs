@@ -103,7 +103,7 @@ namespace KML
             bool isCraftFile = ext == ".craft";
 
             // Show warnings tab if there are any and its not a craft file
-            if (Syntax.Messages.Count > 0 && !isCraftFile)
+            if (!WarningsManager.IsEmpty && !isCraftFile)
             {
                 WarningsTab.Visibility = System.Windows.Visibility.Visible;
                 Tabs.SelectedItem = WarningsTab;

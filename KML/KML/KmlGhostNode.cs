@@ -11,7 +11,7 @@ namespace KML
     /// It is not written to data file, just unpacked flat. So the content will be written
     /// as if it was content of KmlGhostNode.Parent.
     /// </summary>
-    class KmlGhostNode : KmlNode
+    public class KmlGhostNode : KmlNode
     {
         /// <summary>
         /// Creates a KmlGhostNode with a given Name as a child of given parent node.

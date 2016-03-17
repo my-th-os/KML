@@ -10,7 +10,7 @@ namespace KML
     /// <summary>
     /// KmlResource represents a KmlNode with the "RESOURCE" tag.
     /// </summary>
-    class KmlResource : KmlNode
+    public class KmlResource : KmlNode
     {
         /// <summary>
         /// Get the "amount" attribute as property.

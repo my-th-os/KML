@@ -12,7 +12,7 @@ namespace KML
     /// Name and value are extracted from the given line.
     /// Such an attribute is usually a child of a KmlNode.
     /// </summary>
-    class KmlAttrib : KmlItem
+    public class KmlAttrib : KmlItem
     {
         /// <summary>
         /// Get the attribute's name.

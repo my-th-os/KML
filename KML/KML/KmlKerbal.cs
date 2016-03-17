@@ -10,13 +10,24 @@ namespace KML
     /// <summary>
     /// KmlKerbal represents a KmlNode with the "KERBAL" tag.
     /// </summary>
-    class KmlKerbal : KmlNode
+    public class KmlKerbal : KmlNode
     {
         /// <summary>
         /// Possible origins where this node is found.
         /// Regular KERBAL nodes are children of the "ROSTER" node.
         /// </summary>
-        public enum KerbalOrigin { Roster, Other };
+        public enum KerbalOrigin 
+        { 
+            /// <summary>
+            /// Kerbal found under ROSTER node
+            /// </summary>
+            Roster, 
+
+            /// <summary>
+            /// Kerbal found anywhere else
+            /// </summary>
+            Other 
+        };
 
         /// <summary>
         /// Get the origin of this node.

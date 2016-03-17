@@ -13,7 +13,7 @@ namespace KML
     /// A KmlEnd is not stored as a child of its parent node.
     /// To write the line with "}" is part of writing a KmlNode item.
     /// </summary>
-    class KmlEnd : KmlItem
+    public class KmlEnd : KmlItem
     {
         /// <summary>
         /// Creates a KmlEnd with a line read from data file.

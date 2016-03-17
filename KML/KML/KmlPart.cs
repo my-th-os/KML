@@ -11,13 +11,24 @@ namespace KML
     /// <summary>
     /// KmlPart represents a KmlNode with the "PART" tag.
     /// </summary>
-    class KmlPart : KmlNode
+    public class KmlPart : KmlNode
     {
         /// <summary>
         /// Possible origins where this node is found.
         /// Regular PART nodes are children of a "VESSEL" node.
         /// </summary>
-        public enum PartOrigin { Vessel, Other };
+        public enum PartOrigin 
+        { 
+            /// <summary>
+            /// Part found under a VESSEL node
+            /// </summary>
+            Vessel, 
+
+            /// <summary>
+            /// Part found anywhere else
+            /// </summary>
+            Other 
+        };
 
         /// <summary>
         /// Get the origin of this node.

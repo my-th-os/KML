@@ -9,13 +9,24 @@ namespace KML
     /// <summary>
     /// KmlVessel represents a KmlNode with the "VESSEL" tag.
     /// </summary>
-    class KmlVessel : KmlNode
+    public class KmlVessel : KmlNode
     {
         /// <summary>
         /// Possible origins where this node is found.
         /// Regular VESSEL nodes are children of the "FLIGHTSTATE" node.
         /// </summary>
-        public enum VesselOrigin { Flightstate, Other };
+        public enum VesselOrigin 
+        { 
+            /// <summary>
+            /// Vessel found under FLIGHTSTATE node
+            /// </summary>
+            Flightstate, 
+
+            /// <summary>
+            /// Vessel found anywhere else
+            /// </summary>
+            Other 
+        };
 
         /// <summary>
         /// Get the origin of this node.

@@ -11,7 +11,7 @@ namespace KML
     /// KmlNode represents any item in KML structure that is a node, wich is
     /// followed by opening "{", a list of child items and a closing "}".
     /// </summary>
-    class KmlNode : KmlItem
+    public class KmlNode : KmlItem
     {
         /// <summary>
         /// The tag of this node similar to a XML tag.

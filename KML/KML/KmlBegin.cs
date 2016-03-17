@@ -14,7 +14,7 @@ namespace KML
     /// A KmlBegin is not stored as a child of its parent node.
     /// To write the line with "{" is part of writing a KmlNode item.
     /// </summary>
-    class KmlBegin : KmlItem
+    public class KmlBegin : KmlItem
     {
         /// <summary>
         /// Creates a KmlBegin with a line read from data file.

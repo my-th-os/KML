@@ -116,6 +116,7 @@
     <Compile Include="KML\KmlNode.cs" />
     <Compile Include="KML\KmlPart.cs" />
     <Compile Include="KML\KmlPartDock.cs" />
+    <Compile Include="KML\KmlPartDock_Repair.cs" />
     <Compile Include="KML\KmlResource.cs" />
     <Compile Include="KML\KmlVessel.cs" />
     <Compile Include="KML\Syntax.cs" />

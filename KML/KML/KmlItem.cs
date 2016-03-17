@@ -11,7 +11,7 @@ namespace KML
     /// Any item that couldn't be identified (and therefor was generated as 
     /// an instance of a class, that's derived from KmlItem) is just a KmlItem.
     /// </summary>
-    class KmlItem
+    public class KmlItem
     {
         /// <summary>
         /// Get the line that was read from data file.
