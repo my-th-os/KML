@@ -269,7 +269,7 @@ namespace KML
                 if (sameOk && dockeeOk)
                 {
                     Syntax.Info(same, "Successfully repaired same vessel docking. Please save and reload to see the rebuilt part structure.");
-                    // TODO KmlPartDock:RepairDockerDockee(): Refresh structure without save / reload
+                    // TODO KmlPartDock:RepairSameVesselDockee(): Refresh structure without save / reload
                 }
             }
         }

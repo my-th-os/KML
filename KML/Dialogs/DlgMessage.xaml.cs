@@ -19,13 +19,12 @@ namespace KML
     /// </summary>
     public partial class DlgMessage : Window
     {
-        static GuiIcons Icons = new GuiIcons16();
+        private static GuiIcons Icons = new GuiIcons16();
 
         private DlgMessage(string message, string title, Image image)
         {
             InitializeComponent();
 
-            Owner = Application.Current.MainWindow;
             if (title != null)
             {
                 Title = title;
@@ -36,7 +35,8 @@ namespace KML
             }
             TextMessage.Text = message;
 
-            CalcNeededSize();
+            DlgHelper.Initialize(this);
+            DlgHelper.CalcNeededSize(this, TextMessage, ButtonOk.Height);
         }
 
         private DlgMessage(string message, string title)
@@ -55,10 +55,10 @@ namespace KML
         /// <param name="message">The message to show</param>
         /// <param name="title">The window title</param>
         /// <returns>True if "Ok" was clicked, false otherwise</returns>
-        public static bool? Show(string message, string title) 
+        public static bool Show(string message, string title) 
         {
             DlgMessage dlg = new DlgMessage(message, title);
-            return dlg.ShowDialog();
+            return dlg.ShowDialog() == true;
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace KML
         /// </summary>
         /// <param name="message">The message to show</param>
         /// <returns>True if "Ok" was clicked, false otherwise</returns>
-        public static bool? Show(string message)
+        public static bool Show(string message)
         {
             return Show(message, null);
         }
@@ -139,42 +139,6 @@ namespace KML
             bool? result = Show(messages);
             messages.Clear();
             return result;
-        }
-
-        private void CalcNeededSize()
-        {
-            // Readout real border width and height from main window (theme, fontsize, whatever)
-            double borderWidth = Application.Current.MainWindow.Width - (Application.Current.MainWindow.Content as Grid).ActualWidth; //16.0;
-            double borderHeight = Application.Current.MainWindow.Height - (Application.Current.MainWindow.Content as Grid).ActualHeight; // 39.0;
-
-            // Recalculate the needed size depending on content text,
-            // pretending to have unlimited space
-            TextMessage.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
-            TextMessage.Arrange(new Rect(TextMessage.DesiredSize));
-
-            // Limit size to owner, wrap and scroll if needed
-            if (TextMessage.DesiredSize.Width + borderWidth > Owner.ActualWidth)
-            {
-                Width = Owner.ActualWidth;
-                TextMessage.TextWrapping = TextWrapping.Wrap;
-
-                // Recalculate with word wrap
-                TextMessage.Measure(new Size(Width - borderWidth, Double.PositiveInfinity));
-                TextMessage.Arrange(new Rect(TextMessage.DesiredSize));
-            }
-            else
-            {
-                Width = TextMessage.DesiredSize.Width + borderWidth;
-            }
-
-            if (TextMessage.ActualHeight + borderHeight + ButtonOk.Height > Owner.ActualHeight)
-            {
-                Height = Owner.ActualHeight;
-            }
-            else
-            {
-                Height = TextMessage.ActualHeight + borderHeight + ButtonOk.Height;
-            }
         }
 
         private void ButtonOk_Click(object sender, RoutedEventArgs e)

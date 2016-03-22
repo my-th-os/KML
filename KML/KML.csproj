@@ -79,6 +79,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Dialogs\DlgConfirmation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\DlgInput.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -87,8 +95,15 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Dialogs\DlgHelper.cs" />
     <Compile Include="Dialogs\DlgMessage.xaml.cs">
       <DependentUpon>DlgMessage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DlgConfirmation.xaml.cs">
+      <DependentUpon>DlgConfirmation.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DlgInput.xaml.cs">
+      <DependentUpon>DlgInput.xaml</DependentUpon>
     </Compile>
     <Compile Include="GUI\GuiVesselsPartGraph.cs" />
     <Compile Include="GUI\GuiVesselsPartGraphNode.cs" />
