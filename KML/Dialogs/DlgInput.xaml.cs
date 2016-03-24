@@ -67,20 +67,21 @@ namespace KML
         /// </summary>
         /// <param name="message">The message to show</param>
         /// <param name="title">The window title</param>
+        /// <param name="image">The image for the window icon.</param>
         /// <param name="presetText">The preset text for the input</param>
-        /// <param name="output">Out: Returns the input text if "Ok" was clicked, the preset text otherwise</param>
+        /// <param name="input">Out: Returns the input text if "Ok" was clicked, the preset text otherwise</param>
         /// <returns>True if "Ok" was clicked, false otherwise</returns>
-        public static bool Show(string message, string title, string presetText, out string output)
+        public static bool Show(string message, string title, Image image, string presetText, out string input)
         {
-            DlgInput dlg = new DlgInput(message, title, null, presetText);
+            DlgInput dlg = new DlgInput(message, title, image, presetText);
             bool? result = dlg.ShowDialog();
             if (result == true)
             {
-                output = dlg.TextBoxInput.Text;
+                input = dlg.TextBoxInput.Text;
             }
             else
             {
-                output = presetText;
+                input = presetText;
             }
             return result == true;
         }
@@ -89,33 +90,46 @@ namespace KML
         /// Show a dialog window with given title and message.
         /// </summary>
         /// <param name="message">The message to show</param>
+        /// <param name="title">The window title</param>
         /// <param name="presetText">The preset text for the input</param>
-        /// <param name="output">Out: Returns the input text if "Ok" was clicked, the preset text otherwise</param>
+        /// <param name="input">Out: Returns the input text if "Ok" was clicked, the preset text otherwise</param>
         /// <returns>True if "Ok" was clicked, false otherwise</returns>
-        public static bool Show(string message, string presetText, out string output)
+        public static bool Show(string message, string title, string presetText, out string input)
         {
-            return Show(message, null, presetText, out output);
+            return Show(message, title, null, presetText, out input);
+        }
+
+        /// <summary>
+        /// Show a dialog window with given title and message.
+        /// </summary>
+        /// <param name="message">The message to show</param>
+        /// <param name="presetText">The preset text for the input</param>
+        /// <param name="input">Out: Returns the input text if "Ok" was clicked, the preset text otherwise</param>
+        /// <returns>True if "Ok" was clicked, false otherwise</returns>
+        public static bool Show(string message, string presetText, out string input)
+        {
+            return Show(message, null, null, presetText, out input);
         }
 
         /// <summary>
         /// Show a dialog window with given message.
         /// </summary>
         /// <param name="message">The message to show</param>
-        /// <param name="output">Out: Returns the input text if "Ok" was clicked, null otherwise</param>
+        /// <param name="input">Out: Returns the input text if "Ok" was clicked, null otherwise</param>
         /// <returns>True if "Ok" was clicked, false otherwise</returns>
-        public static bool Show(string message, out string output)
+        public static bool Show(string message, out string input)
         {
-            return Show(message, null, null, out output);
+            return Show(message, null, null, null, out input);
         }
 
         /// <summary>
         /// Show a dialog window with input only.
         /// </summary>
-        /// <param name="output">Out: Returns the input text if "Ok" was clicked, null otherwise</param>
+        /// <param name="input">Out: Returns the input text if "Ok" was clicked, null otherwise</param>
         /// <returns>True if "Ok" was clicked, false otherwise</returns>
-        public static bool Show(out string output)
+        public static bool Show(out string input)
         {
-            return Show(null, null, null, out output);
+            return Show(null, null, null, null, out input);
         }
 
         private void ButtonOk_Click(object sender, RoutedEventArgs e)

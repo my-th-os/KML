@@ -84,6 +84,7 @@ namespace KML
             if (node.Parent != null && node.Parent.Tag.ToLower() == "flightstate")
             {
                 Origin = VesselOrigin.Flightstate;
+                node.Parent.CanBeDeleted = false;
             }
             else
             {
@@ -95,6 +96,9 @@ namespace KML
             Parts = new List<KmlPart>();
             ResourceTypes = new SortedSet<string>();
             RootPart = null;
+
+            // TODO KmlVessel.KmlVessel(): Make vessels deletable
+            CanBeDeleted = false;
 
             AddRange(node.AllItems);
         }

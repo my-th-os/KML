@@ -19,16 +19,17 @@ namespace KML
         /// Creates a KmlEnd with a line read from data file.
         /// </summary>
         /// <param name="line">String with only one line from data file</param>
-        public KmlEnd(string line)
-            : base(line)
+        /// <param name="parent">The parent KmlNode</param>
+        public KmlEnd(string line, KmlNode parent)
+            : base(line, parent)
         {
         }
 
         /// <summary>
         /// Creates a standard KmlEnd to be written.
         /// </summary>
-        public KmlEnd()
-            : base("}")
+        public KmlEnd(KmlNode parent)
+            : base("}", parent)
         {
         }
     }

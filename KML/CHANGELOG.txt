@@ -1,5 +1,11 @@
 Version 0.6 - in progress
-- new message dialog
+- adding child nodes (context menu)
+- adding attributes to a node (context menu)
+- deleting nodes (context menu), restricted to not delete in this version
+  - vessels (need to check crew and return home)
+  - parts (need to rebuild index numbers and attachments)
+  - kerbals (need to check if they are in any vessel's crew)
+- custom dialogs
 - supress vessels, kerbals and warnings for CRAFT files
 - read "part" attribute as name for CRAFT files
 - save with loaded file extension only

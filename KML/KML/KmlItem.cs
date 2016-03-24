@@ -16,15 +16,53 @@ namespace KML
         /// <summary>
         /// Get the line that was read from data file.
         /// </summary>
-        public string Line { get; private set; } 
+        public string Line { get; private set; }
+
+        /// <summary>
+        /// Get or set whether deletion of this item is allowed.
+        /// </summary>
+        public bool CanBeDeleted { get; set; }
+
+        /// <summary>
+        /// Get this item's parent node or null if there is none.
+        /// </summary>
+        public KmlNode Parent { get; private set; }
 
         /// <summary>
         /// Creates a KmlItem with a line read from data file.
         /// </summary>
         /// <param name="line">String with only one line from data file</param>
-        public KmlItem(string line)
+        /// <param name="parent">The parent KmlNode</param>
+        public KmlItem(string line, KmlNode parent)
         {
             this.Line = line;
+            Parent = parent;
+
+            // Default is to allow any item deletion.
+            // Sepcial ones, used for class properties will be protected.
+            CanBeDeleted = true;
+        }
+
+        /// <summary>
+        /// Delete this node from it's parent.
+        /// Result will be false if item was not in parent's lists or couldn't be deleted
+        /// because of restrictions.
+        /// </summary>
+        /// <returns>True if item was deleted, false otherwise</returns>
+        public bool Delete()
+        {
+            if (!CanBeDeleted)
+            {
+                return false;
+            }
+            if (Parent != null)
+            {
+                return Parent.Delete(this);
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -61,26 +99,95 @@ namespace KML
             return Line.Trim();
         }
 
-        private static KmlItem ParseLine (string line)
+        /// <summary>
+        /// Creates a KmlItem from a string.
+        /// This is used for adding items outside of loading from file.
+        /// Result will be a KmlAttrib, KmlNode, KmlVessel, etc. or null 
+        /// if line is "{", "}" or empty
+        /// </summary>
+        /// <param name="line">The line to build a KmlItem from</param>
+        /// <param name="parent">The parent to use, if it will be a KmlNode</param>
+        /// <returns>A KmlItem derived object</returns>
+        public static KmlItem CreateItem (string line, KmlNode parent)
+        {
+            if (line == null || line.Length == 0)
+            {
+                return null;
+            }
+            else if (line.IndexOf('{') >= 0)
+            {
+                return null;
+            }
+            else if (line.IndexOf('}') >= 0)
+            {
+                return null;
+            }
+
+            KmlItem item = ParseLine(line, parent);
+            if (item is KmlAttrib)
+            {
+                return item;
+            }
+            else
+            {
+                // It's a node
+                return ParseNode(item);
+            }
+        }
+
+        /// <summary>
+        /// Changes the parent. Needed when a node is changed to a derived class 
+        /// and all existing children need to have a new parent.
+        /// </summary>
+        /// <param name="item">The KmlItem where parent needs to be changed</param>
+        /// <param name="parent">The new parent KmlNode</param>
+        protected static void RemapParent(KmlItem item, KmlNode parent)
+        {
+            item.Parent = parent;
+        }
+
+        private static KmlItem ParseLine (string line, KmlNode parent)
         {
             string s = line.Trim();
 
             if (s.IndexOf('=') >= 0)
             {
-                return new KmlAttrib(line);
+                return new KmlAttrib(line, parent);
             }
             else if (s.Length == 1 && s[0] == '{')
             {
-                return new KmlBegin(line);
+                return new KmlBegin(line, parent);
             }
             else if (s.Length == 1 && s[0] == '}')
             {
-                return new KmlEnd(line);
+                return new KmlEnd(line, parent);
             }
             else
             {
-                return new KmlItem(line);
+                return new KmlItem(line, parent);
             }
+        }
+
+        private static KmlNode ParseNode(KmlItem item)
+        {
+            KmlNode newNode = new KmlNode(item);
+            if (newNode.Tag.ToLower() == "vessel")
+            {
+                newNode = new KmlVessel(newNode);
+            }
+            else if (newNode.Tag.ToLower() == "kerbal")
+            {
+                newNode = new KmlKerbal(newNode);
+            }
+            else if (newNode.Tag.ToLower() == "part")
+            {
+                newNode = new KmlPart(newNode);
+            }
+            else if (newNode.Tag.ToLower() == "resource")
+            {
+                newNode = new KmlResource(newNode);
+            }
+            return newNode;
         }
 
         private static List<KmlItem> ParseFile(System.IO.StreamReader file, KmlNode parent)
@@ -90,37 +197,21 @@ namespace KML
             string line;
             while ((line = file.ReadLine()) != null)
             {
-                KmlItem newItem = ParseLine(line);
+                KmlItem newItem = ParseLine(line, parent);
                 if (newItem is KmlBegin)
                 {
                     KmlItem lastItem;
                     int l = list.Count - 1;
                     if (l < 0)
                     {
-                        lastItem = new KmlItem("");
+                        lastItem = new KmlItem("", parent);
                     }
                     else
                     {
                         lastItem = list[l];
                         list.RemoveAt(l);
                     }
-                    KmlNode newNode = new KmlNode(lastItem, parent);
-                    if (newNode.Tag.ToLower() == "vessel")
-                    {
-                        newNode = new KmlVessel(newNode);
-                    }
-                    else if (newNode.Tag.ToLower() == "kerbal")
-                    {
-                        newNode = new KmlKerbal(newNode);
-                    }
-                    else if (newNode.Tag.ToLower() == "part")
-                    {
-                        newNode = new KmlPart(newNode);
-                    }
-                    else if (newNode.Tag.ToLower() == "resource")
-                    {
-                        newNode = new KmlResource(newNode);
-                    }
+                    KmlNode newNode = ParseNode(lastItem);
                     list.Add(newNode);
                     newNode.AddRange(ParseFile(file, newNode));
                 }
@@ -207,7 +298,7 @@ namespace KML
                 KmlNode node = (KmlNode)item;
                 if (!ghost)
                 {
-                    file.WriteLine(new KmlBegin().ToLine(indent));
+                    file.WriteLine(new KmlBegin(node).ToLine(indent));
                     newIndent = indent + 1;
                 }
                 foreach(KmlItem child in node.AllItems)
@@ -216,7 +307,7 @@ namespace KML
                 }
                 if (!ghost)
                 {
-                    file.WriteLine(new KmlEnd().ToLine(indent));
+                    file.WriteLine(new KmlEnd(node).ToLine(indent));
                 }
             }
         }

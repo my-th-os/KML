@@ -20,16 +20,17 @@ namespace KML
         /// Creates a KmlBegin with a line read from data file.
         /// </summary>
         /// <param name="line">String with only one line from data file</param>
-        public KmlBegin(string line)
-            : base(line)
+        /// <param name="parent">The parent KmlNode</param>
+        public KmlBegin(string line, KmlNode parent)
+            : base(line, parent)
         {
         }
 
         /// <summary>
         /// Creates a standard KmlBegin to be written.
         /// </summary>
-        public KmlBegin()
-            : base("{")
+        public KmlBegin(KmlNode parent)
+            : base("{", parent)
         {
         }
     }

@@ -98,6 +98,7 @@ namespace KML
             {
                 if (item is KmlNode)
                 {
+                    item.CanBeDeleted = false;
                     Tree.Items.Add(new GuiTreeNode((KmlNode)item));
                 }
             }

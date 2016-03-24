@@ -64,7 +64,7 @@ namespace KML
         private void BuildContextMenu()
         {
             // Copy that from a GuiTreeNode
-            GuiTreeNode dummy = new GuiTreeNode(DataVessel);
+            GuiTreeNode dummy = new GuiTreeNode(DataVessel, true, true, true, false, true, false);
             ContextMenu = dummy.ContextMenu;
         }
 

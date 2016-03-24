@@ -25,11 +25,6 @@ namespace KML
         /// </summary>
         public string Name { get; private set; }
 
-        /// <summary>
-        /// Get this node's parent node or null if there is none.
-        /// </summary>
-        public KmlNode Parent { get; private set; }
-
         // TODO KmlNode: Not make lists public, better have a Add(method)
 
         /// <summary>
@@ -55,6 +50,24 @@ namespace KML
         public List<KmlItem> Unknown { get; private set; }
 
         /// <summary>
+        /// Event is raised when attributes are added or deleted. 
+        /// </summary>
+        public event RoutedEventHandler AttribChanged
+        {
+            add { AttribChangedList.Add(value); }
+            remove { AttribChangedList.Remove(value); }
+        }
+
+        /// <summary>
+        /// Event is raised when child nodes are added or deleted. 
+        /// </summary>
+        public event RoutedEventHandler ChildrenChanged
+        {
+            add { ChildrenChangedList.Add(value); }
+            remove { ChildrenChangedList.Remove(value); }
+        }
+
+        /// <summary>
         /// Event is raised when properties are changed that would cause ToString() 
         /// to give new result.
         /// </summary>
@@ -64,6 +77,8 @@ namespace KML
             remove { ToStringChangedList.Remove(value); }
         }
 
+        private List<RoutedEventHandler> AttribChangedList = new List<RoutedEventHandler>();
+        private List<RoutedEventHandler> ChildrenChangedList = new List<RoutedEventHandler>();
         private List<RoutedEventHandler> ToStringChangedList = new List<RoutedEventHandler>();
 
         /// <summary>
@@ -72,13 +87,12 @@ namespace KML
         /// <param name="line">String with only one line from data file</param>
         /// <param name="parent">The parent KmlNode or null to create a root node</param>
         public KmlNode(string line, KmlNode parent)
-            : base(line)
+            : base(line, parent)
         {
             Tag = line.Trim();
             Name = "";
 
             AllItems = new List<KmlItem>();
-            Parent = parent;
             Children = new List<KmlNode>();
             Attribs = new List<KmlAttrib>();
             Unknown = new List<KmlItem>();
@@ -89,9 +103,8 @@ namespace KML
         /// This is used to rebuild the previous KmlItem into a KmlNode after a "{" is found.
         /// </summary>
         /// <param name="item">The KmlItem to copy</param>
-        /// <param name="parent">The parent KmlNode or null to create a root node</param>
-        public KmlNode(KmlItem item, KmlNode parent)
-            : this(item.Line, parent)
+        public KmlNode(KmlItem item)
+            : this(item.Line, item.Parent)
         {
         }
 
@@ -104,10 +117,16 @@ namespace KML
         /// <param name="item">The KmlItem to add</param>
         public virtual void Add (KmlItem item)
         {
+            // ensure that item.Parent is this node
+            if (item.Parent != this)
+            {
+                RemapParent(item, this);
+            }
             AllItems.Add(item);
             if (item is KmlNode)
             {
                 Children.Add((KmlNode)item);
+                InvokeChildrenChanged();
             }
             else if (item is KmlAttrib)
             {
@@ -121,6 +140,7 @@ namespace KML
                     attrib.CanBeDeleted = false;
                 }
                 Attribs.Add(attrib);
+                InvokeAttribChanged();
             }
             else
             {
@@ -139,6 +159,42 @@ namespace KML
             foreach (KmlItem item in list)
             {
                 Add(item);
+            }
+        }
+
+        /// <summary>
+        /// Deletes a KmlItem from this nodes lists.
+        /// Result will be false if item was not in the lists or couldn't be deleted
+        /// because of restrictions.
+        /// </summary>
+        /// <param name="item">The KmlItem to delete</param>
+        /// <returns>True if item was deleted, false otherwise</returns>
+        public virtual bool Delete(KmlItem item)
+        {
+            if(!item.CanBeDeleted)
+            {
+                return false;
+            }
+            if (!AllItems.Remove(item))
+            {
+                // It wasn't in the list, nothing to do
+                return false;
+            }
+            if (item is KmlAttrib)
+            {
+                bool result = Attribs.Remove((KmlAttrib)item);
+                InvokeAttribChanged();
+                return result;
+            }
+            else if (item is KmlNode)
+            {
+                bool result = Children.Remove((KmlNode)item);
+                InvokeChildrenChanged();
+                return result;
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -225,6 +281,30 @@ namespace KML
         protected KmlAttrib GetAttribWhereValueChanged(object sender)
         {
             return (KmlAttrib)sender;
+        }
+
+        /// <summary>
+        /// Call this Method when attributes are added or deleted.
+        /// All registered event handlers will be invoked.
+        /// </summary>
+        protected void InvokeAttribChanged()
+        {
+            foreach (RoutedEventHandler handler in AttribChangedList)
+            {
+                handler.Invoke(this, new RoutedEventArgs());
+            }
+        }
+
+        /// <summary>
+        /// Call this Method when child nodes are added or deleted.
+        /// All registered event handlers will be invoked.
+        /// </summary>
+        protected void InvokeChildrenChanged()
+        {
+            foreach (RoutedEventHandler handler in ChildrenChangedList)
+            {
+                handler.Invoke(this, new RoutedEventArgs());
+            }
         }
 
         /// <summary>

@@ -20,6 +20,8 @@ namespace KML
         /// </summary>
         public GuiIcons16()
         {
+            Add.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Add16.png"));
+            Delete.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Delete16.png"));
             Error.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Error16.png"));
             Ghost.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Document16.png"));
             Kerbal.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Astronaut16.png"));

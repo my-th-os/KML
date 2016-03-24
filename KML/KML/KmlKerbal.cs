@@ -65,6 +65,7 @@ namespace KML
             if (node.Parent != null && node.Parent.Tag.ToLower() == "roster")
             {
                 Origin = KerbalOrigin.Roster;
+                node.Parent.CanBeDeleted = false;
             }
             else
             {
@@ -75,6 +76,9 @@ namespace KML
             Trait = "";
             Brave = 0.0;
             Dumb = 0.0;
+
+            // TODO KmlKerbal.KmlKerbal(): Make kerbals deletable
+            CanBeDeleted = false;
 
             AddRange(node.AllItems);
         }

@@ -54,8 +54,10 @@ namespace KML
         /// <param name="withImage">Do you want an Image in your tree node?</param>
         /// <param name="withText">Do you want text in your tree node?</param>
         /// <param name="withMenu">Do you want a context menu for your tree node?</param>
+        /// <param name="withAddMenu">Do you want a context menu for adding nodes?</param>
+        /// <param name="withDeleteMenu">Do you want a context menu for deletion of this tree node?</param>
         /// <param name="withChildren">Do you want tree children to expand under this node?</param>
-        public GuiTreeNode(KmlNode dataNode, bool withImage, bool withText, bool withMenu, bool withChildren)
+        public GuiTreeNode(KmlNode dataNode, bool withImage, bool withText, bool withMenu, bool withAddMenu, bool withDeleteMenu, bool withChildren)
         {
             DataNode = dataNode;
             TemplateWithImage = withImage;
@@ -69,11 +71,15 @@ namespace KML
 
             // Get notified when KmlNode ToString() changes
             DataNode.ToStringChanged += DataNode_ToStringChanged;
+            // Get notified when attributes / children are added / deleted
+            DataNode.AttribChanged += DataNode_AttribChanged;
+            DataNode.ChildrenChanged += DataNode_ChildrenChanged;
+
 
             // Build a context menu with tools
             if (withMenu)
             {
-                BuildContextMenu();
+                BuildContextMenu(withAddMenu, withDeleteMenu);
             }
         }
 
@@ -82,7 +88,7 @@ namespace KML
         /// </summary>
         /// <param name="dataNode">The KmlNode to contain</param>
         public GuiTreeNode(KmlNode dataNode)
-            : this (dataNode, true, true, true, true)
+            : this (dataNode, true, true, true, true, true, true)
         {
         }
 
@@ -106,9 +112,14 @@ namespace KML
             Add(node);
         }
 
+        private bool NeedsLoadingChildren()
+        {
+            return Items.Count == 1 && Items[0] is DummyTreeNode;
+        }
+
         private void LoadChildren()
         {
-            if (Items.Count == 1 && Items[0] is DummyTreeNode)
+            if (NeedsLoadingChildren())
             {
                 Items.Clear();
                 if (DataNode != null)
@@ -117,6 +128,35 @@ namespace KML
                     {
                         Add(child);
                     }
+                }
+            }
+        }
+
+        private void ReLoadChildren()
+        {
+            if (NeedsLoadingChildren())
+            {
+                LoadChildren();
+            }
+            else
+            {
+                // Check all KmlNodes
+                for (int i = 0; i < DataNode.Children.Count; i++)
+                {
+                    KmlNode child = DataNode.Children[i];
+                    if (Items.Count > i && (Items[i] as GuiTreeNode).DataNode != child)
+                    {
+                        Items.Insert(i, new GuiTreeNode(child));
+                    }
+                    else
+                    {
+                        Add(child);
+                    }
+                }
+                // Check if there are Items left to delete
+                for (int i = Items.Count - 1; i > DataNode.Children.Count - 1; i--)
+                {
+                    Items.RemoveAt(i);
                 }
             }
         }
@@ -296,7 +336,7 @@ namespace KML
             return prog;
         }
 
-        private void BuildContextMenu()
+        private void BuildContextMenu(bool withAddMenu, bool withDeleteMenu)
         {
             ContextMenu menu = new ContextMenu();
             MenuItem title = new MenuItem();
@@ -309,8 +349,15 @@ namespace KML
             menu.Items.Add(title);
             menu.Items.Add(new Separator());
 
+            // So far it's the default Menu, wich should not be shown if no items follow
+            int defaultMenuCount = menu.Items.Count;
+            
+            // Give menu item a more descriptive name
+            string nodeName = "node";
+
             if (DataNode is KmlResource)
             {
+                nodeName = "resource";
                 MenuItem m = new MenuItem();
                 m.DataContext = DataNode;
                 m.Icon = Icons.CreateImage(Icons.Resource);
@@ -320,6 +367,7 @@ namespace KML
             }
             else if (DataNode is KmlPart)
             {
+                nodeName = "part";
                 KmlPart node = (KmlPart)DataNode;
                 if (node.HasResources)
                 {
@@ -345,7 +393,7 @@ namespace KML
                     KmlPartDock dock = (KmlPartDock)node;
                     if (dock.NeedsRepair)
                     {
-                        if (menu.Items.Count > 2)
+                        if (menu.Items.Count > defaultMenuCount)
                         {
                             menu.Items.Add(new Separator());
                         }
@@ -360,6 +408,7 @@ namespace KML
             }
             else if (DataNode is KmlVessel)
             {
+                nodeName = "vessel";
                 KmlVessel node = (KmlVessel)DataNode;
                 if (node.HasResources)
                 {
@@ -381,12 +430,52 @@ namespace KML
                     }
                 }
             }
+            else if (DataNode is KmlKerbal)
+            {
+                nodeName = "kerbal";
+            }
+
+            // Adding / deleting
+            if (withAddMenu)
+            {
+                if (menu.Items.Count > defaultMenuCount)
+                {
+                    menu.Items.Add(new Separator());
+                }
+                MenuItem m = new MenuItem();
+                m.DataContext = DataNode;
+                m.Icon = Icons.CreateImage(Icons.Add);
+                m.Header = "Add child node...";
+                m.Click += NodeAddChild_Click;
+                menu.Items.Add(m);
+
+                m = new MenuItem();
+                m.DataContext = DataNode;
+                m.Icon = Icons.CreateImage(Icons.Add);
+                m.Header = "Add attribute...";
+                m.Click += NodeAddAttrib_Click;
+                menu.Items.Add(m);
+            }
+            if (withDeleteMenu)
+            {
+                if (menu.Items.Count > defaultMenuCount)
+                {
+                    menu.Items.Add(new Separator());
+                }
+                MenuItem m = new MenuItem();
+                m.DataContext = DataNode;
+                m.Icon = Icons.CreateImage(Icons.Delete);
+                m.Header = "Delete this " + nodeName + "...";
+                m.Click += NodeDelete_Click;
+                m.IsEnabled = DataNode.CanBeDeleted;
+                menu.Items.Add(m);
+            }
 
             // Need to have a seperate menu for each item, even if it is empty.
             // If ContextMenu is null, the parent's contextmenu will be used (WTF).
             // Item[0] is the menu title, Item[1] a Seperator, both always created.
             ContextMenu = menu;
-            if (menu.Items.Count < 3)
+            if (menu.Items.Count <= defaultMenuCount)
             {
                 ContextMenu.Visibility = System.Windows.Visibility.Hidden;
             }
@@ -441,6 +530,90 @@ namespace KML
             // Possibly need to update the details ListView, so force Selected event to be fired
             IsSelected = false;
             IsSelected = true;
+        }
+
+        private void NodeAddChild_Click(object sender, RoutedEventArgs e)
+        {
+            KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
+            string input;
+            string preset = "";
+            bool loop = true;
+            while (loop && DlgInput.Show("Enter the tag for the new node:", "NEW child node", Icons.Add, preset, out input))
+            {
+                KmlItem item = KmlItem.CreateItem(input, node);
+                if (item != null && item is KmlNode)
+                {
+                    node.Add((KmlNode)item);
+                    loop = false;
+                    // View will be refreshed in ChildrenChanged event
+                }
+                else
+                {
+                    DlgMessage.Show("Tag is not allowed to be empty or contain following characters: ={}", "NEW child node", Icons.Add);
+                    preset = input;
+                    // Input will pop up again while loop == true
+                }
+            }
+        }
+
+        private void NodeAddAttrib_Click(object sender, RoutedEventArgs e)
+        {
+            KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
+            string input;
+            string preset = "";
+            bool loop = true;
+            while (loop && DlgInput.Show("Enter the name for the new attribute:", "NEW attribute", Icons.Add, preset, out input))
+            {
+                string attrib = input;
+                if (attrib.Length > 0 && attrib.IndexOf('=') < 0)
+                {
+                    attrib = attrib + "=";
+                }
+                KmlItem item = KmlItem.CreateItem(attrib, node);
+                if (item != null && item is KmlAttrib)
+                {
+                    node.Add((KmlAttrib)item);
+                    loop = false;
+                    // View will be refreshed in AttribChanged event
+                }
+                else
+                {
+                    DlgMessage.Show("Attribute name is not allowed to be empty or contain following characters: {}", "NEW attribute", Icons.Add);
+                    preset = input;
+                    // Input will pop up again while loop == true
+                }
+            }
+        }
+
+        private void NodeDelete_Click(object sender, RoutedEventArgs e)
+        {
+            // TODO GuiTreeNode.NodeDelete_Click(): delete
+            KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
+            if (DlgConfirmation.Show("Do your really want to delete this node?\n" + node, "DELETE node", Icons.Delete))
+            {
+                node.Delete();
+                // View will be refreshed in parent's ChildrenChanged event
+            }
+        }
+
+        void DataNode_ChildrenChanged(object sender, RoutedEventArgs e)
+        {
+            // If not loaded yet, they will be loaded correctly when expanded
+            if (!NeedsLoadingChildren())
+            {
+                ReLoadChildren();
+            }
+            IsExpanded = true;
+        }
+
+        void DataNode_AttribChanged(object sender, RoutedEventArgs e)
+        {
+            // Refresh details view if selected
+            if (IsSelected)
+            {
+                IsSelected = false;
+                IsSelected = true;
+            }
         }
 
         private void DataNode_ToStringChanged(object sender, RoutedEventArgs e)

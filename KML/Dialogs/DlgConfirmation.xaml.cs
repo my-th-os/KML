@@ -48,6 +48,19 @@ namespace KML
         }
 
         /// <summary>
+        /// Show a dialog window with given title, message and image.
+        /// </summary>
+        /// <param name="message">The message to show</param>
+        /// <param name="title">The window title</param>
+        /// <param name="image">The image for the window icon</param>
+        /// <returns>True if "Ok" was clicked, false otherwise</returns>
+        public static bool Show(string message, string title, Image image)
+        {
+            DlgConfirmation dlg = new DlgConfirmation(message, title, image);
+            return dlg.ShowDialog() == true;
+        }
+
+        /// <summary>
         /// Show a dialog window with given title and message.
         /// </summary>
         /// <param name="message">The message to show</param>
@@ -55,8 +68,7 @@ namespace KML
         /// <returns>True if "Ok" was clicked, false otherwise</returns>
         public static bool Show(string message, string title)
         {
-            DlgConfirmation dlg = new DlgConfirmation(message, title);
-            return dlg.ShowDialog() == true;
+            return Show(message, title, null);
         }
 
         /// <summary>
@@ -66,7 +78,7 @@ namespace KML
         /// <returns>True if "Ok" was clicked, false otherwise</returns>
         public static bool Show(string message)
         {
-            return Show(message, null);
+            return Show(message, null, null);
         }
 
         private void ButtonOk_Click(object sender, RoutedEventArgs e)

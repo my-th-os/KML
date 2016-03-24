@@ -50,8 +50,8 @@ namespace KML
         public KmlResource(KmlNode node)
             : base(node.Line, node.Parent)
         {
-            Amount = new KmlAttrib("amount =");
-            MaxAmount = new KmlAttrib("maxAmount =");
+            Amount = new KmlAttrib("amount =", node.Parent);
+            MaxAmount = new KmlAttrib("maxAmount =", node.Parent);
 
             AddRange(node.AllItems);
         }

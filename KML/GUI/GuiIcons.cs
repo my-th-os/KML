@@ -14,6 +14,16 @@ namespace KML
     class GuiIcons
     {
         /// <summary>
+        /// The icon for menu items to add content.
+        /// </summary>
+        public Image Add = new Image();
+
+        /// <summary>
+        /// The icon for menu items to delete content.
+        /// </summary>
+        public Image Delete = new Image();
+
+        /// <summary>
         /// The icon for items in the warnings list with type error.
         /// </summary>
         public Image Error = new Image();

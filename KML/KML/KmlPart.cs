@@ -271,6 +271,10 @@ namespace KML
             AttachedPartsSurface = new List<KmlPart>();
 
             Visited = false;
+            CraftName = "";
+
+            // TODO KmlPart.KmlPart(): Make parts deletable
+            CanBeDeleted = false;
 
             AddRange(node.AllItems);
         }

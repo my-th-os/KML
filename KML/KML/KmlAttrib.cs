@@ -50,11 +50,6 @@ namespace KML
             remove { AttribValueChangedList.Remove(value); }
         }
 
-        /// <summary>
-        /// Get or set whether deletion of this attribute is allowed.
-        /// </summary>
-        public bool CanBeDeleted { get; set; }
-
         private List<RoutedEventHandler> AttribValueChangedList = new List<RoutedEventHandler>();
 
         /// <summary>
@@ -62,7 +57,9 @@ namespace KML
         /// That line is parsed into name and value.
         /// </summary>
         /// <param name="line">String with only one line from data file</param>
-        public KmlAttrib(string line) : base (line)
+        /// <param name="parent">The parent KmlNode</param>
+        public KmlAttrib(string line, KmlNode parent)
+            : base(line, parent)
         {
             string s = line.Trim();
             int p = s.IndexOf('=');
@@ -77,10 +74,6 @@ namespace KML
                 Name = s.Substring(0, p).Trim();
                 Value = s.Substring(p + 1, s.Length - p - 1).Trim();
             }
-
-            // Default is to allow any attrib deletion.
-            // Sepcial ones, used for class properties will be protected.
-            CanBeDeleted = true;
         }
 
         /// <summary>

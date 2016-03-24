@@ -142,7 +142,6 @@ namespace KML
             // TODO MainWindow.ButtonSearch_Click()
         }
 
-
         private void ButtonNext_Click(object sender, RoutedEventArgs e)
         {
             TabsManager.Next();
@@ -200,6 +199,8 @@ namespace KML
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
         }
+
+        // TODO MainWindow.KerbalsFilter... Capsulate filter handling, make filter changes visible to buttons, right click filter behaviour
 
         private void KerbalsFilterCrew_Click(object sender, RoutedEventArgs e)
         {
