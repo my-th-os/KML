@@ -1,4 +1,14 @@
 Version 0.6 - in progress
+- adding child nodes (context menu)
+- adding attributes to a node (context menu)
+- deleting nodes (context menu), restricted to not delete in this version
+  - vessels (need to check crew and return home)
+  - parts (need to rebuild index numbers and attachments)
+  - kerbals (need to check if they are in any vessel's crew)
+- custom dialogs
+- supress vessels, kerbals and warnings for CRAFT files
+- read "part" attribute as name for CRAFT files
+- save with loaded file extension only
 - link to KSP forum thread
 
 Version 0.5 - 2016-03-11
@@ -12,6 +22,7 @@ Version 0.5 - 2016-03-11
 - display all vessels in a sorted and filtered list 
 - display all kerbals in a sorted and filtered list 
 - display vessel's part attachment structure 
+- display warnings about structural problems
 - refill part resources (context menu) 
 - repair broken docking ports (context menu) 
 - repair broken grappling devices (context menu) 

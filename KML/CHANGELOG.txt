@@ -22,6 +22,7 @@ Version 0.5 - 2016-03-11
 - display all vessels in a sorted and filtered list 
 - display all kerbals in a sorted and filtered list 
 - display vessel's part attachment structure 
+- display warnings about structural problems
 - refill part resources (context menu) 
 - repair broken docking ports (context menu) 
 - repair broken grappling devices (context menu) 
