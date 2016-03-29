@@ -48,7 +48,7 @@ namespace KML
         private bool TemplateWithText { get; set; }
 
         /// <summary>
-        /// Creates a GuiTreeNode containing the given DataNode.
+        /// Creates a GuiTreeNode containing the given dataNode.
         /// </summary>
         /// <param name="dataNode">The KmlNode to contain</param>
         /// <param name="withImage">Do you want an Image in your tree node?</param>

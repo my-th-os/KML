@@ -10,8 +10,15 @@ using System.Windows.Media;
 
 namespace KML
 {
+    /// <summary>
+    /// A GuiTreeAttrib is a specialized ListViewItem to display
+    /// and contain a KmlAttrib.
+    /// </summary>
     class GuiTreeAttrib : ListViewItem
     {
+        /// <summary>
+        /// Get the contained KmlAttrib from this GuiTreeAttrib.
+        /// </summary>
         public KmlAttrib DataAttrib
         {
             get
@@ -27,9 +34,13 @@ namespace KML
 
         private static GuiIcons Icons = new GuiIcons16();
 
-        public GuiTreeAttrib(KmlAttrib attrib)
+        /// <summary>
+        /// Creates a GuiTreeNode containing the given dataAttrib.
+        /// </summary>
+        /// <param name="dataAttrib">The KmlAttrib to contain</param>
+        public GuiTreeAttrib(KmlAttrib dataAttrib)
         {
-            DataAttrib = attrib;
+            DataAttrib = dataAttrib;
 
             BuildContextMenu();
         }
