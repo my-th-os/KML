@@ -311,20 +311,19 @@ namespace KML
 
         private void Tree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
+            TreeDetails.Items.Clear();
             if (Tree.SelectedItem != null)
             {
                 GuiTreeNode Node = (GuiTreeNode)Tree.SelectedItem;
-                TreeDetails.Items.Clear();
+                TreeDetails.ContextMenu = Node.ContextMenu;
                 foreach (KmlAttrib attrib in Node.DataNode.Attribs)
                 {
-                    TreeDetails.Items.Add(attrib);
+                    TreeDetails.Items.Add(new GuiTreeAttrib(attrib));
                 }
-
-                /*GridView gv = (NodeList.View as GridView);
-                foreach (GridViewColumn col in gv.Columns)
-                {
-                    col.Width = NodeList.ActualWidth / 2 - 15;
-                }*/
+            }
+            else
+            {
+                TreeDetails.ContextMenu = null;
             }
         }
 

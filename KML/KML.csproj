@@ -105,6 +105,7 @@
     <Compile Include="Dialogs\DlgInput.xaml.cs">
       <DependentUpon>DlgInput.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GUI\GuiTreeAttrib.cs" />
     <Compile Include="GUI\GuiVesselsPartGraph.cs" />
     <Compile Include="GUI\GuiVesselsPartGraphNode.cs" />
     <Compile Include="GUI\GuiIcons.cs" />

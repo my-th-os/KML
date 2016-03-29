@@ -21,18 +21,18 @@ Features
 • display vessel's part attachment structure 
 • display warnings about structural problems
 • adding child nodes (context menu)
-• adding attributes to a node (context menu)
 • deleting nodes (context menu), restricted to not delete in this version
   - vessels (need to check crew and return home)
   - parts (need to rebuild index numbers and attachments)
   - kerbals (need to check if they are in any vessel's crew)
+• adding attributes (context menu)
+• deleting attributes (context menu)
 • refill part resources (context menu) 
 • repair broken docking ports (context menu) 
 • repair broken grappling devices (context menu) 
 • tested with KSP 1.0.5 
 
 TODO 
-• delete attributes 
 • inserting nodes and attributes at certain position / change position 
 • copy nodes and attributes 
 • identify add-on part connections (KAS) 

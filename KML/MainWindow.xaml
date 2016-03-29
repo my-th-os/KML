@@ -25,7 +25,7 @@
                     <Image Source="Images\Save48.png"/>
                 </Button>
                 <Separator/>
-                <Button Click="ButtonSearch_Click" ToolTip="Search..." IsEnabled="False" Opacity="0.25">
+                <Button Click="ButtonSearch_Click" ToolTip="Search..." IsEnabled="False" Opacity="0.3">
                     <Image Source="Images\Search48.png"/>
                 </Button>
                 <Separator/>
@@ -37,11 +37,11 @@
                     <Image Source="Images\Next48.png"/>
                 </Button>
                 <Separator/>
-                <Button Click="ButtonAdd_Click" ToolTip="Add item..." IsEnabled="False" Opacity="0.25">
+                <Button Click="ButtonAdd_Click" ToolTip="Add item..." IsEnabled="False" Opacity="0.3">
                     <Image Source="Images\Add48.png"/>
                 </Button>
                 <Separator/>
-                <Button Click="ButtonDelete_Click" ToolTip="Delete item..." IsEnabled="False" Opacity="0.25">
+                <Button Click="ButtonDelete_Click" ToolTip="Delete item..." IsEnabled="False" Opacity="0.3">
                     <Image Source="Images\Delete48.png"/>
                 </Button>
                 <Separator/>
@@ -60,7 +60,7 @@
                     </Grid.ColumnDefinitions>
                     <TreeView x:Name="Tree" Background="LightGray"/>
                     <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="White"/>
-                    <ListView x:Name="TreeDetails" Grid.Column="2" IsSynchronizedWithCurrentItem="True" Background="LightGray">
+                    <ListView x:Name="TreeDetails" Grid.Column="2" IsSynchronizedWithCurrentItem="True" Background="LightGray" Margin="0,1,0,-1">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />

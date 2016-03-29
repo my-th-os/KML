@@ -1,10 +1,11 @@
 Version 0.6 - in progress
 - adding child nodes (context menu)
-- adding attributes to a node (context menu)
 - deleting nodes (context menu), restricted to not delete in this version
   - vessels (need to check crew and return home)
   - parts (need to rebuild index numbers and attachments)
   - kerbals (need to check if they are in any vessel's crew)
+- adding attributes (context menu)
+- deleting attributes (context menu)
 - custom dialogs
 - supress vessels, kerbals and warnings for CRAFT files
 - read "part" attribute as name for CRAFT files

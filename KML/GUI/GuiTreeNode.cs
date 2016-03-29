@@ -468,6 +468,10 @@ namespace KML
                 m.Header = "Delete this " + nodeName + "...";
                 m.Click += NodeDelete_Click;
                 m.IsEnabled = DataNode.CanBeDeleted;
+                if (!m.IsEnabled && m.Icon != null)
+                {
+                    (m.Icon as Image).Opacity = 0.3;
+                }
                 menu.Items.Add(m);
             }
 
@@ -587,7 +591,6 @@ namespace KML
 
         private void NodeDelete_Click(object sender, RoutedEventArgs e)
         {
-            // TODO GuiTreeNode.NodeDelete_Click(): delete
             KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
             if (DlgConfirmation.Show("Do your really want to delete this node?\n" + node, "DELETE node", Icons.Delete))
             {
