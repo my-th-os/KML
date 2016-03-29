@@ -549,7 +549,7 @@ namespace KML
 
         private GuiVesselsPartGraphNode DrawPart(KmlPart part, int x, int y)
         {
-            GuiVesselsPartGraphNode node = new GuiVesselsPartGraphNode(part, x, y, Master);
+            GuiVesselsPartGraphNode node = new GuiVesselsPartGraphNode(part, x, y);
             if(!InsertGrid(x, y, node))
             {
                 throw new Exception("Couldn't place GuiVesselsPartGraphNode on grid pos " + x + ", " + y + " (already occupied)");

@@ -51,7 +51,6 @@ namespace KML
         private Label Text { get; set; }
 
         private static Brush HighlightBrush { get; set; }
-        private GuiTabsManager Master { get; set; }
 
         static GuiVesselsPartGraphNode()
         {
@@ -66,12 +65,10 @@ namespace KML
         /// <param name="part">The KmlPart this node will represent</param>
         /// <param name="koordX">The X koord in parents PartGrid</param>
         /// <param name="koordY">The Y koord in parents PartGrid</param>
-        /// <param name="master">The master GuiTabsManager</param>
-        public GuiVesselsPartGraphNode(KmlPart part, int koordX, int koordY, GuiTabsManager master)
+        public GuiVesselsPartGraphNode(KmlPart part, int koordX, int koordY)
         {
             KoordX = koordX;
             KoordY = koordY;
-            Master = master;
             Lines = new List<Line>();
 
             if (part != null)
@@ -110,7 +107,7 @@ namespace KML
         /// <param name="koordX">The X koord in parents PartGrid</param>
         /// <param name="koordY">The Y koord in parents PartGrid</param>
         public GuiVesselsPartGraphNode(int koordX, int koordY)
-            : this(null, koordX, koordY, null)
+            : this(null, koordX, koordY)
         {
         }
 
@@ -132,7 +129,7 @@ namespace KML
             }
             if (part != null)
             {
-                Master.Select(part);
+                GuiTabsManager.GetCurrent().Select(part);
             }
         }
 

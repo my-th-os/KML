@@ -37,14 +37,6 @@
                     <Image Source="Images\Next48.png"/>
                 </Button>
                 <Separator/>
-                <Button Click="ButtonAdd_Click" ToolTip="Add item..." IsEnabled="False" Opacity="0.3">
-                    <Image Source="Images\Add48.png"/>
-                </Button>
-                <Separator/>
-                <Button Click="ButtonDelete_Click" ToolTip="Delete item..." IsEnabled="False" Opacity="0.3">
-                    <Image Source="Images\Delete48.png"/>
-                </Button>
-                <Separator/>
             </ToolBar>
         </StackPanel>
         <TabControl x:Name="Tabs" Margin="0,59,0,23" TabStripPlacement="Left" Background="White">

@@ -52,6 +52,11 @@ namespace KML
         public List<KmlPart> Parts { get; private set; }
 
         /// <summary>
+        /// Get a list of all flags used on this vessel's parts
+        /// </summary>
+        public List<string> Flags { get; private set; }
+
+        /// <summary>
         /// Get a set of all types (names) of resources in this vessel.
         /// </summary>
         public SortedSet<string> ResourceTypes { get; private set; }
@@ -94,6 +99,7 @@ namespace KML
             Type = "";
             Situation = "";
             Parts = new List<KmlPart>();
+            Flags = new List<string>();
             ResourceTypes = new SortedSet<string>();
             RootPart = null;
 
@@ -149,12 +155,21 @@ namespace KML
                 {
                     RootPart = Parts[rootPartIndex];
                 }
+                if (part.Flag != "" && !Flags.Any(x => x.ToLower() == part.Flag.ToLower()))
+                {
+                    Flags.Add(part.Flag);
+                }
                 if (part.HasResources)
                 {
                     foreach (string resType in part.ResourceTypes)
                     {
                         ResourceTypes.Add(resType);
                     }
+                }
+                KmlAttrib flag = part.GetAttrib("flag");
+                if (flag != null)
+                {
+                    flag.AttribValueChanged += Flag_Changed;
                 }
             }
             /*else if (Item is KmlNode)
@@ -193,6 +208,29 @@ namespace KML
             foreach (KmlPart part in Parts)
             {
                 part.Refill(type);
+            }
+        }
+
+        /// <summary>
+        /// Exchange the flag of all parts that match the oldFlag.
+        /// Party where it doesn't match, will not be changed.
+        /// </summary>
+        /// <param name="oldFlag">The old flag name to change</param>
+        /// <param name="newFlag">The new flag name to apply</param>
+        public void FlagExchange(string oldFlag, string newFlag)
+        {
+            if (Flags.All(x => x.ToLower() != oldFlag.ToLower()))
+            {
+                return;
+            }
+            Flags.Clear();
+            foreach (KmlPart part in Parts)
+            {
+                part.FlagExchange(oldFlag, newFlag);
+                if (!Flags.Contains(part.Flag))
+                {
+                    Flags.Add(part.Flag);
+                }
             }
         }
 
@@ -284,6 +322,18 @@ namespace KML
             SetRootPart(GetAttribWhereValueChanged(sender).Value);
 
             // TODO KmlVessel.Root_Changed(): Change display on old and new root part in TreeView
+        }
+
+        private void Flag_Changed(object sender, System.Windows.RoutedEventArgs e)
+        {
+            Flags.Clear();
+            foreach (KmlPart part in Parts)
+            {
+                if (part.Flag != "" && !Flags.Any(x => x.ToLower() == part.Flag.ToLower()))
+                {
+                    Flags.Add(part.Flag);
+                }
+            }
         }
     }
 }

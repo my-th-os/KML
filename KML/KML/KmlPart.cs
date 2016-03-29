@@ -52,9 +52,14 @@ namespace KML
         public string Uid { get; private set; }
 
         /// <summary>
-        /// Get x, y, z coordinates of this part relative to the vessel
+        /// Get x, y, z coordinates of this part relative to the vessel.
         /// </summary>
         public Point3D Position { get; private set; }
+
+        /// <summary>
+        /// Get the flag name of this part.
+        /// </summary>
+        public string Flag { get; private set; }
 
         /// <summary>
         /// Get the parent part index from vessel structure.
@@ -247,6 +252,7 @@ namespace KML
             ResourceTypes = new SortedSet<string>();
             Uid = "";
             Position = new Point3D(0.0, 0.0, 0.0);
+            Flag = "";
 
             ParentPartIndex = -1;
             ParentPart = null;
@@ -302,6 +308,12 @@ namespace KML
                 {
                     Uid = attrib.Value;
                     attrib.AttribValueChanged += Uid_Changed;
+                    attrib.CanBeDeleted = false;
+                }
+                else if (attrib.Name.ToLower() == "flag")
+                {
+                    Flag = attrib.Value;
+                    attrib.AttribValueChanged += Flag_Changed;
                     attrib.CanBeDeleted = false;
                 }
                 else if (attrib.Name.ToLower() == "parent")
@@ -449,6 +461,29 @@ namespace KML
                 if (res.Name.ToLower() == type.ToLower())
                 {
                     res.Refill();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Exchange the flag of this part when it matches the oldFlag.
+        /// If it doesn't match, nothing will happen.
+        /// </summary>
+        /// <param name="oldFlag">The old flag name this part should have</param>
+        /// <param name="newFlag">The new flag name to apply</param>
+        public void FlagExchange(string oldFlag, string newFlag)
+        {
+            if (Flag.ToLower() != oldFlag.ToLower())
+            {
+                return;
+            }
+            foreach (KmlAttrib attrib in Attribs)
+            {
+                if (attrib.Name.ToLower() == "flag" && attrib.Value.ToLower() == oldFlag.ToLower())
+                {
+                    attrib.Value = newFlag;
+                    Flag = newFlag;
+                    return;
                 }
             }
         }
@@ -807,6 +842,7 @@ namespace KML
         {
             // Ok it's not the string..
             // but the ProgressBar for resource display also updates by this event
+            // TODO KmlPart.Resources_Changed(): Define and invoke another event than ToStringChanged
             InvokeToStringChanged();
         }
 
@@ -824,6 +860,11 @@ namespace KML
         private void Uid_Changed(object sender, System.Windows.RoutedEventArgs e)
         {
             Uid = GetAttribWhereValueChanged(sender).Value;
+        }
+
+        private void Flag_Changed(object sender, System.Windows.RoutedEventArgs e)
+        {
+            Flag = GetAttribWhereValueChanged(sender).Value;
         }
 
         private void AttachmentSurface_Changed(object sender, System.Windows.RoutedEventArgs e)

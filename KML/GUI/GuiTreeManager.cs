@@ -229,7 +229,7 @@ namespace KML
                     }
                 }
             }
-            // And now we can select and focus the item if it is a node, it's parent otherwise
+            // And now we can select and focus the item if it is a node, its parent otherwise
             if (item is KmlNode)
             {
                 foreach (GuiTreeNode sub in masterNode.Items)

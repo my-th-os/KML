@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace KML
 {
@@ -47,6 +49,16 @@ namespace KML
 
             // Get notified when KmlNode ToString() changes
             DataVessel.ToStringChanged += DataVessel_ToStringChanged;
+
+            // Get notified when flag changes
+            if (DataVessel.RootPart != null)
+            {
+                KmlAttrib flag = DataVessel.RootPart.GetAttrib("flag");
+                if (flag != null)
+                {
+                    flag.AttribValueChanged += DataVessel_FlagChanged;
+                }
+            }
         }
 
         private void AssignTemplate()
@@ -57,6 +69,7 @@ namespace KML
             StackPanel pan = new StackPanel();
             pan.Orientation = Orientation.Horizontal;
             pan.Children.Add(GenerateImage(DataVessel));
+            pan.Children.Add(GenerateFlag(DataVessel));
             pan.Children.Add(new TextBlock(new Run(GenerateText(DataVessel))));
             Content = pan;
         }
@@ -117,12 +130,52 @@ namespace KML
             return image;
         }
 
+        private Image GenerateFlag(KmlVessel vessel)
+        {
+            Image image = new Image();
+            image.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/DummyFlag.png"));
+            image.Height = 40;
+            image.Width = image.Height * 1.6;
+            image.Margin = new Thickness(0, 0, 3, 0);
+            if (vessel.RootPart != null && vessel.RootPart.Flag.Length > 0)
+            {
+                string flag = vessel.RootPart.Flag;
+                flag = flag.Replace('/', '\\');
+                flag = System.IO.Path.Combine(GuiTabsManager.GetCurrent().FileGamedataDirectory, flag);
+
+                flag = System.IO.Path.ChangeExtension(flag, ".png");
+                if (!System.IO.File.Exists(flag))
+                {
+                    flag = System.IO.Path.ChangeExtension(flag, ".dds");
+                    if (!System.IO.File.Exists(flag))
+                    {
+                        // keep dummy image
+                        return image; 
+                    }
+                    else
+                    {
+                        // *.dds files are drawn vertically flipped
+                        image.RenderTransform = new ScaleTransform(1.0, -1.0, 0.0, image.Height / 2.0);
+                    }
+                }
+                // flag points to existing file here
+                image.Source = (new ImageSourceConverter()).ConvertFromString(flag) as ImageSource;
+            }
+
+            return image;
+        }
+
         private string GenerateText(KmlVessel vessel)
         {
             return vessel.Name + "\n " + vessel.Type + "\n " + vessel.Situation;
         }
 
         private void DataVessel_ToStringChanged(object sender, System.Windows.RoutedEventArgs e)
+        {
+            AssignTemplate();
+        }
+
+        private void DataVessel_FlagChanged(object sender, RoutedEventArgs e)
         {
             AssignTemplate();
         }

@@ -34,12 +34,56 @@ namespace KML
         /// </summary>
         public GuiWarningsManager WarningsManager { get; private set; }
 
+        /// <summary>
+        /// Get the filename loaded.
+        /// </summary>
+        public string Filename
+        {
+            get
+            {
+                return _filename;
+            }
+            private set
+            {
+                _filename = value;
+                string ext = System.IO.Path.GetExtension(_filename).ToLower();
+                FileIsCraft = ext == ".craft";
+                if (FileIsCraft)
+                {
+                    FileKspDirectory = System.IO.Directory.GetParent(_filename).Parent.Parent.Parent.FullName;
+                }
+                else
+                {
+                    FileKspDirectory = System.IO.Directory.GetParent(_filename).Parent.Parent.FullName;
+                }
+                FileGamedataDirectory = System.IO.Path.Combine(FileKspDirectory, "GameData");
+            }
+        }
+        private string _filename = "";
+
+        /// <summary>
+        /// Get true if *.craft file was loaded, false otherwise.
+        /// </summary>
+        public bool FileIsCraft { get; private set; }
+
+        /// <summary>
+        /// Get the KSP program directory from loaded filename.
+        /// </summary>
+        public string FileKspDirectory { get; private set; }
+
+        /// <summary>
+        /// Get the KSP GameData directory from loaded filename.
+        /// </summary>
+        public string FileGamedataDirectory { get; private set; }
+
         private TabControl Tabs { get; set; }
 
         private TabItem TreeTab { get; set; }
         private TabItem VesselsTab { get; set; }
         private TabItem KerbalsTab { get; set; }
         private TabItem WarningsTab { get; set; }
+
+        private static GuiTabsManager _currentTabsManager;
 
         /// <summary>
         /// Creates a GuiTabsManager to manage all the given visual elements.
@@ -63,6 +107,10 @@ namespace KML
             TabItem kerbalsTab, ListView kerbalsList, ListView kerbalsDetails, Label kerbalsCount,
             TabItem warningsTab, ListView warningsList)
         {
+            FileIsCraft = false;
+            FileKspDirectory = "";
+            FileGamedataDirectory = "";
+
             if (treeTab.Parent != null && treeTab.Parent is TabControl && 
                 treeTab.Parent == vesselsTab.Parent && treeTab.Parent == kerbalsTab.Parent && treeTab.Parent == warningsTab.Parent)
             {
@@ -84,6 +132,17 @@ namespace KML
             {
                 throw new ArgumentException("Given TabItems don't have the same parent TabControl or it is not valid");
             }
+
+            _currentTabsManager = this;
+        }
+
+        /// <summary>
+        /// Get the current instance of GuiTabsManager.
+        /// </summary>
+        /// <returns>The current GuiTabsManager</returns>
+        public static GuiTabsManager GetCurrent()
+        {
+            return _currentTabsManager;
         }
 
         /// <summary>
@@ -92,18 +151,15 @@ namespace KML
         /// <param name="filename">The full path and filename of the data file to read</param>
         public void Load(string filename)
         {
+            Filename = filename;
             WarningsManager.BeforeTreeLoad();
             TreeManager.Load(filename);
             VesselsManager.Load(TreeManager);
             KerbalsManager.Load(TreeManager);
             WarningsManager.AfterTreeLoad();
 
-            // Supress vessels, kerbals and warnings for *.craft files
-            string ext = System.IO.Path.GetExtension(filename).ToLower();
-            bool isCraftFile = ext == ".craft";
-
             // Show warnings tab if there are any and its not a craft file
-            if (!WarningsManager.IsEmpty && !isCraftFile)
+            if (!WarningsManager.IsEmpty && !FileIsCraft)
             {
                 WarningsTab.Visibility = System.Windows.Visibility.Visible;
                 Tabs.SelectedItem = WarningsTab;
@@ -115,7 +171,7 @@ namespace KML
             }
 
             // Show vessels and kerbals list if its not a craft file
-            if (isCraftFile)
+            if (FileIsCraft)
             {
                 VesselsTab.Visibility = System.Windows.Visibility.Collapsed;
                 KerbalsTab.Visibility = System.Windows.Visibility.Collapsed;
@@ -147,6 +203,7 @@ namespace KML
         public void Save(string filename)
         {
             TreeManager.Save(filename);
+            Filename = filename;
         }
 
         /// <summary>

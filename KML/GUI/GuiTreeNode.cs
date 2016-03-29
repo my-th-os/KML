@@ -429,6 +429,19 @@ namespace KML
                         menu.Items.Add(m);
                     }
                 }
+                if (node.Flags.Count > 0)
+                {
+                    if (menu.Items.Count > defaultMenuCount)
+                    {
+                        menu.Items.Add(new Separator());
+                    }
+                    MenuItem m = new MenuItem();
+                    m.DataContext = DataNode;
+                    m.Icon = Icons.CreateImage(Icons.VesselFlag);
+                    m.Header = "Change flag in all parts of this vessel...";
+                    m.Click += VesselFlagExchange_Click;
+                    menu.Items.Add(m);
+                }
             }
             else if (DataNode is KmlKerbal)
             {
@@ -513,6 +526,32 @@ namespace KML
             IsSelected = true;
         }
 
+        private void VesselFlagExchange_Click(object sender, RoutedEventArgs e)
+        {
+            KmlVessel vessel = ((sender as MenuItem).DataContext as KmlVessel);
+            if (vessel.Flags.Count > 0)
+            {
+                string oldFlag = vessel.Flags[0];
+                string otherFlags = "";
+                foreach(string flag in vessel.Flags)
+                {
+                    if (flag.ToLower() != oldFlag.ToLower())
+                    {
+                        otherFlags += "\n - " + flag;
+                    }
+                }
+                if (otherFlags.Length > 0)
+                {
+                    otherFlags = "\nThese other flags will not be changed" + otherFlags;
+                }
+                string newFlag;
+                if (DlgInput.Show("All parts with flag '" + oldFlag + "' will be changed." + otherFlags + "\n\nEnter the new flag:", "Change vessel flag", Icons.VesselFlag, oldFlag, out newFlag))
+                {
+                    vessel.FlagExchange(oldFlag, newFlag);
+                }
+            }
+        }
+
         private void PartRefill_Click(object sender, RoutedEventArgs e)
         {
             if ((sender as MenuItem).Tag != null)
@@ -592,7 +631,7 @@ namespace KML
         private void NodeDelete_Click(object sender, RoutedEventArgs e)
         {
             KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
-            if (DlgConfirmation.Show("Do your really want to delete this node?\n" + node, "DELETE node", Icons.Delete))
+            if (DlgConfirmation.Show("Do your really want to delete this node and all its content?\n" + node, "DELETE node", Icons.Delete))
             {
                 node.Delete();
                 // View will be refreshed in parent's ChildrenChanged event

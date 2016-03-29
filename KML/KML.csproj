@@ -304,6 +304,9 @@
   <ItemGroup>
     <Resource Include="README.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\DummyFlag.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if $(ConfigurationName) == Release "C:\Program Files\7-Zip\7z.exe" a "$(SolutionDir)$(SolutionName).zip" "$(TargetPath)"

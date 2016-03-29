@@ -1,11 +1,13 @@
 Version 0.6 - in progress
-- adding child nodes (context menu)
-- deleting nodes (context menu), restricted to not delete in this version
+- display vessel flag
+- change vessel flag in all its parts - for Enceos
+- adding attributes
+- deleting attributes
+- adding child nodes
+- deleting nodes, restricted to not delete in this version
   - vessels (need to check crew and return home)
   - parts (need to rebuild index numbers and attachments)
   - kerbals (need to check if they are in any vessel's crew)
-- adding attributes (context menu)
-- deleting attributes (context menu)
 - custom dialogs
 - supress vessels, kerbals and warnings for CRAFT files
 - read "part" attribute as name for CRAFT files
@@ -13,18 +15,18 @@ Version 0.6 - in progress
 - link to KSP forum thread
 
 Version 0.5 - 2016-03-11
-- open SFS files 
-- open CRAFT files 
-- check and identify SFS files 
-- save SFS files edited or exactly as loaded 
-- save CRAFT files edited or exactly as loaded 
-- backup of overwritten files 
-- display file structure in a "KML" tree 
-- display all vessels in a sorted and filtered list 
-- display all kerbals in a sorted and filtered list 
-- display vessel's part attachment structure 
+- open SFS files
+- open CRAFT files
+- check and identify SFS files
+- save SFS files edited or exactly as loaded
+- save CRAFT files edited or exactly as loaded
+- backup of overwritten files
+- display file structure in a "KML" tree
+- display all vessels in a sorted and filtered list
+- display all kerbals in a sorted and filtered list
+- display vessel's part attachment structure
 - display warnings about structural problems
-- refill part resources (context menu) 
-- repair broken docking ports (context menu) 
-- repair broken grappling devices (context menu) 
-- tested with KSP 1.0.5 
+- refill part resources
+- repair broken docking ports
+- repair broken grappling devices
+- tested with KSP 1.0.5

@@ -44,7 +44,7 @@ namespace KML
         }
 
         /// <summary>
-        /// Delete this node from it's parent.
+        /// Delete this node from its parent.
         /// Result will be false if item was not in parent's lists or couldn't be deleted
         /// because of restrictions.
         /// </summary>
