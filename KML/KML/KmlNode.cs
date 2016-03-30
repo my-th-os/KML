@@ -217,6 +217,23 @@ namespace KML
         }
 
         /// <summary>
+        /// Search all KmlAttribs of this node, create one if not found.
+        /// Does not search recursive.
+        /// </summary>
+        /// <param name="name">The name of the KmlAttribs to search for</param>
+        /// <returns>The found or created KmlAttrib</returns>
+        public KmlAttrib GetOrCreateAttrib(string name)
+        {
+            KmlAttrib attrib = GetAttrib(name);
+            if (attrib == null)
+            {
+                attrib = KmlItem.CreateItem(name + "=", this) as KmlAttrib;
+                Add(attrib);
+            }
+            return attrib;
+        }
+
+        /// <summary>
         /// Search all child nodes of this node for a certain tag and name.
         /// Does not search recursive.
         /// </summary>
@@ -227,7 +244,7 @@ namespace KML
         {
             foreach (KmlNode node in Children)
             {
-                if (node.Tag.ToLower() == tag.ToLower() && (name.Length == 0 || node.Name.ToLower() == name.ToLower()))
+                if (node.Tag.ToLower() == tag.ToLower() && (name == null || name.Length == 0 || node.Name.ToLower() == name.ToLower()))
                 {
                     return node;
                 }
@@ -243,7 +260,41 @@ namespace KML
         /// <returns>The found KmlNode or null if no such is found</returns>
         public KmlNode GetChildNode(string tag)
         {
-            return GetChildNode(tag, "");
+            return GetChildNode(tag, null);
+        }
+
+        /// <summary>
+        /// Search all child nodes of this node for a certain tag and name, 
+        /// create one if not found. Does not search recursive.
+        /// </summary>
+        /// <param name="tag">The tag of the KmlNode to search for</param>
+        /// <param name="name">The name of the KmlNode to search for</param>
+        /// <returns>The found or created KmlNode</returns>
+        public KmlNode GetOrCreateChildNode(string tag, string name)
+        {
+            KmlNode node = GetChildNode(tag, name);
+            if (node == null)
+            {
+                node = KmlItem.CreateItem(tag, this) as KmlNode;
+                if (name != null && name.Length > 0)
+                {
+                    // Add name attribute
+                    node.Add(KmlItem.CreateItem("name=" + name, node));
+                }
+                Add(node);
+            }
+            return node;
+        }
+
+        /// <summary>
+        /// Search all child nodes of this node for a certain tag,
+        /// create one if not found. Does not search recursive.
+        /// </summary>
+        /// <param name="tag">The tag of the KmlNode to search for</param>
+        /// <returns>The found or created KmlNode</returns>
+        public KmlNode GetOrCreateChildNode(string tag)
+        {
+            return GetOrCreateChildNode(tag, null);
         }
 
         /// <summary>

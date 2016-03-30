@@ -8,11 +8,12 @@ The current version is not feature-complete but so far functional and already he
 Any feedback, more testing, bug reports and suggestions are very welcome.
 
 New Features
+• better CRAFT files identification
 • adding child nodes
 • deleting nodes, restricted to not delete in this version
-  - vessels (need to check crew and return home)
-  - parts (need to rebuild index numbers and attachments)
-  - kerbals (need to check if they are in any vessel's crew)
+  ◦ vessels (need to check crew and return home)
+  ◦ parts (need to rebuild index numbers and attachments)
+  ◦ kerbals (need to check if they are in any vessel's crew)
 • adding attributes
 • deleting attributes
 • change vessel flag in all its parts - for Enceos
