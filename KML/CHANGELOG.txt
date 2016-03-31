@@ -1,4 +1,5 @@
-Version 0.6 - in progress
+Version 0.6 - 2016-03-31
+- repair dock / grapple: create missing items
 - display vessel flag
 - change vessel flag in all its parts - for Enceos
 - adding attributes

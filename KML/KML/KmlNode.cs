@@ -218,19 +218,36 @@ namespace KML
 
         /// <summary>
         /// Search all KmlAttribs of this node, create one if not found.
+        /// Does not search recursive. Default value will only be used on creation.
+        /// </summary>
+        /// <param name="name">The name of the KmlAttribs to search for</param>
+        /// <param name="defaultValue">The default value for a created attribute</param>
+        /// <returns>The found or created KmlAttrib</returns>
+        public KmlAttrib GetOrCreateAttrib(string name, string defaultValue)
+        {
+            KmlAttrib attrib = GetAttrib(name);
+            if (attrib == null)
+            {
+                string line = name + "=";
+                if (defaultValue != null && defaultValue.Length > 0)
+                {
+                    line += defaultValue;
+                }
+                attrib = KmlItem.CreateItem(line, this) as KmlAttrib;
+                Add(attrib);
+            }
+            return attrib;
+        }
+
+        /// <summary>
+        /// Search all KmlAttribs of this node, create one if not found.
         /// Does not search recursive.
         /// </summary>
         /// <param name="name">The name of the KmlAttribs to search for</param>
         /// <returns>The found or created KmlAttrib</returns>
         public KmlAttrib GetOrCreateAttrib(string name)
         {
-            KmlAttrib attrib = GetAttrib(name);
-            if (attrib == null)
-            {
-                attrib = KmlItem.CreateItem(name + "=", this) as KmlAttrib;
-                Add(attrib);
-            }
-            return attrib;
+            return GetOrCreateAttrib(name, null);
         }
 
         /// <summary>

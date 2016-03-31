@@ -158,20 +158,41 @@ namespace KML
                 bool dockeeOk = false;
                 try
                 {
-                    KmlNode module = docker.GetChildNode("MODULE", "ModuleDockingNode");
-                    module.GetAttrib("state").Value = "Docked (docker)";
-                    module.GetAttrib("dockUId").Value = dockee.Uid;
-                    KmlNode events = module.GetChildNode("EVENTS");
-                    events.GetChildNode("Undock").GetAttrib("active").Value = "True";
-                    events.GetChildNode("UndockSameVessel").GetAttrib("active").Value = "False";
-                    if (module.GetChildNode("DOCKEDVESSEL") == null)
+                    KmlNode module = docker.GetOrCreateChildNode("MODULE", "ModuleDockingNode");
+                    module.GetOrCreateAttrib("isEnabled", "True");
+                    module.GetOrCreateAttrib("crossfeed", "True");
+                    module.GetOrCreateAttrib("stagingEnabled").Value = "False";
+                    module.GetOrCreateAttrib("state").Value = "Docked (docker)";
+                    module.GetOrCreateAttrib("dockUId").Value = dockee.Uid;
+                    KmlNode events = module.GetOrCreateChildNode("EVENTS");
+                    events.GetOrCreateChildNode("Undock").GetOrCreateAttrib("active").Value = "True";
+                    events.GetOrCreateChildNode("UndockSameVessel").GetOrCreateAttrib("active").Value = "False";
+                    events.GetOrCreateChildNode("Decouple").GetOrCreateAttrib("active").Value = "False";
+                    module.GetOrCreateChildNode("ACTIONS");
+                    KmlNode dockedVessel = module.GetOrCreateChildNode("DOCKEDVESSEL");
+                    string defaultName;
+                    if (docker.Parent is KmlVessel)
                     {
-                        Syntax.Warning(docker, "Couldn't find sub-node DOCKEDVESSEL, you should try to copy it from older save file.");
+                        defaultName = (docker.Parent as KmlVessel).Name + " Docker - repaired by KML";
                     }
                     else
                     {
-                        dockerOk = true;
+                        defaultName = "Unknown Docker - repaired by KML";
                     }
+                    if (dockedVessel.GetAttrib("vesselName") == null)
+                    {
+                        KmlAttrib attrib = dockedVessel.GetOrCreateAttrib("vesselName", defaultName);
+                        attrib.AttribValueChanged += docker.DockedVesselName_Changed;
+                        docker.DockedVesselName_Changed(attrib, new System.Windows.RoutedEventArgs());
+                    }
+                    if (dockedVessel.GetAttrib("vesselType") == null)
+                    {
+                        KmlAttrib attrib = dockedVessel.GetOrCreateAttrib("vesselType", "6");
+                        attrib.AttribValueChanged += docker.DockedVesselType_Changed;
+                        docker.DockedVesselType_Changed(attrib, new System.Windows.RoutedEventArgs());
+                    }
+                    dockedVessel.GetOrCreateAttrib("rootUId", docker.Uid);
+                    dockerOk = true;
                 }
                 catch (NullReferenceException)
                 {
@@ -181,12 +202,43 @@ namespace KML
                 }
                 try
                 {
-                    KmlNode module = dockee.GetChildNode("MODULE", "ModuleDockingNode");
-                    module.GetAttrib("state").Value = "Docked (dockee)";
-                    module.GetAttrib("dockUId").Value = docker.Uid;
-                    KmlNode events = module.GetChildNode("EVENTS");
-                    events.GetChildNode("Undock").GetAttrib("active").Value = "False";
-                    events.GetChildNode("UndockSameVessel").GetAttrib("active").Value = "False";
+                    KmlNode module = dockee.GetOrCreateChildNode("MODULE", "ModuleDockingNode");
+                    module.GetOrCreateAttrib("isEnabled", "True");
+                    module.GetOrCreateAttrib("crossfeed", "True");
+                    module.GetOrCreateAttrib("stagingEnabled").Value = "False";
+                    module.GetOrCreateAttrib("state").Value = "Docked (dockee)";
+                    module.GetOrCreateAttrib("dockUId").Value = docker.Uid;
+                    KmlNode events = module.GetOrCreateChildNode("EVENTS");
+                    events.GetOrCreateChildNode("Undock").GetOrCreateAttrib("active").Value = "False";
+                    events.GetOrCreateChildNode("UndockSameVessel").GetOrCreateAttrib("active").Value = "False";
+                    events.GetOrCreateChildNode("Decouple").GetOrCreateAttrib("active").Value = "False";
+                    module.GetOrCreateChildNode("ACTIONS");
+                    KmlNode dockedVessel = module.GetOrCreateChildNode("DOCKEDVESSEL");
+                    string defaultName;
+                    string defaultUId;
+                    if (dockee.Parent is KmlVessel)
+                    {
+                        defaultName = (dockee.Parent as KmlVessel).Name;
+                        defaultUId = (dockee.Parent as KmlVessel).RootPart.Uid;
+                    }
+                    else
+                    {
+                        defaultName = "Unknown Dockee - repaired by KML";
+                        defaultUId = dockee.Uid;
+                    }
+                    if (dockedVessel.GetAttrib("vesselName") == null)
+                    {
+                        KmlAttrib attrib = dockedVessel.GetOrCreateAttrib("vesselName", defaultName);
+                        attrib.AttribValueChanged += dockee.DockedVesselName_Changed;
+                        docker.DockedVesselName_Changed(attrib, new System.Windows.RoutedEventArgs());
+                    }
+                    if (dockedVessel.GetAttrib("vesselType") == null)
+                    {
+                        KmlAttrib attrib = dockedVessel.GetOrCreateAttrib("vesselType", "6");
+                        attrib.AttribValueChanged += dockee.DockedVesselType_Changed;
+                        docker.DockedVesselType_Changed(attrib, new System.Windows.RoutedEventArgs());
+                    }
+                    dockedVessel.GetOrCreateAttrib("rootUId", defaultUId);
                     dockeeOk = true;
                 }
                 catch (NullReferenceException)
@@ -236,12 +288,20 @@ namespace KML
                 bool dockeeOk = false;
                 try
                 {
-                    KmlNode module = same.GetChildNode("MODULE", "ModuleDockingNode");
-                    module.GetAttrib("state").Value = "Docked (same vessel)";
-                    module.GetAttrib("dockUId").Value = dockee.Uid;
-                    KmlNode events = module.GetChildNode("EVENTS");
-                    events.GetChildNode("Undock").GetAttrib("active").Value = "False";
-                    events.GetChildNode("UndockSameVessel").GetAttrib("active").Value = "True";
+                    KmlNode module = same.GetOrCreateChildNode("MODULE", "ModuleDockingNode");
+                    module.GetOrCreateAttrib("isEnabled", "True");
+                    module.GetOrCreateAttrib("crossfeed", "True");
+                    module.GetOrCreateAttrib("stagingEnabled").Value = "False";
+                    module.GetOrCreateAttrib("state").Value = "Docked (same vessel)";
+                    module.GetOrCreateAttrib("dockUId").Value = dockee.Uid;
+                    KmlNode events = module.GetOrCreateChildNode("EVENTS");
+                    events.GetOrCreateChildNode("Undock").GetOrCreateAttrib("active").Value = "False";
+                    events.GetOrCreateChildNode("UndockSameVessel").GetOrCreateAttrib("active").Value = "True";
+                    events.GetOrCreateChildNode("Decouple").GetOrCreateAttrib("active").Value = "False";
+                    module.GetOrCreateChildNode("ACTIONS");
+                    // TODO KmlPartDock.RepairSameVesselDockee(): Delete same DOCKEDVESSEL node?
+                    // It's not present in correct savefile with same vessel docking
+                    // KmlNode dockedVessel = module.GetChildNode("DOCKEDVESSEL");
                     sameOk = true;
                 }
                 catch (NullReferenceException)
@@ -252,12 +312,20 @@ namespace KML
                 }
                 try
                 {
-                    KmlNode module = dockee.GetChildNode("MODULE", "ModuleDockingNode");
-                    module.GetAttrib("state").Value = "Docked (dockee)";
-                    module.GetAttrib("dockUId").Value = same.Uid;
-                    KmlNode events = module.GetChildNode("EVENTS");
-                    events.GetChildNode("Undock").GetAttrib("active").Value = "False";
-                    events.GetChildNode("UndockSameVessel").GetAttrib("active").Value = "False";
+                    KmlNode module = dockee.GetOrCreateChildNode("MODULE", "ModuleDockingNode");
+                    module.GetOrCreateAttrib("isEnabled", "True");
+                    module.GetOrCreateAttrib("crossfeed", "True");
+                    module.GetOrCreateAttrib("stagingEnabled").Value = "False";
+                    module.GetOrCreateAttrib("state").Value = "Docked (dockee)";
+                    module.GetOrCreateAttrib("dockUId").Value = same.Uid;
+                    KmlNode events = module.GetOrCreateChildNode("EVENTS");
+                    events.GetOrCreateChildNode("Undock").GetOrCreateAttrib("active").Value = "False";
+                    events.GetOrCreateChildNode("UndockSameVessel").GetOrCreateAttrib("active").Value = "False";
+                    events.GetOrCreateChildNode("Decouple").GetOrCreateAttrib("active").Value = "False";
+                    module.GetOrCreateChildNode("ACTIONS");
+                    // TODO KmlPartDock.RepairSameVesselDockee(): Delete dockee DOCKEDVESSEL node?
+                    // It's not present in correct savefile with same vessel docking
+                    // KmlNode dockedVessel = module.GetChildNode("DOCKEDVESSEL");
                     dockeeOk = true;
                 }
                 catch (NullReferenceException)
@@ -345,29 +413,95 @@ namespace KML
                 partIndex = vessel.Parts.IndexOf(part);
                 try
                 {
-                    KmlNode module = grapple.GetChildNode("MODULE", "ModuleGrappleNode");
-                    module.GetAttrib("state").Value = "Grappled";
-                    module.GetAttrib("dockUId").Value = part.Uid;
-                    KmlNode events = module.GetChildNode("EVENTS");
-                    events.GetChildNode("Release").GetAttrib("active").Value = "True";
-                    events.GetChildNode("ReleaseSameVessel").GetAttrib("active").Value = "False";
-                    if (module.GetChildNode("DOCKEDVESSEL") == null)
+                    KmlNode module = grapple.GetOrCreateChildNode("MODULE", "ModuleGrappleNode");
+                    module.GetOrCreateAttrib("isEnabled", "True");
+                    //module.GetOrCreateAttrib("stagingEnabled").Value = "False"; // True?!?
+                    module.GetOrCreateAttrib("state").Value = "Grappled";
+                    module.GetOrCreateAttrib("dockUId").Value = part.Uid;
+                    KmlNode events = module.GetOrCreateChildNode("EVENTS");
+                    events.GetOrCreateChildNode("Release").GetOrCreateAttrib("active").Value = "True";
+                    events.GetOrCreateChildNode("ReleaseSameVessel").GetOrCreateAttrib("active").Value = "False";
+                    events.GetOrCreateChildNode("Decouple").GetOrCreateAttrib("active").Value = "False";
+                    module.GetOrCreateChildNode("ACTIONS");
+
+                    KmlNode dockedVessel = module.GetOrCreateChildNode("DOCKEDVESSEL");
+                    KmlNode dockedVesselOther = module.GetOrCreateChildNode("DOCKEDVESSEL_Other");
+
+                    string vesselName;
+                    string vesselRootUId;
+                    string defaultName;
+                    if (grapple.Parent is KmlVessel)
                     {
-                        Syntax.Warning(grapple, "Couldn't find sub-node DOCKEDVESSEL, you should try to copy it from older save file.");
-                        dockedVesselOk = false;
+                        vesselName = (grapple.Parent as KmlVessel).Name;
+                        vesselRootUId = (grapple.Parent as KmlVessel).RootPart.Uid;
+                        defaultName = vesselName + " Grappled - repaired by KML";
                     }
-                    if (module.GetChildNode("DOCKEDVESSEL_other") == null)
+                    else
                     {
-                        Syntax.Warning(grapple, "Couldn't find sub-node DOCKEDVESSEL_other, you should try to copy it from older save file.");
-                        dockedVesselOk = false;
+                        vesselName = "Unknown Vessel - repaired by KML";
+                        if (part.ParentPart == grapple)
+                        {
+                            vesselRootUId = grapple.Uid;
+                        }
+                        else
+                        {
+                            vesselRootUId = part.Uid;
+                        }
+                        defaultName = "Unknown Grappled - repaired by KML";
                     }
-                    module = grapple.GetChildNode("MODULE", "ModuleAnimateGeneric");
-                    module.GetAttrib("animSwitch").Value = "False";
-                    module.GetAttrib("animTime").Value = "1";
-                    events = module.GetChildNode("EVENTS");
-                    KmlNode toggle = events.GetChildNode("Toggle");
-                    toggle.GetAttrib("active").Value = "False";
-                    toggle.GetAttrib("guiName").Value = "Disarm";
+
+                    string thisName;
+                    string otherName;
+                    string thisUid;
+                    string otherUid;
+                    if (part.ParentPart == grapple)
+                    {
+                        thisName = vesselName;
+                        thisUid = vesselRootUId;
+                        otherName = defaultName;
+                        otherUid = part.Uid;
+                    }
+                    else
+                    {
+                        thisName = defaultName;
+                        thisUid = grapple.Uid;
+                        otherName = vesselName;
+                        otherUid = vesselRootUId;
+                    }
+                    if (dockedVessel.GetAttrib("vesselName") == null)
+                    {
+                        KmlAttrib attrib = dockedVessel.GetOrCreateAttrib("vesselName", thisName);
+                        attrib.AttribValueChanged += grapple.DockedVesselName_Changed;
+                        grapple.DockedVesselName_Changed(attrib, new System.Windows.RoutedEventArgs());
+                    }
+                    if (dockedVessel.GetAttrib("vesselType") == null)
+                    {
+                        KmlAttrib attrib = dockedVessel.GetOrCreateAttrib("vesselType", "6");
+                        attrib.AttribValueChanged += grapple.DockedVesselType_Changed;
+                        grapple.DockedVesselType_Changed(attrib, new System.Windows.RoutedEventArgs());
+                    }
+                    dockedVessel.GetOrCreateAttrib("rootUId", thisUid);
+                    if (dockedVesselOther.GetAttrib("vesselName") == null)
+                    {
+                        KmlAttrib attrib = dockedVesselOther.GetOrCreateAttrib("vesselName", otherName);
+                        attrib.AttribValueChanged += grapple.DockedVesselOtherName_Changed;
+                        grapple.DockedVesselOtherName_Changed(attrib, new System.Windows.RoutedEventArgs());
+                    }
+                    if (dockedVesselOther.GetAttrib("vesselType") == null)
+                    {
+                        KmlAttrib attrib = dockedVesselOther.GetOrCreateAttrib("vesselType", "6");
+                        attrib.AttribValueChanged += grapple.DockedVesselOtherType_Changed;
+                        grapple.DockedVesselOtherType_Changed(attrib, new System.Windows.RoutedEventArgs());
+                    }
+                    dockedVesselOther.GetOrCreateAttrib("rootUId", otherUid);
+
+                    module = grapple.GetOrCreateChildNode("MODULE", "ModuleAnimateGeneric");
+                    module.GetOrCreateAttrib("animSwitch").Value = "False";
+                    module.GetOrCreateAttrib("animTime").Value = "1";
+                    events = module.GetOrCreateChildNode("EVENTS");
+                    KmlNode toggle = events.GetOrCreateChildNode("Toggle");
+                    toggle.GetOrCreateAttrib("active").Value = "False";
+                    toggle.GetOrCreateAttrib("guiName").Value = "Disarm";
                     if (part.ParentPart == grapple)
                     {
                         RepairGrappleAttachment(part, grappleIndex);
