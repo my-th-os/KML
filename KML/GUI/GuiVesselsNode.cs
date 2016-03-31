@@ -159,7 +159,14 @@ namespace KML
                     }
                 }
                 // flag points to existing file here
-                image.Source = (new ImageSourceConverter()).ConvertFromString(flag) as ImageSource;
+                try
+                {
+                    image.Source = (new ImageSourceConverter()).ConvertFromString(flag) as ImageSource;
+                }
+                catch
+                {
+                    // there could be any problem loading the flag, ignore it and stay with dummy
+                }
             }
 
             return image;

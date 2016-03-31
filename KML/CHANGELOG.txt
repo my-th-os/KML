@@ -1,3 +1,6 @@
+Version 0.6.2 - in progress
+- bugfix about unknown problem while loading flag
+
 Version 0.6.1 - 2016-03-31
 - bugfix finding KSP directory
 
