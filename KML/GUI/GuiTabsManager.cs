@@ -48,13 +48,21 @@ namespace KML
                 _filename = value;
                 string ext = System.IO.Path.GetExtension(_filename).ToLower();
                 FileIsCraft = ext == ".craft";
+                FileKspDirectory = "";
+
+                System.IO.DirectoryInfo dir = System.IO.Directory.GetParent(_filename);
+                int parentDirs = 2;
                 if (FileIsCraft)
                 {
-                    FileKspDirectory = System.IO.Directory.GetParent(_filename).Parent.Parent.Parent.FullName;
+                    parentDirs += 2;
                 }
-                else
+                for (int i = 0; i < parentDirs && dir != null; i++)
                 {
-                    FileKspDirectory = System.IO.Directory.GetParent(_filename).Parent.Parent.FullName;
+                    dir = dir.Parent;
+                }
+                if (dir != null)
+                {
+                    FileKspDirectory = dir.FullName;
                 }
                 FileGamedataDirectory = System.IO.Path.Combine(FileKspDirectory, "GameData");
             }
