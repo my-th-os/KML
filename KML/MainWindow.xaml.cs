@@ -69,8 +69,6 @@ namespace KML
                 VesselsTab, VesselsList, VesselsDetails, VesselsCount,
                 KerbalsTab, KerbalsList, KerbalsDetails, KerbalsCount,
                 WarningsTab, WarningsList);
-
-            CheckCommandLine();
         }
 
         private void CheckCommandLine()
@@ -188,10 +186,14 @@ namespace KML
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            // Loading fromn commandline could cause exceptions, so do it here
+            // and not in constructor, so the window can safely be created.
+            CheckCommandLine();
+            // It also makes this unnecessary:
             // When data loaded in constructor before window is loaded, setting focus does not work
             // For this case do it here once
-            TabsManager.Next();
-            TabsManager.Previous();
+            // TabsManager.Next();
+            // TabsManager.Previous();
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)

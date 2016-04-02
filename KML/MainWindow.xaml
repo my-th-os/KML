@@ -52,7 +52,7 @@
                     </Grid.ColumnDefinitions>
                     <TreeView x:Name="Tree" Background="LightGray"/>
                     <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="White"/>
-                    <ListView x:Name="TreeDetails" Grid.Column="2" IsSynchronizedWithCurrentItem="True" Background="LightGray" Margin="0,1,0,-1">
+                    <ListView x:Name="TreeDetails" Grid.Column="2" IsSynchronizedWithCurrentItem="True" Background="LightGray" Margin="0,1,0,-1" SelectionMode="Single">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -122,7 +122,7 @@
                         </ToggleButton>
                         <Label x:Name="VesselsCount" Height="16" Padding="0, 0" Margin="3, 0, 3, 0">(0 Vessels)</Label>
                     </StackPanel>
-                    <ListView x:Name="VesselsList" Margin="0,20,0,0" Background="LightGray"/>
+                    <ListView x:Name="VesselsList" Margin="0,20,0,0" Background="LightGray" SelectionMode="Single"/>
                     <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="White"/>
                     <Border Grid.Column="2" BorderThickness="1" BorderBrush="Gray" Background="LightGray">
                         <ScrollViewer HorizontalScrollBarVisibility="Visible">
@@ -165,9 +165,9 @@
                         </ToggleButton>
                         <Label x:Name="KerbalsCount" Height="16" Padding="0, 0" Margin="3, 0, 3, 0">(0 Kerbals)</Label>
                     </StackPanel>
-                    <ListView x:Name="KerbalsList" Background="LightGray" Margin="0,20,0,0"/>
+                    <ListView x:Name="KerbalsList" Background="LightGray" Margin="0,20,0,0" SelectionMode="Single"/>
                     <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="White"/>
-                    <ListView x:Name="KerbalsDetails" Grid.Column="2" IsSynchronizedWithCurrentItem="True" Background="LightGray">
+                    <ListView x:Name="KerbalsDetails" Grid.Column="2" IsSynchronizedWithCurrentItem="True" Background="LightGray" SelectionMode="Single">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -196,14 +196,14 @@
                     <Image Width="48" Source="Images\Warning48.png" ToolTip="Warnings"/>
                 </TabItem.Header>
                 <Grid>
-                    <ListView x:Name="WarningsList" Background="LightGray"/>
+                    <ListView x:Name="WarningsList" Background="LightGray" SelectionMode="Single"/>
                 </Grid>
             </TabItem>
         </TabControl>
         <StatusBar Height="23" VerticalAlignment="Bottom" Background="Gray">
             <Label Content="KML - Kerbal Markup Lister" Padding="0"/>
             <Separator/>
-            <Label Content="Version 0.6.2" Padding="0"/>
+            <Label Content="Version 0.6.3" Padding="0"/>
             <Separator/>
             <Label Content="© 2016 Oliver Pola (Mythos)" Padding="0"/>
             <Separator/>

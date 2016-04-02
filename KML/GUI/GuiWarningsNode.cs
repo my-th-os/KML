@@ -70,6 +70,11 @@ namespace KML
             }
             GuiTreeNode dummy = new GuiTreeNode(node, true, true, true, false, false, false);
             ContextMenu = dummy.ContextMenu;
+            // To avoid follwing error output (uncritical), we need to have a parent for the TreeViewItem, so we also make a dummy
+            // System.Windows.Data Error: 4 : Cannot find source for binding with reference 'RelativeSource FindAncestor, AncestorType='System.Windows.Controls.ItemsControl', AncestorLevel='1''. BindingExpression:Path=HorizontalContentAlignment; DataItem=null; target element is 'GuiTreeNode' (Name=''); target property is 'HorizontalContentAlignment' (type 'HorizontalAlignment')
+            // System.Windows.Data Error: 4 : Cannot find source for binding with reference 'RelativeSource FindAncestor, AncestorType='System.Windows.Controls.ItemsControl', AncestorLevel='1''. BindingExpression:Path=VerticalContentAlignment; DataItem=null; target element is 'GuiTreeNode' (Name=''); target property is 'VerticalContentAlignment' (type 'VerticalAlignment')
+            TreeView dummyTree = new TreeView();
+            dummyTree.Items.Add(dummy);
         }
 
         private Image GenerateImage(Syntax.Message message)

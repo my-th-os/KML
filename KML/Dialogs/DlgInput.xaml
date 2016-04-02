@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="KML Input" Height="160" Width="320" Icon="/KML;component/Images/Astronaut.ico" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" MinWidth="320" MinHeight="111" SizeChanged="Window_SizeChanged">
     <Grid>
-        <TextBox x:Name="TextMessage" Text="This is a message" IsReadOnly="True" Margin="0,0,0,72" VerticalScrollBarVisibility="Auto" Background="LightGray"/>
-        <TextBox x:Name="TextBoxInput" VerticalAlignment="Bottom" Height="24" Padding="3" Margin="0,0,0,48">Input text here</TextBox>
+        <TextBox x:Name="TextMessage" Text="This is a message" IsReadOnly="True" Margin="0,0,0,70" VerticalScrollBarVisibility="Auto" Background="LightGray"/>
+        <TextBox x:Name="TextBoxInput" VerticalAlignment="Bottom" Padding="2" Margin="0,0,0,48">Input text here</TextBox>
         <StackPanel Orientation="Horizontal">
             <Button x:Name="ButtonOk" Content="Ok" Height="48" Width="156" VerticalAlignment="Bottom" Click="ButtonOk_Click" IsDefault="True"/>
             <Button x:Name="ButtonCancel" Content="Cancel" Height="48" Width="156" VerticalAlignment="Bottom" Click="ButtonCancel_Click" IsCancel="True"/>

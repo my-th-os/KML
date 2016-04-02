@@ -13,6 +13,21 @@ namespace KML
     /// </summary>
     public partial class App : Application
     {
-
+        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            try
+            {
+                GuiIcons ico = new GuiIcons16();
+                string txt = "Sorry, an unhandled exception occurred!\n\n" +
+                    "Please report follwing details on the KSP forum thread or via GitHub issue:\n\n" + e.Exception.ToString();
+                DlgMessage.Show(txt, "KML Exception", ico.Error);
+            }
+            catch
+            {
+                // maybe something breaks the DlgMessage, e.g. there is no main window (to center onto), then fall back to MessageBox
+                MessageBox.Show(e.Exception.ToString(), "KML Exception");
+            }
+            e.Handled = true;
+        }
     }
 }

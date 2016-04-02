@@ -1,3 +1,10 @@
+Version 0.6.3 - in progress
+- vessel / kerbal lists display name in bold
+- fixed input textbox height (older windows) - thanks to Enceos
+- show message for unhandled exceptions
+- no multiselect on lists, wasn't interpreted anyway
+- fix for debug messages "binding reference" in context menu creation
+
 Version 0.6.2 - 2016-03-31
 - bugfix about unknown problem while loading flag - thanks to Enceos
 

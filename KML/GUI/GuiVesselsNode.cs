@@ -70,7 +70,7 @@ namespace KML
             pan.Orientation = Orientation.Horizontal;
             pan.Children.Add(GenerateImage(DataVessel));
             pan.Children.Add(GenerateFlag(DataVessel));
-            pan.Children.Add(new TextBlock(new Run(GenerateText(DataVessel))));
+            pan.Children.Add(GenerateText(DataVessel));
             Content = pan;
         }
 
@@ -79,6 +79,11 @@ namespace KML
             // Copy that from a GuiTreeNode
             GuiTreeNode dummy = new GuiTreeNode(DataVessel, true, true, true, false, true, false);
             ContextMenu = dummy.ContextMenu;
+            // To avoid follwing error output (uncritical), we need to have a parent for the TreeViewItem, so we also make a dummy
+            // System.Windows.Data Error: 4 : Cannot find source for binding with reference 'RelativeSource FindAncestor, AncestorType='System.Windows.Controls.ItemsControl', AncestorLevel='1''. BindingExpression:Path=HorizontalContentAlignment; DataItem=null; target element is 'GuiTreeNode' (Name=''); target property is 'HorizontalContentAlignment' (type 'HorizontalAlignment')
+            // System.Windows.Data Error: 4 : Cannot find source for binding with reference 'RelativeSource FindAncestor, AncestorType='System.Windows.Controls.ItemsControl', AncestorLevel='1''. BindingExpression:Path=VerticalContentAlignment; DataItem=null; target element is 'GuiTreeNode' (Name=''); target property is 'VerticalContentAlignment' (type 'VerticalAlignment')
+            TreeView dummyTree = new TreeView();
+            dummyTree.Items.Add(dummy);
         }
 
         private Image GenerateImage(KmlVessel vessel)
@@ -166,15 +171,20 @@ namespace KML
                 catch
                 {
                     // there could be any problem loading the flag, ignore it and stay with dummy
+                    // one problem so far: Win 10 can load *.dds, Win 7 can't
                 }
             }
 
             return image;
         }
 
-        private string GenerateText(KmlVessel vessel)
+        private TextBlock GenerateText(KmlVessel vessel)
         {
-            return vessel.Name + "\n " + vessel.Type + "\n " + vessel.Situation;
+            TextBlock text = new TextBlock();
+            text.Inlines.Add(new Bold(new Run(vessel.Name)));
+            text.Inlines.Add(new Run("\n" + vessel.Type + "\n" + vessel.Situation));
+            text.Margin = new Thickness(3, 0, 0, 0);
+            return text;
         }
 
         private void DataVessel_ToStringChanged(object sender, System.Windows.RoutedEventArgs e)

@@ -23,6 +23,8 @@ namespace KML
         {
             InitializeComponent();
 
+            // TODO DlgInput.DlgInput(): TextBoxInput needs more height on Win 7
+
             if (title != null)
             {
                 Title = title;
@@ -43,8 +45,14 @@ namespace KML
             TextBoxInput.SelectionStart = TextBoxInput.Text.Length;
             TextBoxInput.Focus();
 
+            // We need to measure the ActualHeight of TextBoxInput,
+            // because it reads 0.0 if it's not set, unlesse Arrage is called.
+            // And it's not set on purpose to use system default.
+            TextBoxInput.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
+            TextBoxInput.Arrange(new Rect(TextBoxInput.DesiredSize));
+
             DlgHelper.Initialize(this);
-            DlgHelper.CalcNeededSize(this, TextMessage, ButtonOk.Height + TextBoxInput.Height);
+            DlgHelper.CalcNeededSize(this, TextMessage, ButtonOk.Height + TextBoxInput.ActualHeight);
         }
 
         private DlgInput(string message, string title, Image image)

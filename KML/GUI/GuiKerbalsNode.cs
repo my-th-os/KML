@@ -67,7 +67,7 @@ namespace KML
             prog.Margin = new Thickness(-32, 36, 3, 0);
             prog.ToolTip = "dumb";
             pan.Children.Add(prog);
-            pan.Children.Add(new TextBlock(new Run(GenerateText(DataKerbal))));
+            pan.Children.Add(GenerateText(DataKerbal));
             Content = pan;
         }
 
@@ -76,6 +76,11 @@ namespace KML
             // Copy that from a GuiTreeNode
             GuiTreeNode dummy = new GuiTreeNode(DataKerbal, true, true, true, false, true, false);
             ContextMenu = dummy.ContextMenu;
+            // To avoid follwing error output (uncritical), we need to have a parent for the TreeViewItem, so we also make a dummy
+            // System.Windows.Data Error: 4 : Cannot find source for binding with reference 'RelativeSource FindAncestor, AncestorType='System.Windows.Controls.ItemsControl', AncestorLevel='1''. BindingExpression:Path=HorizontalContentAlignment; DataItem=null; target element is 'GuiTreeNode' (Name=''); target property is 'HorizontalContentAlignment' (type 'HorizontalAlignment')
+            // System.Windows.Data Error: 4 : Cannot find source for binding with reference 'RelativeSource FindAncestor, AncestorType='System.Windows.Controls.ItemsControl', AncestorLevel='1''. BindingExpression:Path=VerticalContentAlignment; DataItem=null; target element is 'GuiTreeNode' (Name=''); target property is 'VerticalContentAlignment' (type 'VerticalAlignment')
+            TreeView dummyTree = new TreeView();
+            dummyTree.Items.Add(dummy);
         }
 
         private Image GenerateImage(KmlKerbal kerbal)
@@ -144,9 +149,13 @@ namespace KML
             return prog;
         }
 
-        private string GenerateText(KmlKerbal kerbal)
+        private TextBlock GenerateText(KmlKerbal kerbal)
         {
-            return kerbal.Name + "\n " + kerbal.Type + "\n " + kerbal.Trait;
+            TextBlock text = new TextBlock();
+            text.Inlines.Add(new Bold(new Run(kerbal.Name)));
+            text.Inlines.Add(new Run("\n" + kerbal.Type + "\n" + kerbal.Trait));
+            text.Margin = new Thickness(3, 0, 0, 0);
+            return text;
         }
 
         private void DataKerbal_ToStringChanged(object sender, System.Windows.RoutedEventArgs e)
