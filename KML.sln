@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KML", "KML\KML.csproj", "{6BE20CF1-9008-4012-8745-955E261701A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KML_Test", "KML_Test\KML_Test.csproj", "{07EE2049-4137-4CEA-93C1-350249776C17}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{6BE20CF1-9008-4012-8745-955E261701A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BE20CF1-9008-4012-8745-955E261701A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6BE20CF1-9008-4012-8745-955E261701A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07EE2049-4137-4CEA-93C1-350249776C17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07EE2049-4137-4CEA-93C1-350249776C17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07EE2049-4137-4CEA-93C1-350249776C17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07EE2049-4137-4CEA-93C1-350249776C17}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

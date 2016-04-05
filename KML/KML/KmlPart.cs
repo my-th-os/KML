@@ -291,13 +291,13 @@ namespace KML
         /// When an KmlAttrib "Name" is found, its value 
         /// will be used for the corresponding property of this node.
         /// </summary>
-        /// <param name="item">The KmlItem to add</param>
-        public override void Add(KmlItem item)
+        /// <param name="beforeItem">The KmlItem where the new item should be inserted before</param>
+        /// <param name="newItem">The KmlItem to add</param>
+        protected override void Add(KmlItem beforeItem, KmlItem newItem)
         {
-            KmlItem newItem = item;
-            if (item is KmlAttrib)
+            if (newItem is KmlAttrib)
             {
-                KmlAttrib attrib = (KmlAttrib)item;
+                KmlAttrib attrib = (KmlAttrib)newItem;
                 if (attrib.Name.ToLower() == "part")
                 {
                     CraftName = attrib.Value;
@@ -396,9 +396,9 @@ namespace KML
                     }
                 }
             }
-            else if (item is KmlResource)
+            else if (newItem is KmlResource)
             {
-                KmlResource res = (KmlResource)item;
+                KmlResource res = (KmlResource)newItem;
                 Resources.Add(res);
                 ResourceTypes.Add(res.Name);
 
@@ -408,15 +408,7 @@ namespace KML
                 res.Amount.AttribValueChanged += Resources_Changed;
                 res.Amount.CanBeDeleted = false;
             }
-            /*if (Item is KmlNode)
-            {
-                KmlNode node = (KmlNode)Item;
-                if (node.Tag.ToLower() == "resource")
-                {
-                    newItem = new KmlResource(node);
-                }
-            }*/
-            base.Add(newItem);
+            base.Add(beforeItem, newItem);
         }
 
         /// <summary>

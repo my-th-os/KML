@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -109,28 +110,48 @@ namespace KML
         }
 
         /// <summary>
-        /// Adds a child KmlItem to this nodes lists of children, depending of its
-        /// derived class KmlNode or KmlAttrib or further derived from these.
-        /// When an KmlAttrib "Name" is found, its value will be used for the "Name" property
-        /// of this node.
+        /// Adds (inserts before) a child KmlItem to this nodes lists of children.
+        /// If item to insert before is null or not contained, it will be added at the end.
+        /// This is the basic add method, derived classes can override but should
+        /// always call base.Add(beforeItem, newItem) within.
+        /// Public Add, AddRange, InsertBefore and InsertAfter all use this protected
+        /// method to access the lists.
+        /// <see cref="KML.KmlNode.Add(KML.KmlItem)"/>
         /// </summary>
-        /// <param name="item">The KmlItem to add</param>
-        public virtual void Add (KmlItem item)
+        /// <param name="beforeItem">The KmlItem where the new item should be inserted before</param>
+        /// <param name="newItem">The KmlItem to add</param>
+        protected virtual void Add (KmlItem beforeItem, KmlItem newItem)
         {
             // ensure that item.Parent is this node
-            if (item.Parent != this)
+            if (newItem.Parent != this)
             {
-                RemapParent(item, this);
+                RemapParent(newItem, this);
             }
-            AllItems.Add(item);
-            if (item is KmlNode)
+
+            if (beforeItem != null && AllItems.Contains(beforeItem))
             {
-                Children.Add((KmlNode)item);
+                AllItems.Insert(AllItems.IndexOf(beforeItem), newItem);
+            }
+            else
+            {
+                AllItems.Add(newItem);
+            }
+
+            if (newItem is KmlNode)
+            {
+                if (beforeItem != null && beforeItem is KmlNode && Children.Contains((KmlNode)beforeItem))
+                {
+                    Children.Insert(Children.IndexOf((KmlNode)beforeItem), (KmlNode)newItem);
+                }
+                else
+                {
+                    Children.Add((KmlNode)newItem);
+                }
                 InvokeChildrenChanged();
             }
-            else if (item is KmlAttrib)
+            else if (newItem is KmlAttrib)
             {
-                KmlAttrib attrib = (KmlAttrib)item;
+                KmlAttrib attrib = (KmlAttrib)newItem;
                 if (attrib.Name.ToLower() == "name")
                 {
                     Name = attrib.Value;
@@ -139,14 +160,41 @@ namespace KML
                     attrib.AttribValueChanged += Name_Changed;
                     attrib.CanBeDeleted = false;
                 }
-                Attribs.Add(attrib);
+
+                if (beforeItem != null && beforeItem is KmlAttrib && Attribs.Contains((KmlAttrib)beforeItem))
+                {
+                    Attribs.Insert(Attribs.IndexOf((KmlAttrib)beforeItem), attrib);
+                }
+                else
+                {
+                    Attribs.Add(attrib);
+                }
                 InvokeAttribChanged();
             }
             else
             {
-                Unknown.Add(item);
-                Syntax.Warning(this, "Unknown line in persistence file: " + item.ToString());
+                if (beforeItem != null && Unknown.Contains(newItem))
+                {
+                    Unknown.Insert(Unknown.IndexOf(beforeItem), newItem);
+                }
+                else
+                {
+                    Unknown.Add(newItem);
+                }
+                Syntax.Warning(this, "Unknown line in persistence file: " + newItem.ToString());
             }
+        }
+
+        /// <summary>
+        /// Adds a child KmlItem to this nodes lists of children, depending of its
+        /// derived class KmlNode or KmlAttrib or further derived from these.
+        /// When an KmlAttrib "Name" is found, its value will be used for the "Name" property
+        /// of this node.
+        /// </summary>
+        /// <param name="item">The KmlItem to add</param>
+        public void Add(KmlItem item)
+        {
+            Add(null, item);
         }
 
         /// <summary>
@@ -158,8 +206,35 @@ namespace KML
         {
             foreach (KmlItem item in list)
             {
-                Add(item);
+                Add(null, item);
             }
+        }
+
+        /// <summary>
+        /// Inserts a child KmlItem after given KmlItem to this nodes lists of children, 
+        /// depending of its derived class KmlNode or KmlAttrib or further derived from these.
+        /// If item to insert after is null or not contained, it will be added at the end.
+        /// <see cref="KML.KmlNode.Add(KML.KmlItem)"/>
+        /// </summary>
+        /// <param name="afterItem">The KmlItem where the new item should be inserted after</param>
+        /// <param name="newItem">The KmlItem to add</param>
+        public void InsertAfter(KmlItem afterItem, KmlItem newItem)
+        {
+            KmlItem beforeItem = GetNextSibling(afterItem);
+            Add(beforeItem, newItem);
+        }
+
+        /// <summary>
+        /// Inserts a child KmlItem before given KmlItem to this nodes lists of children, 
+        /// depending of its derived class KmlNode or KmlAttrib or further derived from these.
+        /// If item to insert before is null or not contained, it will be added at the end.
+        /// <see cref="KML.KmlNode.Add(KML.KmlItem)"/>
+        /// </summary>
+        /// <param name="beforeItem">The KmlItem where the new item should be inserted before</param>
+        /// <param name="newItem">The KmlItem to add</param>
+        public void InsertBefore(KmlItem beforeItem, KmlItem newItem)
+        {
+            Add(beforeItem, newItem);
         }
 
         /// <summary>
@@ -195,6 +270,56 @@ namespace KML
             else
             {
                 return false;
+            }
+        }
+
+        private KmlAttrib GetNextSibling(KmlAttrib attrib)
+        {
+            int index = Attribs.IndexOf(attrib);
+            if (index >= 0 && index < Attribs.Count - 1)
+            {
+                return Attribs[index + 1];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private KmlNode GetNextSibling(KmlNode node)
+        {
+            int index = Children.IndexOf(node);
+            if (index >= 0 && index < Children.Count - 1)
+            {
+                return Children[index + 1];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private KmlItem GetNextSibling(KmlItem item)
+        {
+            if (item is KmlAttrib)
+            {
+                return GetNextSibling((KmlAttrib)item);
+            }
+            else if (item is KmlNode)
+            {
+                return GetNextSibling((KmlNode)item);
+            }
+            else
+            {
+                int index = Unknown.IndexOf(item);
+                if (index >= 0 && index < Unknown.Count - 1)
+                {
+                    return Unknown[index + 1];
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 

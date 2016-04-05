@@ -149,16 +149,6 @@ namespace KML
             TabsManager.Previous();
         }
 
-        private void ButtonAdd_Click(object sender, RoutedEventArgs e)
-        {
-            // TODO MainWindow.ButtonAdd_Click()
-        }
-
-        private void ButtonDelete_Click(object sender, RoutedEventArgs e)
-        {
-            // TODO MainWindow.ButtonDelete_Click()
-        }
-
         private void SetContainedImageOpacity(Visual Parent, double Opacity)
         {
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(Parent); i++)

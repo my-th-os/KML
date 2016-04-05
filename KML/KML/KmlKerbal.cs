@@ -89,12 +89,13 @@ namespace KML
         /// When an KmlAttrib "Name", "Type" or "Trait" are found, their value 
         /// will be used for the corresponding property of this node.
         /// </summary>
-        /// <param name="item">The KmlItem to add</param>
-        public override void Add(KmlItem item)
+        /// <param name="beforeItem">The KmlItem where the new item should be inserted before</param>
+        /// <param name="newItem">The KmlItem to add</param>
+        protected override void Add(KmlItem beforeItem, KmlItem newItem)
         {
-            if (item is KmlAttrib)
+            if (newItem is KmlAttrib)
             {
-                KmlAttrib attrib = (KmlAttrib)item;
+                KmlAttrib attrib = (KmlAttrib)newItem;
                 if (attrib.Name.ToLower() == "type")
                 {
                     Type = attrib.Value;
@@ -128,7 +129,7 @@ namespace KML
                     attrib.CanBeDeleted = false;
                 }
             }
-            base.Add(item);
+            base.Add(beforeItem, newItem);
         }
 
         private double GetDoubleValue(string value, double defaultValue)

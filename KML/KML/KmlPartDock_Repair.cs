@@ -552,17 +552,17 @@ namespace KML
             }
             // If we got here we didn't find it
             KmlAttrib newAttrib = new KmlAttrib("attN = grapple, " + attachmentIndex, part);
-            if (lastItem != null)
-            {
-                // TODO KmlPartDock.RepairGrappleAttachment(): There is no Insert method that manages both lists yet
-                part.Attribs.Insert(part.Attribs.IndexOf(lastItem) + 1, newAttrib);
-                part.AllItems.Insert(part.AllItems.IndexOf(lastItem) + 1, newAttrib);
-            }
-            else
-            {
-                // Add method manages the Attribs and AllItems lists
-                part.Add(newAttrib);
-            }
+            // InsertAfter will add to the end if lastItem is null
+            part.InsertAfter(lastItem, newAttrib);
+            //if (lastItem != null)
+            //{
+            //    part.Attribs.Insert(part.Attribs.IndexOf(lastItem) + 1, newAttrib);
+            //    part.AllItems.Insert(part.AllItems.IndexOf(lastItem) + 1, newAttrib);
+            //}
+            //else
+            //{
+            //    part.Add(newAttrib);
+            //}
         }
     }
 }

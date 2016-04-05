@@ -23,8 +23,6 @@ namespace KML
         {
             InitializeComponent();
 
-            // TODO DlgInput.DlgInput(): TextBoxInput needs more height on Win 7
-
             if (title != null)
             {
                 Title = title;

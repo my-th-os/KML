@@ -110,6 +110,8 @@ namespace KML
         /// <returns>A KmlItem derived object</returns>
         public static KmlItem CreateItem (string line, KmlNode parent)
         {
+            // TODO KmlItem.CreateItem() Parent unnecessary, will be set on Add() via RemapParent()
+            // so it can be left null in constructor
             if (line == null || line.Length == 0)
             {
                 return null;

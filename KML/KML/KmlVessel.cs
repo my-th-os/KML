@@ -115,13 +115,13 @@ namespace KML
         /// When an KmlAttrib "Name", "Type" or "Root" are found, their value 
         /// will be used for the corresponding property of this node.
         /// </summary>
-        /// <param name="item">The KmlItem to add</param>
-        public override void Add(KmlItem item)
+        /// <param name="beforeItem">The KmlItem where the new item should be inserted before</param>
+        /// <param name="newItem">The KmlItem to add</param>
+        protected override void Add(KmlItem beforeItem, KmlItem newItem)
         {
-            KmlItem newItem = item;
-            if (item is KmlAttrib)
+            if (newItem is KmlAttrib)
             {
-                KmlAttrib attrib = (KmlAttrib)item;
+                KmlAttrib attrib = (KmlAttrib)newItem;
                 if (attrib.Name.ToLower() == "type")
                 {
                     Type = attrib.Value;
@@ -147,9 +147,9 @@ namespace KML
                     attrib.CanBeDeleted = false;
                 }
             }
-            else if (item is KmlPart)
+            else if (newItem is KmlPart)
             {
-                KmlPart part = (KmlPart)item;
+                KmlPart part = (KmlPart)newItem;
                 Parts.Add(part);
                 if (Parts.Count == rootPartIndex + 1)
                 {
@@ -172,20 +172,7 @@ namespace KML
                     flag.AttribValueChanged += Flag_Changed;
                 }
             }
-            /*else if (Item is KmlNode)
-            {
-                KmlNode node = (KmlNode)Item;
-                if (node.Tag.ToLower() == "part")
-                {
-                    newItem = new KmlPart(node);
-                    Parts.Add((KmlPart)newItem);
-                    if (Parts.Count == rootPartNr + 1)
-                    {
-                        RootPart = Parts[rootPartNr];
-                    }
-                }
-            }*/
-            base.Add(newItem);
+            base.Add(beforeItem, newItem);
         }
 
         /// <summary>
