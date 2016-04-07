@@ -645,7 +645,7 @@ namespace KML
             {
                 ReLoadChildren();
             }
-            IsExpanded = true;
+            // IsExpanded = true;
         }
 
         void DataNode_AttribChanged(object sender, RoutedEventArgs e)

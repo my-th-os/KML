@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +17,8 @@ namespace KML
         /// The tag of this node similar to a XML tag.
         /// </summary>
         public string Tag { get; private set; }
+
+        // TODO KmlNode.Tag: Allow to change Tag and invoke ToStringChanged?
 
         /// <summary>
         /// The name of this node which is read from a child KmlAttrib
@@ -154,11 +155,17 @@ namespace KML
                 KmlAttrib attrib = (KmlAttrib)newItem;
                 if (attrib.Name.ToLower() == "name")
                 {
-                    Name = attrib.Value;
+                    if (Name.Length == 0)
+                    {
+                        Name = attrib.Value;
 
-                    // Get notified when Name changes
-                    attrib.AttribValueChanged += Name_Changed;
-                    attrib.CanBeDeleted = false;
+                        // Get notified when Name changes
+                        attrib.AttribValueChanged += Name_Changed;
+                        attrib.CanBeDeleted = false;
+
+                        // And notify that the name changed
+                        InvokeToStringChanged();
+                    }
                 }
 
                 if (beforeItem != null && beforeItem is KmlAttrib && Attribs.Contains((KmlAttrib)beforeItem))
