@@ -66,7 +66,11 @@ namespace KML
             }
             else
             {
-                node = DataMessage.Parent;
+                node = DataMessage.Source.Parent;
+            }
+            if (node == null)
+            {
+                return;
             }
             GuiTreeNode dummy = new GuiTreeNode(node, true, true, true, false, false, false);
             ContextMenu = dummy.ContextMenu;

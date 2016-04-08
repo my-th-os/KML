@@ -87,9 +87,8 @@ namespace KML
         /// Creates a KmlNode with a line read from data file as a child of given parent node.
         /// </summary>
         /// <param name="line">String with only one line from data file</param>
-        /// <param name="parent">The parent KmlNode or null to create a root node</param>
-        public KmlNode(string line, KmlNode parent)
-            : base(line, parent)
+        public KmlNode(string line)
+            : base(line)
         {
             Tag = line.Trim();
             Name = "";
@@ -106,7 +105,7 @@ namespace KML
         /// </summary>
         /// <param name="item">The KmlItem to copy</param>
         public KmlNode(KmlItem item)
-            : this(item.Line, item.Parent)
+            : this(item.Line)
         {
         }
 
@@ -123,6 +122,10 @@ namespace KML
         /// <param name="newItem">The KmlItem to add</param>
         protected virtual void Add (KmlItem beforeItem, KmlItem newItem)
         {
+            // TODO KmlNode.Add(): Not add always to end of AllItems?
+            // like Add(attrib), Add(Node), Add(attrib) should result in attrib, attrib, node
+            // but never rearrange while loading from file!
+
             // ensure that item.Parent is this node
             if (newItem.Parent != this)
             {
@@ -140,7 +143,7 @@ namespace KML
 
             if (newItem is KmlNode)
             {
-                if (beforeItem != null && beforeItem is KmlNode && Children.Contains((KmlNode)beforeItem))
+                if (beforeItem is KmlNode && Children.Contains((KmlNode)beforeItem))
                 {
                     Children.Insert(Children.IndexOf((KmlNode)beforeItem), (KmlNode)newItem);
                 }
@@ -152,6 +155,12 @@ namespace KML
             }
             else if (newItem is KmlAttrib)
             {
+                if (!(beforeItem is KmlAttrib) && Children.Count > 0)
+                {
+                    Syntax.Warning(newItem, "KML attrib should not come after nodes");
+                    // TODO KmlNode.Add(): Avoid adding attribs after nodes, fix problems on the fly
+                }
+
                 KmlAttrib attrib = (KmlAttrib)newItem;
                 if (attrib.Name.ToLower() == "name")
                 {
@@ -168,7 +177,7 @@ namespace KML
                     }
                 }
 
-                if (beforeItem != null && beforeItem is KmlAttrib && Attribs.Contains((KmlAttrib)beforeItem))
+                if (beforeItem is KmlAttrib && Attribs.Contains((KmlAttrib)beforeItem))
                 {
                     Attribs.Insert(Attribs.IndexOf((KmlAttrib)beforeItem), attrib);
                 }

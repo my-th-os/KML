@@ -22,11 +22,7 @@ namespace KML
             {
                 if (DockedPart == null)
                 {
-                    if (Parent == null || !(Parent is KmlVessel))
-                    {
-                        Syntax.Warning(this, "Could not search for connected parts, parent vessel is not valid");
-                    }
-                    else
+                    if (Parent is KmlVessel)
                     {
                         KmlVessel vessel = (KmlVessel)Parent;
                         int myIndex = vessel.Parts.IndexOf(this);
@@ -62,6 +58,10 @@ namespace KML
                         // Syntax.Warning(this, "Didn't find another part in all parts of the vessel to fix this dock with");
                         RepairClearDocking(this);
                     }
+                    else
+                    {
+                        Syntax.Warning(this, "Could not search for connected parts, parent vessel is not valid");
+                    }
                 }
                 else if (!(DockedPart is KmlPartDock))
                 {
@@ -89,11 +89,7 @@ namespace KML
             {
                 if (DockedPart == null)
                 {
-                    if (Parent == null || !(Parent is KmlVessel))
-                    {
-                        Syntax.Warning(this, "Could not search for connected parts, parent vessel is not valid");
-                    }
-                    else
+                    if (Parent is KmlVessel)
                     {
                         KmlVessel vessel = (KmlVessel)Parent;
                         int myIndex = vessel.Parts.IndexOf(this);
@@ -118,6 +114,10 @@ namespace KML
                         // To avoid getting to here there are returns spread above
                         // Syntax.Warning(this, "Didn't find another part in all parts of the vessel to fix this grappling device with");
                         RepairClearDocking(this);
+                    }
+                    else
+                    {
+                        Syntax.Warning(this, "Could not search for connected parts, parent vessel is not valid");
                     }
                 }
                 else
@@ -249,8 +249,11 @@ namespace KML
                 }
                 if (dockerOk && dockeeOk)
                 {
-                    Syntax.Info(docker, "Successfully repaired docker-dockee. Please save and reload to see the rebuilt part structure.");
-                    // TODO KmlPartDock:RepairDockerDockee(): Refresh structure without save / reload
+                    Syntax.Info(docker, "Successfully repaired docker-dockee");
+                    if (docker.Parent is KmlVessel)
+                    {
+                        BuildAttachmentStructure((docker.Parent as KmlVessel).Parts);
+                    }
                 }
             }
             else
@@ -336,8 +339,11 @@ namespace KML
                 }
                 if (sameOk && dockeeOk)
                 {
-                    Syntax.Info(same, "Successfully repaired same vessel docking. Please save and reload to see the rebuilt part structure.");
-                    // TODO KmlPartDock:RepairSameVesselDockee(): Refresh structure without save / reload
+                    Syntax.Info(same, "Successfully repaired same vessel docking");
+                    if (same.Parent is KmlVessel)
+                    {
+                        BuildAttachmentStructure((same.Parent as KmlVessel).Parts);
+                    }
                 }
             }
         }
@@ -364,7 +370,7 @@ namespace KML
                 KmlNode events = module.GetChildNode("EVENTS");
                 events.GetChildNode("Undock").GetAttrib("active").Value = "False";
                 events.GetChildNode("UndockSameVessel").GetAttrib("active").Value = "False";
-                Syntax.Info(dock1, "Successfully reset docking to ready. Please save and reload to see the rebuilt part structure.");
+                Syntax.Info(dock1, "Successfully reset docking to ready");
             }
             catch (NullReferenceException)
             {
@@ -381,15 +387,18 @@ namespace KML
                     KmlNode events = module.GetChildNode("EVENTS");
                     events.GetChildNode("Undock").GetAttrib("active").Value = "False";
                     events.GetChildNode("UndockSameVessel").GetAttrib("active").Value = "False";
-                    Syntax.Info(dock2, "Successfully reset docking to ready. Please save and reload to see the rebuilt part structure.");
+                    Syntax.Info(dock2, "Successfully reset docking to ready");
                 }
                 catch (NullReferenceException)
                 {
                     Syntax.Warning(dock2, "Couldn't reset docking node, there are sub-nodes missing.\n" +
-                        "You should copy a MODULE node from a functional state 'Ready' part.\n");
+                        "You should copy a MODULE node from a functional state 'Ready' part\n");
                 }
             }
-            // TODO KmlPartDock:RepairClearDocking(): Refresh structure without save / reload
+            if (dock1.Parent is KmlVessel)
+            {
+                BuildAttachmentStructure((dock1.Parent as KmlVessel).Parts);
+            }
         }
 
         private static void RepairClearDocking(KmlPartDock dock)
@@ -401,11 +410,7 @@ namespace KML
         {
             int grappleIndex = -1;
             int partIndex = -1;
-            if (grapple.Parent == null || !(grapple.Parent is KmlVessel))
-            {
-                Syntax.Warning(grapple, "Could not search for connected parts, parent vessel is not valid");
-            }
-            else
+            if (grapple.Parent is KmlVessel)
             {
                 bool dockedVesselOk = true;
                 KmlVessel vessel = (KmlVessel)grapple.Parent;
@@ -516,16 +521,20 @@ namespace KML
                     }
                     if (dockedVesselOk)
                     {
-                        Syntax.Info(grapple, "Successfully repaired grappling. Please save and reload to see the rebuilt part structure.");
-                        // TODO KmlPartDock:RepairGrappling(): Refresh structure without save / reload
+                        Syntax.Info(grapple, "Successfully repaired grappling");
+                        BuildAttachmentStructure(vessel.Parts);                      
                     }
                 }
                 catch (NullReferenceException)
                 {
                     Syntax.Warning(grapple, "Couldn't fix grappling node, there are sub-nodes missing.\n" +
-                        "You should copy a MODULE node from a functional state 'Grappled' part.\n" +
+                        "You should copy a MODULE node from a functional state 'Grappled' part\n" +
                         "grappled part should be: " + part);
                 }
+            }
+            else
+            {
+                Syntax.Warning(grapple, "Could not search for connected parts, parent vessel is not valid");
             }
         }
 
@@ -551,7 +560,7 @@ namespace KML
                 }
             }
             // If we got here we didn't find it
-            KmlAttrib newAttrib = new KmlAttrib("attN = grapple, " + attachmentIndex, part);
+            KmlAttrib newAttrib = new KmlAttrib("attN = grapple, " + attachmentIndex);
             // InsertAfter will add to the end if lastItem is null
             part.InsertAfter(lastItem, newAttrib);
             //if (lastItem != null)

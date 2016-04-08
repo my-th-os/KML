@@ -85,7 +85,14 @@ namespace KML
 
                 Text = new Label();
                 Text.DataContext = part;
-                Text.Content = "[" + (part.Parent as KmlVessel).Parts.IndexOf(part) + "]";
+                if (part.Parent is KmlVessel)
+                {
+                    Text.Content = "[" + (part.Parent as KmlVessel).Parts.IndexOf(part) + "]";
+                }
+                else
+                {
+                    Text.Content = "[x]";
+                }
                 Text.ToolTip = part.ToString();
                 // TODO GuiVesselsPartGraphNode.GuiVesselsPartGraphNode(): Label.ContextMenu does not really work
                 Text.ContextMenu = Icon.ContextMenu;

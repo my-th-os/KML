@@ -22,7 +22,7 @@ namespace KML
         private class DummyTreeNode : GuiTreeNode
         {
             public DummyTreeNode()
-                : base (new KmlGhostNode("", null))
+                : base (new KmlGhostNode(""))
             {
             }
         }
@@ -506,9 +506,16 @@ namespace KML
 
         private void DockRepair_Click(object sender, RoutedEventArgs e)
         {
-            ((sender as MenuItem).DataContext as KmlPartDock).Repair();
+            KmlPartDock dock = (sender as MenuItem).DataContext as KmlPartDock;
+            dock.Repair();
             DlgMessage.ShowAndClear(Syntax.Messages);
-            // TODO GuiTreeNode.DockRepair_Click(): Need to refresh view?
+            
+            // Refresh view
+            IGuiManager manager = GuiTabsManager.GetCurrent().VesselsManager;
+            if (dock.Parent is KmlVessel && dock.Parent == manager.GetSelectedItem())
+            {
+                manager.Select(dock.Parent);
+            }
         }
 
         private void VesselRefill_Click(object sender, RoutedEventArgs e)
@@ -584,7 +591,7 @@ namespace KML
             while (loop && DlgInput.Show("Enter the tag for the new node:", "NEW child node", Icons.Add, preset, out input))
             {
                 KmlItem item = KmlItem.CreateItem(input, node);
-                if (item != null && item is KmlNode)
+                if (item is KmlNode)
                 {
                     node.Add((KmlNode)item);
                     loop = false;
@@ -613,7 +620,7 @@ namespace KML
                     attrib = attrib + "=";
                 }
                 KmlItem item = KmlItem.CreateItem(attrib, node);
-                if (item != null && item is KmlAttrib)
+                if (item is KmlAttrib)
                 {
                     node.Add((KmlAttrib)item);
                     loop = false;

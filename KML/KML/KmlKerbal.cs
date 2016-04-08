@@ -60,17 +60,11 @@ namespace KML
         /// </summary>
         /// <param name="node">The KmlNode to copy</param>
         public KmlKerbal(KmlNode node)
-            : base(node.Line, node.Parent)
+            : base(node.Line)
         {
-            if (node.Parent != null && node.Parent.Tag.ToLower() == "roster")
-            {
-                Origin = KerbalOrigin.Roster;
-                node.Parent.CanBeDeleted = false;
-            }
-            else
-            {
-                Origin = KerbalOrigin.Other;
-            }
+            // First parent is null, will be set later when added to parent,
+            // then  IdentifyParent() will set Origin.
+            Origin = KerbalOrigin.Other;
 
             Type = "";
             Trait = "";
@@ -174,6 +168,24 @@ namespace KML
                 s = " (" + s + ")"; ;
             }
             return Tag + s;
+        }
+
+        /// <summary>
+        /// When Parent is set or changed IdentifyParent will be called.
+        /// Deriving classes can override this method and check for the new parent.
+        /// </summary>
+        protected override void IdentifyParent()
+        {
+            if (Parent != null && Parent.Tag.ToLower() == "roster")
+            {
+                Origin = KerbalOrigin.Roster;
+                Parent.CanBeDeleted = false;
+            }
+            else
+            {
+                Origin = KerbalOrigin.Other;
+            }
+            base.IdentifyParent();
         }
 
         private void Trait_Changed(object sender, System.Windows.RoutedEventArgs e)

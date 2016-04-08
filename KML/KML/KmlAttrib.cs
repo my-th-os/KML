@@ -32,10 +32,13 @@ namespace KML
             }
             set
             {
-                _value = value;
-                foreach (RoutedEventHandler e in AttribValueChangedList)
+                if (value != _value)
                 {
-                    e.Invoke(this, new RoutedEventArgs());
+                    _value = value;
+                    foreach (RoutedEventHandler e in AttribValueChangedList)
+                    {
+                        e.Invoke(this, new RoutedEventArgs());
+                    }
                 }
             }
         }
@@ -57,9 +60,8 @@ namespace KML
         /// That line is parsed into name and value.
         /// </summary>
         /// <param name="line">String with only one line from data file</param>
-        /// <param name="parent">The parent KmlNode</param>
-        public KmlAttrib(string line, KmlNode parent)
-            : base(line, parent)
+        public KmlAttrib(string line)
+            : base(line)
         {
             string s = line.Trim();
             int p = s.IndexOf('=');

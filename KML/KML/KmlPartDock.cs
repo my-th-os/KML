@@ -236,12 +236,12 @@ namespace KML
                 KmlNode module = dock.GetChildNode("MODULE", "ModuleDockingNode");
                 if (module == null)
                 {
-                    Syntax.Warning(dock, "Dock sub-node MODULE with name = 'ModuleDockingNode' is missing. Please copy one from functional dock part or older save file.");
+                    Syntax.Warning(dock, "Dock sub-node MODULE with name = 'ModuleDockingNode' is missing. Please copy one from functional dock part or older save file");
                     dock.NeedsRepair = true;
                 }
                 else if (module.GetChildNode("DOCKEDVESSEL") == null)
                 {
-                    Syntax.Warning(dock, "Dock sub-sub-node DOCKEDVESSEL is missing. Please copy it from older save file.");
+                    Syntax.Warning(dock, "Dock sub-sub-node DOCKEDVESSEL is missing");
                     dock.NeedsRepair = true;
                 }
             }
@@ -250,19 +250,19 @@ namespace KML
                 KmlNode module = dock.GetChildNode("MODULE", "ModuleGrappleNode");
                 if (module == null)
                 {
-                    Syntax.Warning(dock, "Grapple sub-node MODULE with name = 'ModuleGrappleNode' is missing. Please copy one from functional dock part or older save file.");
+                    Syntax.Warning(dock, "Grapple sub-node MODULE with name = 'ModuleGrappleNode' is missing. Please copy one from functional dock part or older save file");
                     dock.NeedsRepair = true;
                 }
                 else
                 {
                     if (module.GetChildNode("DOCKEDVESSEL") == null)
                     {
-                        Syntax.Warning(dock, "Grapple sub-sub-node DOCKEDVESSEL is missing. Please copy it from older save file.");
+                        Syntax.Warning(dock, "Grapple sub-sub-node DOCKEDVESSEL is missing");
                         dock.NeedsRepair = true;
                     }
                     if (module.GetChildNode("DOCKEDVESSEL_other") == null)
                     {
-                        Syntax.Warning(dock, "Grapple sub-sub-node DOCKEDVESSEL_other is missing. Please copy it from older save file.");
+                        Syntax.Warning(dock, "Grapple sub-sub-node DOCKEDVESSEL_other is missing");
                         dock.NeedsRepair = true;
                     }
                 }

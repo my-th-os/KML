@@ -19,11 +19,6 @@ namespace KML
         public class Message
         {
             /// <summary>
-            /// Get the parent of the KmlItem where the message came from.
-            /// </summary>
-            public KmlNode Parent { get; private set; }
-
-            /// <summary>
             /// Get the source KmlItem where the message came from.
             /// </summary>
             public KmlItem Source { get; private set; }
@@ -36,12 +31,10 @@ namespace KML
             /// <summary>
             /// Creates a new message.
             /// </summary>
-            /// <param name="parent">The parent KmlNode from message source</param>
             /// <param name="source">The source KmlItem where the message came from</param>
             /// <param name="message">The message text</param>
-            public Message(KmlNode parent, KmlItem source, string message)
+            public Message(KmlItem source, string message)
             {
-                Parent = parent;
                 Source = source;
                 Text = message;
             }
@@ -54,9 +47,9 @@ namespace KML
             public string ToString(bool withNewLine)
             {
                 StringBuilder s = new StringBuilder();
-                if (Parent != null)
+                if (Source.Parent != null)
                 {
-                    s.Append(Parent.ToString());
+                    s.Append(Source.Parent.ToString());
                     s.Append(" -> ");
                 }
                 else
@@ -94,11 +87,10 @@ namespace KML
             /// <summary>
             /// Creates a new warning message.
             /// </summary>
-            /// <param name="parent">The parent KmlNode from message source</param>
             /// <param name="source">The source KmlItem where the message came from</param>
             /// <param name="message">The message text</param>
-            public WarningMessage(KmlNode parent, KmlItem source, string message)
-                : base (parent, source, message)
+            public WarningMessage(KmlItem source, string message)
+                : base (source, message)
             {
             }
         }
@@ -111,11 +103,10 @@ namespace KML
             /// <summary>
             /// Creates a new error message.
             /// </summary>
-            /// <param name="parent">The parent KmlNode from message source</param>
             /// <param name="source">The source KmlItem where the message came from</param>
             /// <param name="message">The message text</param>
-            public ErrorMessage(KmlNode parent, KmlItem source, string message)
-                : base(parent, source, message)
+            public ErrorMessage(KmlItem source, string message)
+                : base(source, message)
             {
             }
         }
@@ -128,33 +119,11 @@ namespace KML
         /// <summary>
         /// Generate a info message.
         /// </summary>
-        /// <param name="parent">The parent KmlNode from message source</param>
-        /// <param name="source">The source KmlItem where the message came from</param>
-        /// <param name="message">The message text</param>
-        public static void Info(KmlNode parent, KmlItem source, string message)
-        {
-            Messages.Add(new Message(parent, source, message));
-        }
-
-        /// <summary>
-        /// Generate a info message.
-        /// </summary>
         /// <param name="source">The source KmlNode where the message came from</param>
         /// <param name="message">The message text</param>
-        public static void Info(KmlNode source, string message)
+        public static void Info(KmlItem source, string message)
         {
-            Messages.Add(new Message(source.Parent, source, message));
-        }
-
-        /// <summary>
-        /// Generate a warning message.
-        /// </summary>
-        /// <param name="parent">The parent KmlNode from message source</param>
-        /// <param name="source">The source KmlItem where the message came from</param>
-        /// <param name="message">The message text</param>
-        public static void Warning(KmlNode parent, KmlItem source, string message)
-        {
-            Messages.Add(new WarningMessage(parent, source, message));
+            Messages.Add(new Message(source, message));
         }
 
         /// <summary>
@@ -162,20 +131,9 @@ namespace KML
         /// </summary>
         /// <param name="source">The source KmlNode where the message came from</param>
         /// <param name="message">The message text</param>
-        public static void Warning(KmlNode source, string message)
+        public static void Warning(KmlItem source, string message)
         {
-            Messages.Add(new WarningMessage(source.Parent, source, message));
-        }
-
-        /// <summary>
-        /// Generate a error message.
-        /// </summary>
-        /// <param name="parent">The parent KmlNode from message source</param>
-        /// <param name="source">The source KmlItem where the message came from</param>
-        /// <param name="message">The message text</param>
-        public static void Error(KmlNode parent, KmlItem source, string message)
-        {
-            Messages.Add(new ErrorMessage(parent, source, message));
+            Messages.Add(new WarningMessage(source, message));
         }
 
         /// <summary>
@@ -183,9 +141,9 @@ namespace KML
         /// </summary>
         /// <param name="source">The source KmlNode where the message came from</param>
         /// <param name="message">The message text</param>
-        public static void Error(KmlNode source, string message)
+        public static void Error(KmlItem source, string message)
         {
-            Messages.Add(new ErrorMessage(source.Parent, source, message));
+            Messages.Add(new ErrorMessage(source, message));
         }
     }
 }

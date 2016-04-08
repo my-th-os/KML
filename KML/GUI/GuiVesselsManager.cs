@@ -151,12 +151,28 @@ namespace KML
             {
                 if (node.DataVessel == item)
                 {
+                    // Force a refreh, by causing SelectionChanged to invoke
+                    VesselsList.SelectedItem = null;
                     VesselsList.SelectedItem = node;
                     VesselsList.ScrollIntoView(node);
                     Focus();
                     return;
                 }
             }
+        }
+
+        /// <summary>
+        /// Get the selected KmlItem. Will be needed to check if
+        /// views have to be refreshed.
+        /// </summary>
+        /// <returns>The currently selected KmlItem</returns>
+        public KmlItem GetSelectedItem()
+        {
+            if (VesselsList.SelectedItem is GuiVesselsNode)
+            {
+                return (VesselsList.SelectedItem as GuiVesselsNode).DataVessel;
+            }
+            return null;
         }
 
         /// <summary>

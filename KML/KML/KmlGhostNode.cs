@@ -17,9 +17,8 @@ namespace KML
         /// Creates a KmlGhostNode with a given Name as a child of given parent node.
         /// </summary>
         /// <param name="tag">Tag of the ghost node, will be visible but not written</param>
-        /// <param name="parent">The parent KmlNode or null to create a root node</param>
-        public KmlGhostNode(string tag, KmlNode parent)
-            : base(tag, parent)
+        public KmlGhostNode(string tag)
+            : base(tag)
         {
         }
     }

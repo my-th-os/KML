@@ -84,17 +84,11 @@ namespace KML
         /// </summary>
         /// <param name="node">The KmlNode to copy</param>
         public KmlVessel(KmlNode node)
-            : base(node.Line, node.Parent)
+            : base(node.Line)
         {
-            if (node.Parent != null && node.Parent.Tag.ToLower() == "flightstate")
-            {
-                Origin = VesselOrigin.Flightstate;
-                node.Parent.CanBeDeleted = false;
-            }
-            else
-            {
-                Origin = VesselOrigin.Other;
-            }
+            // First parent is null, will be set later when added to parent,
+            // then  IdentifyParent() will set Origin.
+            Origin = VesselOrigin.Other;
 
             Type = "";
             Situation = "";
@@ -260,25 +254,44 @@ namespace KML
         /// <returns>There is no class derived from KmlVessel so always null is returned</returns>
         protected override KmlItem Identify()
         {
-            if (Origin == VesselOrigin.Flightstate)
+            // No need to replace this by another class, but after vessel is completed 
+            // it's the right time to build parts structure
+            List<KmlPart> roots = KmlPart.BuildAttachmentStructure(Parts);
+            if (roots.Count > 1)
             {
-                // No need to replace this by another class, but after vessel is completed 
-                // it's the right time to build parts structure
-                List<KmlPart> roots = KmlPart.BuildAttachmentStructure(Parts);
-                if (roots.Count != 1)
-                {
-                    Syntax.Warning(this, "Vessel has more than one root part identified from part structure: " + string.Join<KmlPart>(", ", roots.ToArray()));
-                }
-                if(RootPart == null)
-                {
-                    Syntax.Warning(this, "Vessel's root part attribute does not point to a valid part. Set root to: " + string.Join<KmlPart>(", ", roots.ToArray()));
-                }
-                else if (!roots.Contains(RootPart))
-                {
-                    Syntax.Warning(this, "Vessel's root part attribute is not equal to root identified from part structure: " + RootPart.ToString() + " <-> " + string.Join<KmlPart>(", ", roots.ToArray()));
-                }
+                Syntax.Warning(this, "Vessel has more than one root part identified from part structure: " + string.Join<KmlPart>(", ", roots.ToArray()));
+            }
+            if(RootPart == null && roots.Count > 0)
+            {
+                Syntax.Warning(this, "Vessel's root part attribute does not point to a valid part. Set root to: " + string.Join<KmlPart>(", ", roots.ToArray()));
+            }
+            else if (RootPart != null && !roots.Contains(RootPart))
+            {
+                Syntax.Warning(this, "Vessel's root part attribute is not equal to root identified from part structure: " + RootPart.ToString() + " <-> " + string.Join<KmlPart>(", ", roots.ToArray()));
             }
             return base.Identify();
+        }
+
+        /// <summary>
+        /// When Parent is set or changed IdentifyParent will be called.
+        /// Deriving classes can override this method and check for the new parent.
+        /// </summary>
+        protected override void IdentifyParent()
+        {
+            if (Parent != null && Parent.Tag.ToLower() == "flightstate")
+            {
+                Origin = VesselOrigin.Flightstate;
+                Parent.CanBeDeleted = false;
+                if (RootPart == null)
+                {
+                    Syntax.Warning(this, "Vessel's root part attribute does not point to a valid part");
+                }
+            }
+            else
+            {
+                Origin = VesselOrigin.Other;
+            }
+            base.IdentifyParent();
         }
 
         private void SetRootPart(string value)

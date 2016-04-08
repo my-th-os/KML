@@ -88,7 +88,7 @@ namespace KML
             // If so, pack all roots into a new ghost root
             if (KmlRoots.Any(x => !(x is KmlNode)))
             {
-                KmlGhostNode root = new KmlGhostNode(System.IO.Path.GetFileName(filename), null);
+                KmlGhostNode root = new KmlGhostNode(System.IO.Path.GetFileName(filename));
                 root.AddRange(KmlRoots);
                 KmlRoots.Clear();
                 KmlRoots.Add(root);
@@ -188,7 +188,11 @@ namespace KML
             foreach (KmlNode node in KmlRoots)
             {
                 stack.Push(node);
-                if (!SelectSearch(stack, item))
+                if (SelectSearch(stack, item))
+                {
+                    break;
+                }
+                else
                 {
                     stack.Pop();
                 }
@@ -197,24 +201,39 @@ namespace KML
             // This reverses the stack, so root node comes out first
             stack = new Stack<KmlNode>(stack);
 
-            // Expand recursively all parent nodes from stack, root first
+            // Master node will be selected later, 
+            // if item is KmlNode, master = GuiTreeNode for item
+            // otherwise, master = GuiTreeNode for item.Parent
             GuiTreeNode masterNode = null;
+
+            // Expand recursively all parent nodes from stack, root first
             // Seach root in the Tree.Items
             foreach (GuiTreeNode treeNode in Tree.Items)
             {
-                if (treeNode.DataNode == stack.Peek())
+                if (stack.Count > 0)
                 {
-                    stack.Pop();
+                    KmlNode peek = stack.Peek();
+                    if (treeNode.DataNode == peek)
+                    {
+                        stack.Pop();
+                        masterNode = treeNode;
+                        treeNode.IsExpanded = true;
+                        break;
+                    }
+                }
+                else if (treeNode.DataNode == item)
+                {
                     masterNode = treeNode;
-                    treeNode.IsExpanded = true;
                     break;
                 }
             }
+
             if (masterNode == null)
             {
-                // Some bullshit went horribly wrong
+                // Item found nowhere
                 return;
             }
+
             // Seach following nodes recursive in parent treeNode
             foreach (KmlNode node in stack)
             {
@@ -229,14 +248,17 @@ namespace KML
                     }
                 }
             }
+
             // And now we can select and focus the item if it is a node, its parent otherwise
-            if (item is KmlNode)
+            if (item is KmlNode && masterNode.DataNode != item)
             {
                 foreach (GuiTreeNode sub in masterNode.Items)
                 {
                     if (sub.DataNode == item)
                     {
                         sub.BringIntoView();
+                        // Force a refreh, by causing SelectionChanged to invoke
+                        sub.IsSelected = false;
                         sub.IsSelected = true;
                         Focus();
                         break;
@@ -246,9 +268,25 @@ namespace KML
             else
             {
                 masterNode.BringIntoView();
+                // Force a refreh, by causing SelectionChanged to invoke
+                masterNode.IsSelected = false;
                 masterNode.IsSelected = true;
                 Focus();
             }
+        }
+
+        /// <summary>
+        /// Get the selected KmlItem. Will be needed to check if
+        /// views have to be refreshed.
+        /// </summary>
+        /// <returns>The currently selected KmlItem</returns>
+        public KmlItem GetSelectedItem()
+        {
+            if (Tree.SelectedItem is GuiTreeNode)
+            {
+                return (Tree.SelectedItem as GuiTreeNode).DataNode;
+            }
+            return null;
         }
 
         private bool SelectSearch(Stack<KmlNode> stack, KmlItem item)

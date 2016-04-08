@@ -112,12 +112,28 @@ namespace KML
             {
                 if(node.DataMessage.Source == item)
                 {
+                    // Force a refreh, by causing SelectionChanged to invoke
+                    WarningsList.SelectedItem = null;
                     WarningsList.SelectedItem = node;
                     WarningsList.ScrollIntoView(node);
                     Focus();
                     return;
                 }
             }
+        }
+
+        /// <summary>
+        /// Get the selected KmlItem. Will be needed to check if
+        /// views have to be refreshed.
+        /// </summary>
+        /// <returns>The currently selected KmlItem</returns>
+        public KmlItem GetSelectedItem()
+        {
+            if (WarningsList.SelectedItem is GuiWarningsNode)
+            {
+                return (WarningsList.SelectedItem as GuiWarningsNode).DataMessage.Source;
+            }
+            return null;
         }
 
         private void WarningsNode_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)

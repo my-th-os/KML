@@ -36,5 +36,12 @@ namespace KML
         /// </summary>
         /// <param name="item">The KmlItem to select</param>
         void Select(KmlItem item);
+
+        /// <summary>
+        /// Get the selected KmlItem. Will be needed to check if
+        /// views have to be refreshed.
+        /// </summary>
+        /// <returns>The currently selected KmlItem</returns>
+        KmlItem GetSelectedItem();
     }
 }

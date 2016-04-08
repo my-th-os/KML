@@ -33,6 +33,15 @@ namespace KML
             // Readout real border width and height from main window (theme, fontsize, whatever)
             double borderWidth = Application.Current.MainWindow.Width - (Application.Current.MainWindow.Content as Grid).ActualWidth; //16.0;
             double borderHeight = Application.Current.MainWindow.Height - (Application.Current.MainWindow.Content as Grid).ActualHeight; // 39.0;
+            // TODO DlgHelper.CalcNeededSize(): border < 0 when main window maximized, get correct values
+            if (borderWidth <= 0)
+            {
+                borderWidth = 16.0;
+            }
+            if (borderHeight <= 0)
+            {
+                borderHeight = 39.0;
+            }
 
             // Recalculate the needed size depending on content text,
             // pretending to have unlimited space
@@ -40,9 +49,10 @@ namespace KML
             textBox.Arrange(new Rect(textBox.DesiredSize));
 
             // Limit size to owner, wrap and scroll if needed
+            double setWidth = 0.0;
             if (textBox.DesiredSize.Width + borderWidth > window.Owner.ActualWidth)
             {
-                window.Width = window.Owner.ActualWidth;
+                setWidth = window.Owner.ActualWidth;
                 textBox.TextWrapping = TextWrapping.Wrap;
 
                 // Recalculate with word wrap
@@ -51,20 +61,29 @@ namespace KML
             }
             else
             {
-                window.Width = textBox.DesiredSize.Width + borderWidth;
+                setWidth = textBox.DesiredSize.Width + borderWidth;
+            }
+            if (setWidth > 0)
+            {
+                window.Width = setWidth;
             }
 
+            double setHeight = 0.0;
             if (textBox.ActualHeight + borderHeight + additionalHeight > window.Owner.ActualHeight)
             {
-                window.Height = window.Owner.ActualHeight;
+                setHeight = window.Owner.ActualHeight;
             }
             else if (textBox.Text == null || textBox.Text.Length == 0)
             {
-                window.Height = borderHeight + additionalHeight;
+                setHeight = borderHeight + additionalHeight;
             }
             else
             {
-                window.Height = textBox.ActualHeight + borderHeight + additionalHeight;
+                setHeight = textBox.ActualHeight + borderHeight + additionalHeight;
+            }
+            if (setHeight > 0)
+            {
+                window.Height = setHeight;
             }
         }
     }

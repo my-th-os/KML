@@ -48,10 +48,10 @@ namespace KML
         /// </summary>
         /// <param name="node">The KmlNode to copy</param>
         public KmlResource(KmlNode node)
-            : base(node.Line, node.Parent)
+            : base(node.Line)
         {
-            Amount = new KmlAttrib("amount =", node.Parent);
-            MaxAmount = new KmlAttrib("maxAmount =", node.Parent);
+            Amount = new KmlAttrib("amount =");
+            MaxAmount = new KmlAttrib("maxAmount =");
 
             AddRange(node.AllItems);
         }

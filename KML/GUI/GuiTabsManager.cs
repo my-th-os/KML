@@ -119,7 +119,7 @@ namespace KML
             FileKspDirectory = "";
             FileGamedataDirectory = "";
 
-            if (treeTab.Parent != null && treeTab.Parent is TabControl && 
+            if (treeTab.Parent is TabControl && 
                 treeTab.Parent == vesselsTab.Parent && treeTab.Parent == kerbalsTab.Parent && treeTab.Parent == warningsTab.Parent)
             {
                 Tabs = (TabControl)treeTab.Parent;
@@ -190,7 +190,7 @@ namespace KML
                 KerbalsTab.Visibility = System.Windows.Visibility.Visible;
             }
 
-            if(Tabs.SelectedItem != null && (Tabs.SelectedItem as TabItem).Visibility != System.Windows.Visibility.Visible)
+            if (Tabs.SelectedItem is TabItem && (Tabs.SelectedItem as TabItem).Visibility != System.Windows.Visibility.Visible)
             {
                 // Switch to another tab when hidden
                 Tabs.SelectedItem = TreeTab;
@@ -296,6 +296,21 @@ namespace KML
                 Tabs.SelectedItem = TreeTab;
                 TreeManager.Select(item);
             }
+        }
+
+        /// <summary>
+        /// Get the selected KmlItem. Will be needed to check if
+        /// views have to be refreshed.
+        /// </summary>
+        /// <returns>The currently selected KmlItem</returns>
+        public KmlItem GetSelectedItem()
+        {
+            IGuiManager manager = GetActiveGuiManager();
+            if (manager != null)
+            {
+                return manager.GetSelectedItem();
+            }
+            return null;
         }
 
         private IGuiManager GetActiveGuiManager()

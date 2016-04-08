@@ -144,12 +144,28 @@ namespace KML
             {
                 if (node.DataKerbal == item)
                 {
+                    // Force a refreh, by causing SelectionChanged to invoke
+                    KerbalsList.SelectedItem = null;
                     KerbalsList.SelectedItem = node;
                     KerbalsList.ScrollIntoView(node);
                     Focus();
                     return;
                 }
             }
+        }
+
+        /// <summary>
+        /// Get the selected KmlItem. Will be needed to check if
+        /// views have to be refreshed.
+        /// </summary>
+        /// <returns>The currently selected KmlItem</returns>
+        public KmlItem GetSelectedItem()
+        {
+            if (KerbalsList.SelectedItem is GuiKerbalsNode)
+            {
+                return (KerbalsList.SelectedItem as GuiKerbalsNode).DataKerbal;
+            }
+            return null;
         }
 
         /// <summary>

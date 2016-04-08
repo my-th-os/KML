@@ -32,11 +32,12 @@ namespace KML
         /// Creates a KmlItem with a line read from data file.
         /// </summary>
         /// <param name="line">String with only one line from data file</param>
-        /// <param name="parent">The parent KmlNode</param>
-        public KmlItem(string line, KmlNode parent)
+        public KmlItem(string line)
         {
             this.Line = line;
-            Parent = parent;
+
+            // Parent will be set within parent's Add method
+            Parent = null;
 
             // Default is to allow any item deletion.
             // Sepcial ones, used for class properties will be protected.
@@ -125,7 +126,7 @@ namespace KML
                 return null;
             }
 
-            KmlItem item = ParseLine(line, parent);
+            KmlItem item = ParseLine(line);
             if (item is KmlAttrib)
             {
                 return item;
@@ -145,28 +146,33 @@ namespace KML
         /// <param name="parent">The new parent KmlNode</param>
         protected static void RemapParent(KmlItem item, KmlNode parent)
         {
-            item.Parent = parent;
+            if (item.Parent != parent)
+            {
+                //item.Delete(); // from previous parent
+                item.Parent = parent;
+                item.IdentifyParent();
+            }
         }
 
-        private static KmlItem ParseLine (string line, KmlNode parent)
+        private static KmlItem ParseLine (string line)
         {
             string s = line.Trim();
 
             if (s.IndexOf('=') >= 0)
             {
-                return new KmlAttrib(line, parent);
+                return new KmlAttrib(line);
             }
             else if (s.Length == 1 && s[0] == '{')
             {
-                return new KmlBegin(line, parent);
+                return new KmlBegin(line);
             }
             else if (s.Length == 1 && s[0] == '}')
             {
-                return new KmlEnd(line, parent);
+                return new KmlEnd(line);
             }
             else
             {
-                return new KmlItem(line, parent);
+                return new KmlItem(line);
             }
         }
 
@@ -192,21 +198,21 @@ namespace KML
             return newNode;
         }
 
-        private static List<KmlItem> ParseFile(System.IO.StreamReader file, KmlNode parent)
+        private static List<KmlItem> ParseFile(System.IO.StreamReader file)
         {
             List<KmlItem> list = new List<KmlItem>();
 
             string line;
             while ((line = file.ReadLine()) != null)
             {
-                KmlItem newItem = ParseLine(line, parent);
+                KmlItem newItem = ParseLine(line);
                 if (newItem is KmlBegin)
                 {
                     KmlItem lastItem;
                     int l = list.Count - 1;
                     if (l < 0)
                     {
-                        lastItem = new KmlItem("", parent);
+                        lastItem = new KmlItem("");
                     }
                     else
                     {
@@ -215,7 +221,7 @@ namespace KML
                     }
                     KmlNode newNode = ParseNode(lastItem);
                     list.Add(newNode);
-                    newNode.AddRange(ParseFile(file, newNode));
+                    newNode.AddRange(ParseFile(file));
                 }
                 else if (newItem is KmlEnd)
                 {
@@ -260,6 +266,14 @@ namespace KML
         }
 
         /// <summary>
+        /// When Parent is set or changed IdentifyParent will be called.
+        /// Deriving classes can override this method and check for the new parent.
+        /// </summary>
+        protected virtual void IdentifyParent()
+        {
+        }
+
+        /// <summary>
         /// Parse a KSP persistence file and return a list of the root nodes.
         /// In general there may be more than one item not containing other items.
         /// With correct KSP persistence data this doesn't happen and the list will
@@ -276,7 +290,7 @@ namespace KML
                 // Explicit setting UTF8 doesn't look the same, if I compare loaded and saved with MinMerge
                 // System.IO.StreamReader file = new System.IO.StreamReader(Filename, Encoding.UTF8);
                 System.IO.StreamReader file = new System.IO.StreamReader(filename);
-                list.AddRange(ParseFile(file, null));
+                list.AddRange(ParseFile(file));
                 file.Close();
             }
             catch (Exception e)
@@ -300,7 +314,7 @@ namespace KML
                 KmlNode node = (KmlNode)item;
                 if (!ghost)
                 {
-                    file.WriteLine(new KmlBegin(node).ToLine(indent));
+                    file.WriteLine(new KmlBegin().ToLine(indent));
                     newIndent = indent + 1;
                 }
                 foreach(KmlItem child in node.AllItems)
@@ -309,7 +323,7 @@ namespace KML
                 }
                 if (!ghost)
                 {
-                    file.WriteLine(new KmlEnd(node).ToLine(indent));
+                    file.WriteLine(new KmlEnd().ToLine(indent));
                 }
             }
         }

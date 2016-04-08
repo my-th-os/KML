@@ -1,4 +1,7 @@
 Version 0.6.3 - in progress
+- rebuild part structure when repaired
+- bugfix selecting root nodes
+- bugfix setting dialog size when main window maximized
 - vessel / kerbal lists display name in bold
 - fixed input textbox height (older windows) - thanks to Enceos
 - show message for unhandled exceptions

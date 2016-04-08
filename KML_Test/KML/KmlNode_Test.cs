@@ -19,7 +19,7 @@ namespace KML_Test.KML
         [TestMethod]
         public void Create()
         {
-            KmlNode root = new KmlNode("root", null);
+            KmlNode root = new KmlNode("root");
             Assert.IsNull(root.Parent);
             Assert.AreEqual("root", root.Tag);
             Assert.AreEqual("", root.Name);
@@ -541,7 +541,7 @@ namespace KML_Test.KML
             KmlAttrib attrib1 = KmlItem.CreateItem("attrib1 = value1", root) as KmlAttrib;
             root.Add(attrib1);
             // KmlItem constructor is only way to create a KmlItem (unknown) instead of KmlNode or KmlAttrib
-            KmlItem unknown = new KmlItem("unknown", root);
+            KmlItem unknown = new KmlItem("unknown");
             root.Add(unknown);
             KmlNode node2 = KmlItem.CreateItem("node2", root) as KmlNode;
             root.Add(node2);
@@ -567,7 +567,7 @@ namespace KML_Test.KML
             KmlAttrib attrib1 = KmlItem.CreateItem("attrib1 = value1", root) as KmlAttrib;
             root.InsertBefore(node1, attrib1);
             // KmlItem constructor is only way to create a KmlItem (unknown) instead of KmlNode or KmlAttrib
-            KmlItem unknown = new KmlItem("unknown", root);
+            KmlItem unknown = new KmlItem("unknown");
             root.InsertBefore(node1, unknown);
             KmlNode node2 = KmlItem.CreateItem("node2", root) as KmlNode;
             root.InsertBefore(node1, node2);

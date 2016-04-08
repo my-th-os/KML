@@ -237,16 +237,11 @@ namespace KML
         /// </summary>
         /// <param name="node">The KmlNode to copy</param>
         public KmlPart(KmlNode node)
-            : base(node.Line, node.Parent)
+            : base(node.Line)
         {
-            if (node.Parent != null && node.Parent.Tag.ToLower() == "vessel")
-            {
-                Origin = PartOrigin.Vessel;
-            }
-            else
-            {
-                Origin = PartOrigin.Other;
-            }
+            // First parent is null, will be set later when added to parent,
+            // then  IdentifyParent() will set Origin.
+            Origin = PartOrigin.Other;
 
             Resources = new List<KmlResource>();
             ResourceTypes = new SortedSet<string>();
@@ -432,6 +427,23 @@ namespace KML
         }
 
         /// <summary>
+        /// When Parent is set or changed IdentifyParent will be called.
+        /// Deriving classes can override this method and check for the new parent.
+        /// </summary>
+        protected override void IdentifyParent()
+        {
+            if (Parent != null && Parent.Tag.ToLower() == "vessel")
+            {
+                Origin = PartOrigin.Vessel;
+            }
+            else
+            {
+                Origin = PartOrigin.Other;
+            }
+            base.IdentifyParent();
+        }
+
+        /// <summary>
         /// Refill all resources of this part.
         /// </summary>
         public void Refill()
@@ -489,6 +501,31 @@ namespace KML
         /// <returns>A list of root parts (not pointing to another parent part). Could be more than one, if some connections are broken.</returns>
         public static List<KmlPart> BuildAttachmentStructure(List<KmlPart> parts)
         {
+            foreach (KmlPart part in parts)
+            {
+                part.AttachedPartsBack.Clear();
+                part.AttachedPartsBottom.Clear();
+                part.AttachedPartsFront.Clear();
+                part.AttachedPartsLeft.Clear();
+                part.AttachedPartsRight.Clear();
+                part.AttachedPartsSurface.Clear();
+                part.AttachedPartsTop.Clear();
+                part.AttachedToPartsBack.Clear();
+                part.AttachedToPartsBottom.Clear();
+                part.AttachedToPartsFront.Clear();
+                part.AttachedToPartsLeft.Clear();
+                part.AttachedToPartsRight.Clear();
+                part.AttachedToPartsTop.Clear();
+                part.AttachedToPartSurface = null;
+                if (part is KmlPartDock)
+                {
+                    (part as KmlPartDock).NeedsRepair = false;
+                    // TODO KmlPart.BuildAttachmentStructure(): Invoke another event than ToStringChanged
+                    // For the moment this will cause the GuiTreeNode to rebuild, including the context menu
+                    part.InvokeToStringChanged();
+                }
+            }
+
             List<KmlPart> roots = new List<KmlPart>();
             for (int i = 0; i < parts.Count; i++ )
             {
@@ -501,7 +538,7 @@ namespace KML
                 }
                 else if (part.ParentPartIndex < 0 || part.ParentPartIndex >= parts.Count)
                 {
-                    Syntax.Warning(part, "Part's parent part index [" + part.ParentPartIndex + "] does not point to a valid part.");
+                    Syntax.Warning(part, "Part's parent part index [" + part.ParentPartIndex + "] does not point to a valid part");
                     roots.Add(part);
                 }
                 else 
@@ -702,7 +739,8 @@ namespace KML
                 }
                 if(part.AttachedToSurfaceIndex >= 0 && part.AttachedToSurfaceIndex < parts.Count)
                 {
-                    parts[part.AttachedToSurfaceIndex].AttachedPartsSurface.Add(part);
+                    part.AttachedToPartSurface = parts[part.AttachedToSurfaceIndex];
+                    part.AttachedToPartSurface.AttachedPartsSurface.Add(part);
                 }
                 else if (part.AttachedToSurfaceIndex != -1)
                 {
