@@ -1,4 +1,5 @@
 Version 0.6.3 - in progress
+- insert nodes
 - rebuild part structure when repaired
 - bugfix selecting root nodes
 - bugfix setting dialog size when main window maximized

@@ -90,6 +90,16 @@ namespace KML
         }
 
         /// <summary>
+        /// Clear all child nodes and attributes from this node.
+        /// </summary>
+        public override void Clear()
+        {
+            Amount.Value = "";
+            MaxAmount.Value = "";
+            base.Clear();
+        }
+
+        /// <summary>
         /// Refill this resource by setting "amount" value to "maxAmount" value.
         /// </summary>
         public void Refill()

@@ -68,6 +68,14 @@ namespace KML
 
             MenuItem m = new MenuItem();
             m.DataContext = DataAttrib;
+            m.Icon = Icons.CreateImage(Icons.Add);
+            m.Header = "Insert attribute...";
+            m.Click += AttribInsertBefore_Click;
+            menu.Items.Add(m);
+            menu.Items.Add(new Separator());
+
+            m = new MenuItem();
+            m.DataContext = DataAttrib;
             m.Icon = Icons.CreateImage(Icons.Delete);
             m.Header = "Delete this attribute...";
             m.Click += AttribDelete_Click;
@@ -86,6 +94,14 @@ namespace KML
             {
                 ContextMenu.Visibility = System.Windows.Visibility.Hidden;
             }
+        }
+
+        private void AttribInsertBefore_Click(object sender, RoutedEventArgs e)
+        {
+            KmlAttrib attrib = ((sender as MenuItem).DataContext as KmlAttrib);
+
+            // TODO GuiTreeAttrib.AttribInsertBefore_Click(): Insert
+            throw new NotImplementedException();
         }
 
         private void AttribDelete_Click(object sender, RoutedEventArgs e)

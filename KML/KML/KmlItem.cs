@@ -107,12 +107,9 @@ namespace KML
         /// if line is "{", "}" or empty
         /// </summary>
         /// <param name="line">The line to build a KmlItem from</param>
-        /// <param name="parent">The parent to use, if it will be a KmlNode</param>
         /// <returns>A KmlItem derived object</returns>
-        public static KmlItem CreateItem (string line, KmlNode parent)
+        public static KmlItem CreateItem (string line)
         {
-            // TODO KmlItem.CreateItem() Parent unnecessary, will be set on Add() via RemapParent()
-            // so it can be left null in constructor
             if (line == null || line.Length == 0)
             {
                 return null;
@@ -148,7 +145,10 @@ namespace KML
         {
             if (item.Parent != parent)
             {
-                //item.Delete(); // from previous parent
+                // This often happens when we iterate through the lists,
+                // so we can not delete items from that list here.
+                // TODO KmlItem.RemapParent(): Delete item from old parent
+                // item.Delete(); // from previous parent
                 item.Parent = parent;
                 item.IdentifyParent();
             }

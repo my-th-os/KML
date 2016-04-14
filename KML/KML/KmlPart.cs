@@ -407,6 +407,48 @@ namespace KML
         }
 
         /// <summary>
+        /// Clear all child nodes and attributes from this node.
+        /// </summary>
+        public override void Clear()
+        {
+            Resources.Clear();
+            ResourceTypes.Clear();
+            Uid = "";
+            Position = new Point3D(0.0, 0.0, 0.0);
+            Flag = "";
+            ParentPartIndex = -1;
+            ParentPart = null;
+            ClearAttachments();
+            CraftName = "";
+            base.Clear();
+        }
+
+        private void ClearAttachments()
+        {
+            AttachedToNodeIndices.Clear();
+            AttachedToSurfaceIndex = -1;
+            ClearVirtualAttachments();
+        }
+
+        private void ClearVirtualAttachments()
+        {
+            AttachedPartsBack.Clear();
+            AttachedPartsBottom.Clear();
+            AttachedPartsFront.Clear();
+            AttachedPartsLeft.Clear();
+            AttachedPartsRight.Clear();
+            AttachedPartsSurface.Clear();
+            AttachedPartsTop.Clear();
+            AttachedToPartsBack.Clear();
+            AttachedToPartsBottom.Clear();
+            AttachedToPartsFront.Clear();
+            AttachedToPartsLeft.Clear();
+            AttachedToPartsRight.Clear();
+            AttachedToPartsTop.Clear();
+            AttachedToPartSurface = null;
+        }
+
+        /// <summary>
         /// After a part is completely loaded the Intentify() method is called.
         /// Then can be determined, if this part represents a docking port part or not,
         /// checking all child nodes and their attributes.
@@ -503,20 +545,7 @@ namespace KML
         {
             foreach (KmlPart part in parts)
             {
-                part.AttachedPartsBack.Clear();
-                part.AttachedPartsBottom.Clear();
-                part.AttachedPartsFront.Clear();
-                part.AttachedPartsLeft.Clear();
-                part.AttachedPartsRight.Clear();
-                part.AttachedPartsSurface.Clear();
-                part.AttachedPartsTop.Clear();
-                part.AttachedToPartsBack.Clear();
-                part.AttachedToPartsBottom.Clear();
-                part.AttachedToPartsFront.Clear();
-                part.AttachedToPartsLeft.Clear();
-                part.AttachedToPartsRight.Clear();
-                part.AttachedToPartsTop.Clear();
-                part.AttachedToPartSurface = null;
+                part.ClearVirtualAttachments();
                 if (part is KmlPartDock)
                 {
                     (part as KmlPartDock).NeedsRepair = false;

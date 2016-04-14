@@ -126,6 +126,18 @@ namespace KML
             base.Add(beforeItem, newItem);
         }
 
+        /// <summary>
+        /// Clear all child nodes and attributes from this node.
+        /// </summary>
+        public override void Clear()
+        {
+            Type = "";
+            Trait = "";
+            Brave = 0.0;
+            Dumb = 0.0;
+            base.Clear();
+        }
+
         private double GetDoubleValue(string value, double defaultValue)
         {
             double d = 0.0;

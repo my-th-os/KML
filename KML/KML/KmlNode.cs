@@ -289,6 +289,20 @@ namespace KML
             }
         }
 
+        /// <summary>
+        /// Clear all child nodes and attributes from this node.
+        /// Deriving classes should override this and clear their stuff,
+        /// but call base.Clear() within.
+        /// </summary>
+        public virtual void Clear()
+        {
+            Attribs.Clear();
+            Children.Clear();
+            Unknown.Clear();
+            AllItems.Clear();
+            Name = "";
+        }
+
         private KmlAttrib GetNextSibling(KmlAttrib attrib)
         {
             int index = Attribs.IndexOf(attrib);
@@ -374,7 +388,7 @@ namespace KML
                 {
                     line += defaultValue;
                 }
-                attrib = KmlItem.CreateItem(line, this) as KmlAttrib;
+                attrib = KmlItem.CreateItem(line) as KmlAttrib;
                 Add(attrib);
             }
             return attrib;
@@ -433,11 +447,11 @@ namespace KML
             KmlNode node = GetChildNode(tag, name);
             if (node == null)
             {
-                node = KmlItem.CreateItem(tag, this) as KmlNode;
+                node = KmlItem.CreateItem(tag) as KmlNode;
                 if (name != null && name.Length > 0)
                 {
                     // Add name attribute
-                    node.Add(KmlItem.CreateItem("name=" + name, node));
+                    node.Add(KmlItem.CreateItem("name=" + name));
                 }
                 Add(node);
             }

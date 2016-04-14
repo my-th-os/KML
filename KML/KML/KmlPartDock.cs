@@ -105,6 +105,7 @@ namespace KML
             DockedVesselOtherName = "";
             DockedVesselOtherType = "";
             DockUid = "";
+            DockedPart = null;
             NeedsRepair = false;
 
             foreach (KmlNode node in Children)
@@ -185,6 +186,24 @@ namespace KML
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Clear all child nodes and attributes from this node.
+        /// </summary>
+        public override void Clear()
+        {
+            DockType = DockTypes.Dock;
+            DockName = "";
+            DockState = "";
+            DockedVesselName = "";
+            DockedVesselType = "";
+            DockedVesselOtherName = "";
+            DockedVesselOtherType = "";
+            DockUid = "";
+            DockedPart = null;
+            NeedsRepair = false;
+            base.Clear();
         }
 
         /// <summary>

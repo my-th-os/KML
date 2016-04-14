@@ -170,6 +170,21 @@ namespace KML
         }
 
         /// <summary>
+        /// Clear all child nodes and attributes from this node.
+        /// </summary>
+        public override void Clear()
+        {
+            Type = "";
+            Situation = "";
+            Parts.Clear();
+            Flags.Clear();
+            ResourceTypes.Clear();
+            RootPart = null;
+            rootPartIndex = 0;
+            base.Clear();
+        }
+
+        /// <summary>
         /// Refill all resources in all parts of this vessel.
         /// </summary>
         public void Refill()

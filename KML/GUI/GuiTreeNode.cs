@@ -458,6 +458,13 @@ namespace KML
                 MenuItem m = new MenuItem();
                 m.DataContext = DataNode;
                 m.Icon = Icons.CreateImage(Icons.Add);
+                m.Header = "Add attribute...";
+                m.Click += NodeAddAttrib_Click;
+                menu.Items.Add(m);
+
+                m = new MenuItem();
+                m.DataContext = DataNode;
+                m.Icon = Icons.CreateImage(Icons.Add);
                 m.Header = "Add child node...";
                 m.Click += NodeAddChild_Click;
                 menu.Items.Add(m);
@@ -465,8 +472,9 @@ namespace KML
                 m = new MenuItem();
                 m.DataContext = DataNode;
                 m.Icon = Icons.CreateImage(Icons.Add);
-                m.Header = "Add attribute...";
-                m.Click += NodeAddAttrib_Click;
+                m.Header = "Insert node...";
+                m.Click += NodeInsertBefore_Click;
+                m.IsEnabled = DataNode.Parent != null;
                 menu.Items.Add(m);
             }
             if (withDeleteMenu)
@@ -481,10 +489,6 @@ namespace KML
                 m.Header = "Delete this " + nodeName + "...";
                 m.Click += NodeDelete_Click;
                 m.IsEnabled = DataNode.CanBeDeleted;
-                if (!m.IsEnabled && m.Icon != null)
-                {
-                    (m.Icon as Image).Opacity = 0.3;
-                }
                 menu.Items.Add(m);
             }
 
@@ -495,6 +499,86 @@ namespace KML
             if (menu.Items.Count <= defaultMenuCount)
             {
                 ContextMenu.Visibility = System.Windows.Visibility.Hidden;
+            }
+            else
+            {
+                // Apply look and feel
+                foreach (object o in menu.Items)
+                {
+                    if (o is MenuItem)
+                    {
+                        MenuItem m = (MenuItem)o;
+                        if (!m.IsEnabled && m.Icon != null)
+                        {
+                            (m.Icon as Image).Opacity = 0.3;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void AddChildNode(KmlNode toItem, KmlNode beforeItem)
+        {
+            KmlNode node = toItem;
+            string input;
+            string preset = "";
+            bool loop = true;
+            while (loop && DlgInput.Show("Enter the tag for the new node:", "NEW node", Icons.Add, preset, out input))
+            {
+                KmlItem item = KmlItem.CreateItem(input);
+                if (item is KmlNode && beforeItem != null)
+                {
+                    node.InsertBefore(beforeItem, (KmlNode)item);
+                    loop = false;
+                    // View will be refreshed in ChildrenChanged event
+                }
+                else if (item is KmlNode)
+                {
+                    node.Add((KmlNode)item);
+                    loop = false;
+                    // View will be refreshed in ChildrenChanged event
+                }
+                else
+                {
+                    DlgMessage.Show("Tag is not allowed to be empty or contain following characters: ={}", "NEW node", Icons.Warning);
+                    preset = input;
+                    // Input will pop up again while loop == true
+                }
+            }
+        }
+
+        private void AddAttrib(KmlNode toItem, KmlAttrib beforeItem)
+        {
+            KmlNode node = toItem;
+            string input;
+            string preset = "";
+            bool loop = true;
+            while (loop && DlgInput.Show("Enter the name for the new attribute:", "NEW attribute", Icons.Add, preset, out input))
+            {
+                string attrib = input;
+                if (attrib.Length > 0 && attrib.IndexOf('=') < 0)
+                {
+                    attrib = attrib + "=";
+                }
+                KmlItem item = KmlItem.CreateItem(attrib);
+                if (item is KmlAttrib && beforeItem != null)
+                {
+                    node.InsertBefore(beforeItem, (KmlAttrib)item);
+                    loop = false;
+                    // View will be refreshed in AttribChanged event
+                }
+                else if (item is KmlAttrib)
+                {
+                    node.Add((KmlAttrib)item);
+                    loop = false;
+                    // View will be refreshed in AttribChanged event
+                }
+                else
+                {
+                    DlgMessage.Show("Attribute name is not allowed to be empty or contain following characters: {}", "NEW attribute", Icons.Warning);
+                    preset = input;
+                    // Input will pop up again while loop == true
+                }
             }
         }
 
@@ -582,56 +666,28 @@ namespace KML
             IsSelected = true;
         }
 
-        private void NodeAddChild_Click(object sender, RoutedEventArgs e)
-        {
-            KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
-            string input;
-            string preset = "";
-            bool loop = true;
-            while (loop && DlgInput.Show("Enter the tag for the new node:", "NEW child node", Icons.Add, preset, out input))
-            {
-                KmlItem item = KmlItem.CreateItem(input, node);
-                if (item is KmlNode)
-                {
-                    node.Add((KmlNode)item);
-                    loop = false;
-                    // View will be refreshed in ChildrenChanged event
-                }
-                else
-                {
-                    DlgMessage.Show("Tag is not allowed to be empty or contain following characters: ={}", "NEW child node", Icons.Add);
-                    preset = input;
-                    // Input will pop up again while loop == true
-                }
-            }
-        }
-
         private void NodeAddAttrib_Click(object sender, RoutedEventArgs e)
         {
             KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
-            string input;
-            string preset = "";
-            bool loop = true;
-            while (loop && DlgInput.Show("Enter the name for the new attribute:", "NEW attribute", Icons.Add, preset, out input))
+            AddAttrib(node, null);
+        }
+
+        private void NodeAddChild_Click(object sender, RoutedEventArgs e)
+        {
+            KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
+            AddChildNode(node, null);
+        }
+
+        private void NodeInsertBefore_Click(object sender, RoutedEventArgs e)
+        {
+            KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
+            if (node.Parent != null)
             {
-                string attrib = input;
-                if (attrib.Length > 0 && attrib.IndexOf('=') < 0)
-                {
-                    attrib = attrib + "=";
-                }
-                KmlItem item = KmlItem.CreateItem(attrib, node);
-                if (item is KmlAttrib)
-                {
-                    node.Add((KmlAttrib)item);
-                    loop = false;
-                    // View will be refreshed in AttribChanged event
-                }
-                else
-                {
-                    DlgMessage.Show("Attribute name is not allowed to be empty or contain following characters: {}", "NEW attribute", Icons.Add);
-                    preset = input;
-                    // Input will pop up again while loop == true
-                }
+                AddChildNode(node.Parent, node);
+            }
+            else
+            {
+                DlgMessage.Show("Can not insert, node has no parent", "NEW node", Icons.Warning);
             }
         }
 
