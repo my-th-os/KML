@@ -98,10 +98,47 @@ namespace KML
 
         private void AttribInsertBefore_Click(object sender, RoutedEventArgs e)
         {
-            KmlAttrib attrib = ((sender as MenuItem).DataContext as KmlAttrib);
+            // TODO GuiTreeAttrib.AttribInsertBefore_Click(): Almost same code as private GuiTreeNode.AddAttrib()
 
-            // TODO GuiTreeAttrib.AttribInsertBefore_Click(): Insert
-            throw new NotImplementedException();
+            KmlAttrib beforeItem = ((sender as MenuItem).DataContext as KmlAttrib);
+            KmlNode node = beforeItem.Parent;
+            if (node != null)
+            {
+                string input;
+                string preset = "";
+                bool loop = true;
+                while (loop && DlgInput.Show("Enter the name for the new attribute:", "NEW attribute", Icons.Add, preset, out input))
+                {
+                    string attrib = input;
+                    if (attrib.Length > 0 && attrib.IndexOf('=') < 0)
+                    {
+                        attrib = attrib + "=";
+                    }
+                    KmlItem item = KmlItem.CreateItem(attrib);
+                    if (item is KmlAttrib && beforeItem != null)
+                    {
+                        node.InsertBefore(beforeItem, (KmlAttrib)item);
+                        loop = false;
+                        // View will be refreshed in AttribChanged event
+                    }
+                    else if (item is KmlAttrib)
+                    {
+                        node.Add((KmlAttrib)item);
+                        loop = false;
+                        // View will be refreshed in AttribChanged event
+                    }
+                    else
+                    {
+                        DlgMessage.Show("Attribute name is not allowed to be empty or contain following characters: {}", "NEW attribute", Icons.Warning);
+                        preset = input;
+                        // Input will pop up again while loop == true
+                    }
+                }
+            }
+            else
+            {
+                DlgMessage.Show("Can not insert, attribute has no parent", "NEW attribute", Icons.Warning);
+            }
         }
 
         private void AttribDelete_Click(object sender, RoutedEventArgs e)
