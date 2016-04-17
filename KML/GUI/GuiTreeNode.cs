@@ -340,7 +340,9 @@ namespace KML
         {
             ContextMenu menu = new ContextMenu();
             MenuItem title = new MenuItem();
-            title.Icon = GenerateImage(DataNode);
+            Image img = GenerateImage(DataNode);
+            img.Margin = new Thickness(0);
+            title.Icon = img;
             title.Header = DataNode.ToString();
             title.IsEnabled = false;
             title.Background = new SolidColorBrush(Colors.Black);
@@ -361,7 +363,7 @@ namespace KML
                 MenuItem m = new MenuItem();
                 m.DataContext = DataNode;
                 m.Icon = Icons.CreateImage(Icons.Resource);
-                m.Header = "Refill this resource";
+                m.Header = "_Refill this resource";
                 m.Click += ResourceRefill_Click;
                 menu.Items.Add(m);
             }
@@ -374,7 +376,7 @@ namespace KML
                     MenuItem m = new MenuItem();
                     m.DataContext = DataNode;
                     m.Icon = Icons.CreateImage(Icons.Resource);
-                    m.Header = "Refill all resources in this part";
+                    m.Header = "_Refill all resources in this part";
                     m.Click += PartRefill_Click;
                     menu.Items.Add(m);
                     foreach (string resType in node.ResourceTypes)
@@ -382,7 +384,7 @@ namespace KML
                         m = new MenuItem();
                         m.DataContext = DataNode;
                         m.Icon = Icons.CreateImage(Icons.Resource);
-                        m.Header = "Refill '" + resType + "' resource in this part";
+                        m.Header = "_Refill '" + resType + "' resource in this part";
                         m.Tag = resType;
                         m.Click += PartRefill_Click;
                         menu.Items.Add(m);
@@ -400,7 +402,7 @@ namespace KML
                         MenuItem m = new MenuItem();
                         m.DataContext = DataNode;
                         m.Icon = Icons.CreateImage(Icons.PartDock);
-                        m.Header = "Repair docking connection of this and connected part";
+                        m.Header = "Re_pair docking connection of this and connected part";
                         m.Click += DockRepair_Click;
                         menu.Items.Add(m);
                     }
@@ -410,12 +412,23 @@ namespace KML
             {
                 nodeName = "vessel";
                 KmlVessel node = (KmlVessel)DataNode;
+
+                MenuItem m = new MenuItem();
+                m.DataContext = DataNode;
+                img = GenerateImage(DataNode);
+                img.Margin = new Thickness(0);
+                m.Icon = img;
+                m.Header = "Switch _view";
+                m.Click += SwitchView_Click;
+                menu.Items.Add(m);
+                
                 if (node.HasResources)
                 {
-                    MenuItem m = new MenuItem();
+                    menu.Items.Add(new Separator());
+                    m = new MenuItem();
                     m.DataContext = DataNode;
                     m.Icon = Icons.CreateImage(Icons.Resource);
-                    m.Header = "Refill all resources in all parts of this vessel";
+                    m.Header = "_Refill all resources in all parts of this vessel";
                     m.Click += VesselRefill_Click;
                     menu.Items.Add(m);
                     foreach (string resType in node.ResourceTypes)
@@ -423,7 +436,7 @@ namespace KML
                         m = new MenuItem();
                         m.DataContext = DataNode;
                         m.Icon = Icons.CreateImage(Icons.Resource);
-                        m.Header = "Refill all '" + resType + "' resources in all parts of this vessel";
+                        m.Header = "_Refill all '" + resType + "' resources in all parts of this vessel";
                         m.Tag = resType;
                         m.Click += VesselRefill_Click;
                         menu.Items.Add(m);
@@ -431,14 +444,11 @@ namespace KML
                 }
                 if (node.Flags.Count > 0)
                 {
-                    if (menu.Items.Count > defaultMenuCount)
-                    {
-                        menu.Items.Add(new Separator());
-                    }
-                    MenuItem m = new MenuItem();
+                    menu.Items.Add(new Separator());
+                    m = new MenuItem();
                     m.DataContext = DataNode;
                     m.Icon = Icons.CreateImage(Icons.VesselFlag);
-                    m.Header = "Change flag in all parts of this vessel...";
+                    m.Header = "Change _flag in all parts of this vessel...";
                     m.Click += VesselFlagExchange_Click;
                     menu.Items.Add(m);
                 }
@@ -446,6 +456,15 @@ namespace KML
             else if (DataNode is KmlKerbal)
             {
                 nodeName = "kerbal";
+
+                MenuItem m = new MenuItem();
+                m.DataContext = DataNode;
+                img = GenerateImage(DataNode);
+                img.Margin = new Thickness(0);
+                m.Icon = img;
+                m.Header = "Switch _view";
+                m.Click += SwitchView_Click;
+                menu.Items.Add(m);
             }
 
             // Adding / deleting
@@ -458,21 +477,21 @@ namespace KML
                 MenuItem m = new MenuItem();
                 m.DataContext = DataNode;
                 m.Icon = Icons.CreateImage(Icons.Add);
-                m.Header = "Add attribute...";
+                m.Header = "Add _attribute...";
                 m.Click += NodeAddAttrib_Click;
                 menu.Items.Add(m);
 
                 m = new MenuItem();
                 m.DataContext = DataNode;
                 m.Icon = Icons.CreateImage(Icons.Add);
-                m.Header = "Add child node...";
+                m.Header = "Add _child node...";
                 m.Click += NodeAddChild_Click;
                 menu.Items.Add(m);
 
                 m = new MenuItem();
                 m.DataContext = DataNode;
                 m.Icon = Icons.CreateImage(Icons.Add);
-                m.Header = "Insert node...";
+                m.Header = "_Insert node...";
                 m.Click += NodeInsertBefore_Click;
                 m.IsEnabled = DataNode.Parent != null;
                 menu.Items.Add(m);
@@ -486,7 +505,7 @@ namespace KML
                 MenuItem m = new MenuItem();
                 m.DataContext = DataNode;
                 m.Icon = Icons.CreateImage(Icons.Delete);
-                m.Header = "Delete this " + nodeName + "...";
+                m.Header = "_Delete this " + nodeName + "...";
                 m.Click += NodeDelete_Click;
                 m.IsEnabled = DataNode.CanBeDeleted;
                 menu.Items.Add(m);
@@ -586,6 +605,12 @@ namespace KML
         {
             Expanded -= GuiTreeNode_Expanded;
             LoadChildren();
+        }
+
+        private void SwitchView_Click(object sender, RoutedEventArgs e)
+        {
+            KmlItem item = (sender as MenuItem).DataContext as KmlItem;
+            GuiTabsManager.GetCurrent().Select(item);
         }
 
         private void DockRepair_Click(object sender, RoutedEventArgs e)

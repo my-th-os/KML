@@ -1,4 +1,5 @@
-Version 0.6.3 - in progress
+Version 0.7 - in progress
+- search for nodes
 - insert nodes
 - insert attributes
 - rebuild part structure when repaired
@@ -8,6 +9,7 @@ Version 0.6.3 - in progress
 - fixed input textbox height (older windows) - thanks to Enceos
 - show message for unhandled exceptions
 - no multiselect on lists, wasn't interpreted anyway
+- some keyboard usage improvements
 - fix for debug messages "binding reference" in context menu creation
 
 Version 0.6.2 - 2016-03-31

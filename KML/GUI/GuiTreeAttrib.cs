@@ -69,7 +69,7 @@ namespace KML
             MenuItem m = new MenuItem();
             m.DataContext = DataAttrib;
             m.Icon = Icons.CreateImage(Icons.Add);
-            m.Header = "Insert attribute...";
+            m.Header = "_Insert attribute...";
             m.Click += AttribInsertBefore_Click;
             menu.Items.Add(m);
             menu.Items.Add(new Separator());
@@ -77,7 +77,7 @@ namespace KML
             m = new MenuItem();
             m.DataContext = DataAttrib;
             m.Icon = Icons.CreateImage(Icons.Delete);
-            m.Header = "Delete this attribute...";
+            m.Header = "_Delete this attribute...";
             m.Click += AttribDelete_Click;
             m.IsEnabled = DataAttrib.CanBeDeleted;
             if (!m.IsEnabled && m.Icon != null)

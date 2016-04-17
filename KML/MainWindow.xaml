@@ -2,6 +2,15 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="KML - Kerbal Markup Lister" Height="600" Width="800" MinWidth="450" MinHeight="300" Background="Gray" ResizeMode="CanResizeWithGrip" Loaded="Window_Loaded" Icon="Images/Astronaut.ico">
+    <Window.Resources>
+        <RoutedUICommand x:Key="cmdSearch"/>
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource cmdSearch}" Executed="ButtonSearch_Click"/>
+    </Window.CommandBindings>
+    <Window.InputBindings>
+        <KeyBinding Key="F3" Command="{StaticResource cmdSearch}"/>
+    </Window.InputBindings>
     <Grid>
         <StackPanel VerticalAlignment="Top">
             <StackPanel.Background>
@@ -25,9 +34,9 @@
                     <Image Source="Images\Save48.png"/>
                 </Button>
                 <Separator/>
-                <Button Click="ButtonSearch_Click" ToolTip="Search..." IsEnabled="False" Opacity="0.3">
+                <ToggleButton x:Name="ButtonSearch" Command="{StaticResource cmdSearch}" ToolTip="Search...">
                     <Image Source="Images\Search48.png"/>
-                </Button>
+                </ToggleButton>
                 <Separator/>
                 <Button Click="ButtonPrevious_Click" ToolTip="Previous item">
                     <Image Source="Images\Previous48.png"/>
@@ -203,7 +212,7 @@
         <StatusBar Height="23" VerticalAlignment="Bottom" Background="Gray">
             <Label Content="KML - Kerbal Markup Lister" Padding="0"/>
             <Separator/>
-            <Label Content="Version 0.6.3" Padding="0"/>
+            <Label Content="Version 0.7" Padding="0"/>
             <Separator/>
             <Label Content="© 2016 Oliver Pola (Mythos)" Padding="0"/>
             <Separator/>

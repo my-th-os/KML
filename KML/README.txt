@@ -1,4 +1,4 @@
-KML - Kerbal Markup Lister v0.6 - 2016-03-31 (WIP) - A persistence file editor for Kerbal Space Program
+KML - Kerbal Markup Lister v0.7 - 2016-04-?? (WIP) - A persistence file editor for Kerbal Space Program
 KSP Forum: http://forum.kerbalspaceprogram.com/index.php?/topic/133971-win-kml-persistence-file-editor/
 
 Do you face a problem with broken docking ports or need just a little fuel-cheating? Do you got tired of editing save games in a text editor with long loading time and so much scrolling to compare different parts and vessels? So did I and decided to make a more helpful external editor to display the XML-like structure (the "KML" - Kerbal Markup Language) in a tree view and pick out vessels, kerbals and parts to be displayed in more eye-candy way.
@@ -8,41 +8,35 @@ The current version is not feature-complete but so far functional and already he
 Any feedback, more testing, bug reports and suggestions are very welcome.
 
 New Features
-• better CRAFT files identification
-• adding child nodes
-• deleting nodes, restricted to not delete in this version
-  ◦ vessels (need to check crew and return home)
-  ◦ parts (need to rebuild index numbers and attachments)
-  ◦ kerbals (need to check if they are in any vessel's crew)
-• adding attributes
-• deleting attributes
-• change vessel flag in all its parts - for Enceos
-• improved repair broken docking ports / grappling devices
+• search for nodes
+• insert nodes and attributes
+• rebuild part structure when repaired
 
 Features 
-• open SFS files
-• open CRAFT files
-• check and identify SFS files
-• check and identify CRAFT files
-• save SFS files edited or exactly as loaded
-• save CRAFT files edited or exactly as loaded
+• open SFS and CRAFT files
+• save files edited or exactly as loaded
 • backup of overwritten files
 • display file structure in a "KML" tree
 • display all vessels in a sorted and filtered list
 • display all kerbals in a sorted and filtered list
 • display vessel's part attachment structure
 • display warnings about structural problems
+• adding, inserting and deleting nodes and attributes
+• deletion excludes in current version
+  ◦ vessels (need to check crew and return home)
+  ◦ parts (need to rebuild index numbers and attachments)
+  ◦ kerbals (need to check if they are in any vessel's crew)
+• change vessel flag in all its parts - for Enceos
 • refill part resources
-• repair broken docking ports
-• repair broken grappling devices
+• repair broken docking ports and grappling devices
 • tested with KSP 1.0.5
 
 TODO
-• inserting nodes and attributes at certain position / change position
+• search for attributes
 • copy nodes and attributes
-• search for nodes and attributes
 • identify add-on part connections (KAS)
 • some more kerbal-related (display assigned vessel, send home)
+• change position of nodes and attributes
 • more testing (uncommon vessel builds I didn't think of?)
 • documentation
 • a lot of source code TODOs

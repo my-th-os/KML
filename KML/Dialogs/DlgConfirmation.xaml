@@ -3,7 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="KML Confirmation" Height="160" Width="320" Icon="/KML;component/Images/Astronaut.ico" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" MinWidth="320" MinHeight="160" SizeChanged="Window_SizeChanged">
     <Grid>
-        <TextBox x:Name="TextMessage" Text="This is a message" IsReadOnly="True" Margin="0,0,0,48" VerticalScrollBarVisibility="Auto"/>
+        <TextBox x:Name="TextMessage" Text="This is a message" IsReadOnly="True" Margin="0,0,0,48" VerticalScrollBarVisibility="Auto">
+            <TextBox.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="White" Offset="0"/>
+                    <GradientStop Color="LightGray" Offset="1"/>
+                </LinearGradientBrush>
+            </TextBox.Background>
+        </TextBox>
         <StackPanel Orientation="Horizontal">
             <Button x:Name="ButtonOk" Content="Ok" Height="48" Width="156" VerticalAlignment="Bottom" Click="ButtonOk_Click" IsDefault="True"/>
             <Button x:Name="ButtonCancel" Content="Cancel" Height="48" Width="156" VerticalAlignment="Bottom" Click="ButtonCancel_Click" IsCancel="True"/>

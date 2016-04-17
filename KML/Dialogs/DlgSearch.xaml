@@ -1,0 +1,28 @@
+﻿<Window x:Class="KML.DlgSearch"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="KML Search" Height="320" Width="320" Icon="/KML;component/Images/Search16.png" ShowInTaskbar="False" WindowStartupLocation="Manual" MinWidth="320" MinHeight="200" SizeChanged="Window_SizeChanged" WindowStyle="None" AllowsTransparency="True" ResizeMode="CanResizeWithGrip" BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <StackPanel x:Name="PanelTop" Orientation="Vertical">
+                <StackPanel.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="White" Offset="0"/>
+                        <GradientStop Color="LightGray" Offset="1"/>
+                    </LinearGradientBrush>
+                </StackPanel.Background>
+                <Label>Search for:</Label>
+                <CheckBox x:Name="CheckNodeTag" Content="node tags" IsChecked="True" Margin="6, 0, 0, 0" Click="Check_Click"/>
+                <CheckBox x:Name="CheckNodeText" Content="node names (display text)" IsChecked="True" Margin="6, 0, 0, 0" Click="Check_Click"/>
+                <CheckBox x:Name="CheckAttribName" Content="attribute names" IsChecked="True" Margin="6, 0, 0, 0" IsEnabled="False" Click="Check_Click"/>
+                <CheckBox x:Name="CheckAttribValue" Content="attribute values" IsChecked="True" Margin="6, 0, 0, 0" IsEnabled="False" Click="Check_Click"/>
+                <TextBox x:Name="TextBoxInput" Margin="0, 3, 0, 0" Padding="2" TextChanged="TextBoxInput_TextChanged" >Input text here</TextBox>
+            </StackPanel>
+            <TreeView x:Name="Tree" Background="LightGray" VerticalContentAlignment="Bottom" Height="160" SelectedItemChanged="Tree_SelectedItemChanged" MouseDoubleClick="Tree_MouseDoubleClick"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <Button x:Name="ButtonOk" Content="Select" Height="48" Width="156" VerticalAlignment="Bottom" Click="ButtonOk_Click" IsDefault="True" IsEnabled="False"/>
+            <Button x:Name="ButtonCancel" Content="Cancel" Height="48" Width="156" VerticalAlignment="Bottom" Click="ButtonCancel_Click" IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</Window>

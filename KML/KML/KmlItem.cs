@@ -101,6 +101,23 @@ namespace KML
         }
 
         /// <summary>
+        /// Generates a string to represent to path from root to here, incl. this item.
+        /// </summary>
+        /// <param name="separator">The separator to combine parent and child with</param>
+        /// <returns>A string to display the path</returns>
+        public string PathToString(string separator)
+        {
+            if (Parent != null)
+            {
+                return Parent.PathToString(separator) + separator + ToString();
+            }
+            else
+            {
+                return ToString();
+            }
+        }
+
+        /// <summary>
         /// Creates a KmlItem from a string.
         /// This is used for adding items outside of loading from file.
         /// Result will be a KmlAttrib, KmlNode, KmlVessel, etc. or null 

@@ -15,6 +15,9 @@ namespace KML
     /// </summary>
     class GuiTreeManager : IGuiManager
     {
+        private static string _oldSearchText = "";
+        private static List<KmlItem> _oldSearchList = new List<KmlItem>();
+
         private GuiTabsManager Master { get; set; }
         private List<KmlItem> KmlRoots { get; set; }
         private TreeView Tree { get; set; }
@@ -121,6 +124,88 @@ namespace KML
         public void Save(string filename)
         {
             KmlItem.WriteFile(filename, KmlRoots);
+        }
+
+        /// <summary>
+        /// Seach for text in the KML structure.
+        /// </summary>
+        /// <param name="text">The text to search for</param>
+        /// <param name="checkNodeTag">If node tags are searched in</param>
+        /// <param name="checkNodeText">If node display texts are searched in</param>
+        /// <param name="checkAttribName">If attribute names are searched in</param>
+        /// <param name="checkAttribValue">If attribute values are searched in</param>
+        /// <returns>A list of found KmlItems</returns>
+        public List<KmlItem> Search(string text, bool checkNodeTag = true, bool checkNodeText = true, bool checkAttribName = true, bool checkAttribValue = true)
+        {
+            List<KmlItem> result = new List<KmlItem>();
+            if (_oldSearchText.Length > 0 && text.ToLower().Contains(_oldSearchText.ToLower()))
+            {
+                List<KmlItem> seachList = _oldSearchList;
+                _oldSearchList = new List<KmlItem>();
+                foreach (KmlItem item in seachList)
+                {
+                    SearchAddItem(result, item, text, checkNodeTag, checkNodeText, checkAttribName, checkAttribValue);
+                }
+            }
+            else
+            {
+                foreach (KmlNode node in KmlRoots)
+                {
+                    SearchAddItem(result, node, text, checkNodeTag, checkNodeText, checkAttribName, checkAttribValue);
+                    SearchRecursive(result, node, text, checkNodeTag, checkNodeText, checkAttribName, checkAttribValue);
+                }
+                _oldSearchList = result;
+            }
+            _oldSearchText = text;
+            return result;
+        }
+
+        private void SearchRecursive(List<KmlItem> result, KmlNode node, string text, bool checkNodeTag, bool checkNodeText, bool checkAttribName, bool checkAttribValue)
+        {
+            if (checkAttribName || checkAttribValue)
+            {
+                foreach (KmlAttrib attrib in node.Attribs)
+                {
+                    SearchAddItem(result, attrib, text, checkNodeTag, checkNodeText, checkAttribName, checkAttribValue);
+                }
+            }
+            foreach (KmlNode child in node.Children)
+            {
+                SearchAddItem(result, child, text, checkNodeTag, checkNodeText, checkAttribName, checkAttribValue);
+                SearchRecursive(result, child, text, checkNodeTag, checkNodeText, checkAttribName, checkAttribValue);
+            }
+        }
+
+        private bool SearchCheckItem(KmlItem item, string text, bool checkNodeTag, bool checkNodeText, bool checkAttribName, bool checkAttribValue)
+        {
+            if (item is KmlNode)
+            {
+                KmlNode node = (KmlNode)item;
+                return (checkNodeTag && node.Tag.ToLower().Contains(text.ToLower())) ||
+                    (checkNodeText && node.ToString().ToLower().Contains(text.ToLower()));
+            }
+            else if (item is KmlAttrib)
+            {
+                KmlAttrib attrib = (KmlAttrib)item;
+                return (checkAttribName && attrib.Name.ToLower().Contains(text.ToLower())) ||
+                    (checkAttribValue && attrib.Value.ToLower().Contains(text.ToLower()));
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private void SearchAddItem(List<KmlItem> result, KmlItem item, string text, bool checkNodeTag, bool checkNodeText, bool checkAttribName, bool checkAttribValue)
+        {
+            if (SearchCheckItem(item, text, checkNodeTag, checkNodeText, checkAttribName, checkAttribValue))
+            {
+                result.Add(item);
+            }
+            if (SearchCheckItem(item, text, true, true, true, true))
+            {
+                _oldSearchList.Add(item);
+            }
         }
 
         /// <summary>

@@ -138,6 +138,15 @@ namespace KML
         private void ButtonSearch_Click(object sender, RoutedEventArgs e)
         {
             // TODO MainWindow.ButtonSearch_Click()
+            ButtonSearch.IsChecked = true;
+            KmlItem selectedItem;
+            if (DlgSearch.Show(ButtonSearch, out selectedItem))
+            {
+                TabsManager.Select(selectedItem);
+            }
+            // Being a ToggleButton keeps it highlighted during the popup window is open
+            // But we don't want it to stay highlighted, so we uncheck afterwards
+            ButtonSearch.IsChecked = false;
         }
 
         private void ButtonNext_Click(object sender, RoutedEventArgs e)
@@ -318,6 +327,11 @@ namespace KML
             TabsManager.VesselsManager.Filter.Others = (sender as ToggleButton).IsChecked == true;
             TabsManager.VesselsManager.UpdateVisibility();
             SetToggleButtonStyle(sender as ToggleButton);
+        }
+
+        private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+
         }
     }
 }
