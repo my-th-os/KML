@@ -15,9 +15,6 @@ namespace KML
     /// </summary>
     class GuiTreeManager : IGuiManager
     {
-        private static string _oldSearchText = "";
-        private static List<KmlItem> _oldSearchList = new List<KmlItem>();
-
         private GuiTabsManager Master { get; set; }
         private List<KmlItem> KmlRoots { get; set; }
         private TreeView Tree { get; set; }
@@ -208,6 +205,9 @@ namespace KML
             }
         }
 
+        private static string _oldSearchText = "";
+        private static List<KmlItem> _oldSearchList = new List<KmlItem>();
+
         /// <summary>
         /// Focus the standard control. Also select first item in the tree, 
         /// if there is one and none is selected.
@@ -328,7 +328,10 @@ namespace KML
                     {
                         // No need to pop, this is handled by foreach loop
                         masterNode = treeNode;
-                        treeNode.IsExpanded = true;
+                        if (!(item is KmlAttrib) || item.Parent != treeNode.DataNode)
+                        {
+                            treeNode.IsExpanded = true;
+                        }
                         break;
                     }
                 }
@@ -357,6 +360,17 @@ namespace KML
                 masterNode.IsSelected = false;
                 masterNode.IsSelected = true;
                 Focus();
+                if (item is KmlAttrib)
+                {
+                    foreach (GuiTreeAttrib attrib in TreeDetails.Items)
+                    {
+                        if (attrib.DataAttrib == item)
+                        {
+                            attrib.IsSelected = true;
+                            TreeDetails.Focus();
+                        }
+                    }
+                }
             }
         }
 

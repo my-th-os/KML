@@ -551,11 +551,11 @@ namespace KML_Test.KML
             Assert.AreEqual(2, root.Children.Count);
             Assert.AreEqual(1, root.Unknown.Count);
             Assert.AreEqual(5, root.AllItems.Count);
-            Assert.AreEqual(node1, root.AllItems[0]);
-            Assert.AreEqual(attrib1, root.AllItems[1]);
-            Assert.AreEqual(unknown, root.AllItems[2]);
-            Assert.AreEqual(node2, root.AllItems[3]);
-            Assert.AreEqual(attrib2, root.AllItems[4]);
+            Assert.AreEqual(attrib1, root.Attribs[0]);
+            Assert.AreEqual(attrib2, root.Attribs[1]);
+            Assert.AreEqual(node1, root.Children[0]);
+            Assert.AreEqual(node2, root.Children[1]);
+            Assert.AreEqual(unknown, root.Unknown[0]);
         }
 
         [TestMethod]
@@ -577,11 +577,35 @@ namespace KML_Test.KML
             Assert.AreEqual(2, root.Children.Count);
             Assert.AreEqual(1, root.Unknown.Count);
             Assert.AreEqual(5, root.AllItems.Count);
-            Assert.AreEqual(attrib2, root.AllItems[0]);
-            Assert.AreEqual(attrib1, root.AllItems[1]);
-            Assert.AreEqual(unknown, root.AllItems[2]);
-            Assert.AreEqual(node2, root.AllItems[3]);
-            Assert.AreEqual(node1, root.AllItems[4]);
+            Assert.AreEqual(attrib2, root.Attribs[0]);
+            Assert.AreEqual(attrib1, root.Attribs[1]);
+            Assert.AreEqual(unknown, root.Unknown[0]);
+            Assert.AreEqual(node2, root.Children[0]);
+            Assert.AreEqual(node1, root.Children[1]);
+        }
+
+        [TestMethod]
+        public void MixedAddWellOrdered()
+        {
+            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
+            KmlAttrib attrib1 = KmlItem.CreateItem("attrib1 = value1") as KmlAttrib;
+            root.Add(attrib1);
+            KmlNode node1 = KmlItem.CreateItem("node1") as KmlNode;
+            root.Add(node1);
+            KmlAttrib attrib2 = KmlItem.CreateItem("attrib2 = value1") as KmlAttrib;
+            root.Add(attrib2);
+            KmlNode node2 = KmlItem.CreateItem("node2") as KmlNode;
+            root.Add(node2);
+            KmlAttrib attrib3 = KmlItem.CreateItem("attrib3 = value2") as KmlAttrib;
+            root.Add(attrib3);
+            Assert.AreEqual(3, root.Attribs.Count);
+            Assert.AreEqual(2, root.Children.Count);
+            Assert.AreEqual(5, root.AllItems.Count);
+            Assert.AreEqual(attrib1, root.AllItems[0]);
+            Assert.AreEqual(attrib2, root.AllItems[1]);
+            Assert.AreEqual(attrib3, root.AllItems[2]);
+            Assert.AreEqual(node1, root.AllItems[3]);
+            Assert.AreEqual(node2, root.AllItems[4]);
         }
 
         [TestMethod]

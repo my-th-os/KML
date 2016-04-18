@@ -137,12 +137,26 @@ namespace KML
 
         private void ButtonSearch_Click(object sender, RoutedEventArgs e)
         {
-            // TODO MainWindow.ButtonSearch_Click()
             ButtonSearch.IsChecked = true;
             KmlItem selectedItem;
             if (DlgSearch.Show(ButtonSearch, out selectedItem))
             {
-                TabsManager.Select(selectedItem);
+                // TODO MainWIndow.ButtonSearch_Click(): Selecting the right IGuiManager doesn't always work
+                // like KmlVessel that is not under roster, selecting kerbals when in vessel tab, etc.
+                IGuiManager manager;
+                if (selectedItem is KmlVessel && Tabs.SelectedItem == VesselsTab)
+                {
+                    manager = TabsManager.VesselsManager;
+                }
+                else if (selectedItem is KmlKerbal && Tabs.SelectedItem == KerbalsTab)
+                {
+                    manager = TabsManager.KerbalsManager;
+                }
+                else
+                {
+                    manager = TabsManager;
+                }
+                manager.Select(selectedItem);
             }
             // Being a ToggleButton keeps it highlighted during the popup window is open
             // But we don't want it to stay highlighted, so we uncheck afterwards

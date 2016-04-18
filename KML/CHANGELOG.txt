@@ -1,7 +1,9 @@
 Version 0.7 - in progress
 - search for nodes
+- search for attributes
 - insert nodes
 - insert attributes
+- add attributes always before child nodes
 - rebuild part structure when repaired
 - bugfix selecting root nodes
 - bugfix setting dialog size when main window maximized

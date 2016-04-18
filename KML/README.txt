@@ -8,7 +8,7 @@ The current version is not feature-complete but so far functional and already he
 Any feedback, more testing, bug reports and suggestions are very welcome.
 
 New Features
-• search for nodes
+• search for nodes and attributes
 • insert nodes and attributes
 • rebuild part structure when repaired
 
@@ -32,7 +32,6 @@ Features
 • tested with KSP 1.0.5
 
 TODO
-• search for attributes
 • copy nodes and attributes
 • identify add-on part connections (KAS)
 • some more kerbal-related (display assigned vessel, send home)

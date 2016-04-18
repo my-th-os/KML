@@ -122,14 +122,18 @@ namespace KML
         /// <param name="newItem">The KmlItem to add</param>
         protected virtual void Add (KmlItem beforeItem, KmlItem newItem)
         {
-            // TODO KmlNode.Add(): Not add always to end of AllItems?
-            // like Add(attrib), Add(Node), Add(attrib) should result in attrib, attrib, node
-            // but never rearrange while loading from file!
-
             // ensure that item.Parent is this node
             if (newItem.Parent != this)
             {
                 RemapParent(newItem, this);
+            }
+
+            // Not add always to end of AllItems, add well ordered: attribs first, then nodes.
+            // Like Add(attrib), Add(Node), Add(attrib) should result in attrib, attrib, node
+            if (newItem is KmlAttrib && !(beforeItem is KmlAttrib) && Children.Count > 0)
+            {
+                Syntax.Warning(newItem, "KML attribute should not come after nodes, will be fixed when saved");
+                beforeItem = Children[0];
             }
 
             if (beforeItem != null && AllItems.Contains(beforeItem))
@@ -155,12 +159,6 @@ namespace KML
             }
             else if (newItem is KmlAttrib)
             {
-                if (!(beforeItem is KmlAttrib) && Children.Count > 0)
-                {
-                    Syntax.Warning(newItem, "KML attrib should not come after nodes");
-                    // TODO KmlNode.Add(): Avoid adding attribs after nodes, fix problems on the fly
-                }
-
                 KmlAttrib attrib = (KmlAttrib)newItem;
                 if (attrib.Name.ToLower() == "name")
                 {

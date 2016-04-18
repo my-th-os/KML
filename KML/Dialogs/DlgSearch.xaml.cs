@@ -27,8 +27,8 @@ namespace KML
         private static string _searchString = "";
         private static bool _checkNodeTag = true;
         private static bool _checkNodeText = true;
-        private static bool _checkAttribName = false;
-        private static bool _checkAttribValue = false;
+        private static bool _checkAttribName = true;
+        private static bool _checkAttribValue = true;
         private static KmlItem _selectedItem;
 
         private DispatcherTimer SearchTimer { get; set; }
@@ -65,9 +65,16 @@ namespace KML
                 Search();
                 foreach (TreeViewItem item in Tree.Items)
                 {
-                    if (item is GuiTreeNode && (item as GuiTreeNode).DataNode == _selectedItem)
+                    if (item.DataContext == _selectedItem)
                     {
                         item.IsSelected = true;
+                    }
+                    foreach (TreeViewItem sub in item.Items)
+                    {
+                        if (sub.DataContext == _selectedItem)
+                        {
+                            sub.IsSelected = true;
+                        }
                     }
                 }
             }
@@ -149,10 +156,9 @@ namespace KML
                 _checkNodeText = CheckNodeText.IsChecked == true;
                 _checkAttribName = CheckAttribName.IsChecked == true;
                 _checkAttribValue = CheckAttribValue.IsChecked == true;
-                if (Tree.SelectedItem is GuiTreeNode)
+                if (Tree.SelectedItem is TreeViewItem && (Tree.SelectedItem as TreeViewItem).DataContext is KmlItem)
                 {
-                    // TODO DlgSearch.Show(): Return selected item not node
-                    _selectedItem = (Tree.SelectedItem as GuiTreeNode).DataNode;
+                    _selectedItem = (Tree.SelectedItem as TreeViewItem).DataContext as KmlItem;
                     selectedItem = _selectedItem;
                 }
             }
@@ -177,7 +183,7 @@ namespace KML
                     Tree.Items.Add("... " + (list.Count - 100) + " other items ...");
                     return;
                 }
-                if (item is KmlNode)
+                if (item is KmlNode || item is KmlAttrib)
                 {
                     if (item.Parent != null && item.Parent != parentNode)
                     {
@@ -187,7 +193,17 @@ namespace KML
                         Tree.Items.Add(parentItem);
                         parentItem.IsExpanded = true;
                     }
-                    GuiTreeNode node = new GuiTreeNode((KmlNode)item, true, true, true, false, true, false);
+                    TreeViewItem node;
+                    if (item is KmlNode)
+                    {
+                        node = new GuiTreeNode((KmlNode)item, true, true, true, false, true, false);
+                    }
+                    else
+                    {
+                        node = new TreeViewItem();
+                        node.DataContext = item;
+                        node.Header = item.ToString();
+                    }
                     node.Margin = new Thickness(-16, 0, 0, 0);
                     if (parentNode == null)
                     {
@@ -246,7 +262,7 @@ namespace KML
 
         private void Tree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            ButtonOk.IsEnabled = Tree.SelectedItem is GuiTreeNode;
+            ButtonOk.IsEnabled = Tree.SelectedItem is TreeViewItem &&  (Tree.SelectedItem as TreeViewItem).DataContext is KmlItem;
         }
 
         private void Check_Click(object sender, RoutedEventArgs e)

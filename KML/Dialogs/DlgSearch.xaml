@@ -14,8 +14,8 @@
                 <Label>Search for:</Label>
                 <CheckBox x:Name="CheckNodeTag" Content="node tags" IsChecked="True" Margin="6, 0, 0, 0" Click="Check_Click"/>
                 <CheckBox x:Name="CheckNodeText" Content="node names (display text)" IsChecked="True" Margin="6, 0, 0, 0" Click="Check_Click"/>
-                <CheckBox x:Name="CheckAttribName" Content="attribute names" IsChecked="True" Margin="6, 0, 0, 0" IsEnabled="False" Click="Check_Click"/>
-                <CheckBox x:Name="CheckAttribValue" Content="attribute values" IsChecked="True" Margin="6, 0, 0, 0" IsEnabled="False" Click="Check_Click"/>
+                <CheckBox x:Name="CheckAttribName" Content="attribute names" IsChecked="True" Margin="6, 0, 0, 0" Click="Check_Click"/>
+                <CheckBox x:Name="CheckAttribValue" Content="attribute values" IsChecked="True" Margin="6, 0, 0, 0" Click="Check_Click"/>
                 <TextBox x:Name="TextBoxInput" Margin="0, 3, 0, 0" Padding="2" TextChanged="TextBoxInput_TextChanged" >Input text here</TextBox>
             </StackPanel>
             <TreeView x:Name="Tree" Background="LightGray" VerticalContentAlignment="Bottom" Height="160" SelectedItemChanged="Tree_SelectedItemChanged" MouseDoubleClick="Tree_MouseDoubleClick"/>
