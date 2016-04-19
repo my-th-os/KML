@@ -141,20 +141,28 @@ namespace KML
             KmlItem selectedItem;
             if (DlgSearch.Show(ButtonSearch, out selectedItem))
             {
-                // TODO MainWIndow.ButtonSearch_Click(): Selecting the right IGuiManager doesn't always work
-                // like KmlVessel that is not under roster, selecting kerbals when in vessel tab, etc.
+                bool isVessel = selectedItem is KmlVessel && (selectedItem as KmlVessel).Origin == KmlVessel.VesselOrigin.Flightstate;
+                bool isKerbal = selectedItem is KmlKerbal && (selectedItem as KmlKerbal).Origin == KmlKerbal.KerbalOrigin.Roster;
                 IGuiManager manager;
-                if (selectedItem is KmlVessel && Tabs.SelectedItem == VesselsTab)
+                if (isVessel && Tabs.SelectedItem == VesselsTab)
                 {
                     manager = TabsManager.VesselsManager;
                 }
-                else if (selectedItem is KmlKerbal && Tabs.SelectedItem == KerbalsTab)
+                else if (isKerbal && Tabs.SelectedItem == KerbalsTab)
                 {
                     manager = TabsManager.KerbalsManager;
                 }
                 else
                 {
                     manager = TabsManager;
+                    // Select once opens in tree view (cases with opening vessels while in vessel view handled above).
+                    // We want now: Open vessels in vessel view when not in tree view (e.g. in kerbal view).
+                    // Same for kerbals.
+                    // We can call Select twice, so it will switch views.
+                    if (isVessel || isKerbal)
+                    {
+                        manager.Select(selectedItem);
+                    }
                 }
                 manager.Select(selectedItem);
             }

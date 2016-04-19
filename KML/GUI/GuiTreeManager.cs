@@ -20,6 +20,9 @@ namespace KML
         private TreeView Tree { get; set; }
         private ListView TreeDetails { get; set; }
 
+        private static string _oldSearchText = "";
+        private static List<KmlItem> _oldSearchList = new List<KmlItem>();
+
         /// <summary>
         /// Creates a GuiTreeManager to link and manage the given TreeView and ListView.
         /// </summary>
@@ -112,6 +115,9 @@ namespace KML
                     item.IsExpanded = true;
                 }
             }
+
+            _oldSearchList.Clear();
+            _oldSearchText = "";
         }
 
         /// <summary>
@@ -149,6 +155,10 @@ namespace KML
                 foreach (KmlNode node in KmlRoots)
                 {
                     SearchAddItem(result, node, text, checkNodeTag, checkNodeText, checkAttribName, checkAttribValue);
+                }
+                // Keep found nodes together, go recursive afterwards, so wee need two loops
+                foreach (KmlNode node in KmlRoots)
+                {
                     SearchRecursive(result, node, text, checkNodeTag, checkNodeText, checkAttribName, checkAttribValue);
                 }
                 _oldSearchList = result;
@@ -169,6 +179,10 @@ namespace KML
             foreach (KmlNode child in node.Children)
             {
                 SearchAddItem(result, child, text, checkNodeTag, checkNodeText, checkAttribName, checkAttribValue);
+            }
+            // Keep found nodes together, go recursive afterwards, so wee need two loops
+            foreach (KmlNode child in node.Children)
+            {
                 SearchRecursive(result, child, text, checkNodeTag, checkNodeText, checkAttribName, checkAttribValue);
             }
         }
@@ -204,9 +218,6 @@ namespace KML
                 _oldSearchList.Add(item);
             }
         }
-
-        private static string _oldSearchText = "";
-        private static List<KmlItem> _oldSearchList = new List<KmlItem>();
 
         /// <summary>
         /// Focus the standard control. Also select first item in the tree, 

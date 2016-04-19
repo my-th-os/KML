@@ -259,38 +259,32 @@ namespace KML
         {
             if(item is KmlVessel)
             {
-                if (Tabs.SelectedItem == TreeTab)
+                KmlVessel vessel = (KmlVessel)item;
+                if (Tabs.SelectedItem == TreeTab && vessel.Origin == KmlVessel.VesselOrigin.Flightstate)
                 {
                     Tabs.SelectedItem = VesselsTab;
-                    VesselsManager.Select(item);
+                    VesselsManager.Select(vessel);
                 }
                 else
                 {
                     Tabs.SelectedItem = TreeTab;
-                    TreeManager.Select(item);
+                    TreeManager.Select(vessel);
                 }
             }
             else if(item is KmlKerbal)
             {
-                if (Tabs.SelectedItem == TreeTab)
+                KmlKerbal kerbal = (KmlKerbal)item;
+                if (Tabs.SelectedItem == TreeTab && kerbal.Origin == KmlKerbal.KerbalOrigin.Roster)
                 {
                     Tabs.SelectedItem = KerbalsTab;
-                    KerbalsManager.Select(item);
+                    KerbalsManager.Select(kerbal);
                 }
                 else
                 {
                     Tabs.SelectedItem = TreeTab;
-                    TreeManager.Select(item);
+                    TreeManager.Select(kerbal);
                 }
             }
-            //else if (item is KmlNode)
-            //{
-            //    KmlNode node = (KmlNode)item;
-            //    if (node != null)
-            //    {
-            //        Select(node.Parent);
-            //    }
-            //}
             else
             {
                 Tabs.SelectedItem = TreeTab;
