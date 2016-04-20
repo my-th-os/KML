@@ -67,7 +67,9 @@ namespace KML
             prog.Margin = new Thickness(-32, 36, 3, 0);
             prog.ToolTip = "dumb";
             pan.Children.Add(prog);
-            pan.Children.Add(GenerateText(DataKerbal));
+            TextBlock text = GenerateText(DataKerbal);
+            pan.Children.Add(text);
+            pan.Children.Add(GenerateStateText(DataKerbal, text));
             Content = pan;
         }
 
@@ -155,6 +157,16 @@ namespace KML
             text.Inlines.Add(new Bold(new Run(kerbal.Name)));
             text.Inlines.Add(new Run("\n" + kerbal.Type + "\n" + kerbal.Trait));
             text.Margin = new Thickness(3, 0, 0, 0);
+            return text;
+        }
+
+        private TextBlock GenerateStateText(KmlKerbal kerbal, TextBlock previous)
+        {
+            previous.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
+            previous.Arrange(new Rect(previous.DesiredSize));
+            string s = "\n" + kerbal.State;
+            TextBlock text = new TextBlock(new Run(s));
+            text.Margin = new Thickness(-previous.ActualWidth + 100, 0, 0, 0);
             return text;
         }
 

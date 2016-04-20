@@ -135,10 +135,12 @@ namespace KML
             {
 	            // Get the screen position of the button
                 GeneralTransform transform = elementToShowBelow.TransformToAncestor(dlg.Owner);
+                // Matrix transform = PresentationSource.FromVisual(dlg.Owner).CompositionTarget.TransformFromDevice;
                 Point rootPoint = transform.Transform(new Point(-9, elementToShowBelow.ActualHeight + 3));
-	
-	            // Now get the point of the button in the screen
-                Point point = Application.Current.MainWindow.PointToScreen(rootPoint);
+
+                // Now get the point of the button in the screen
+                // TODO DlgSearch.Show(): PointToScreen returns wrong points on my notebook, but works on my pc
+                Point point = dlg.Owner.PointToScreen(rootPoint);
                 dlg.Left = point.X;
                 dlg.Top = point.Y;
             }
@@ -180,6 +182,7 @@ namespace KML
             {
                 if (Tree.Items.Count >= 100)
                 {
+                    // TODO DlgSearch.Search(): Make dummy item expandable and then load further items
                     Tree.Items.Add("... " + (list.Count - 100) + " other items ...");
                     return;
                 }

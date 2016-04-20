@@ -46,6 +46,11 @@ namespace KML
         public string Trait { get; private set; }
 
         /// <summary>
+        /// Get the "State" attribute as a property (Available, Assigned, Missing).
+        /// </summary>
+        public string State { get; private set; }
+
+        /// <summary>
         /// Get the "Brave" attribute as a property (should be in range 0.0 to 1.0).
         /// </summary>
         public double Brave { get; private set; }
@@ -54,6 +59,16 @@ namespace KML
         /// Get the "Dumb" attribute as a property (should be in range 0.0 to 1.0)
         /// </summary>
         public double Dumb { get; private set; }
+
+        /// <summary>
+        /// Get the KmlVessel this kerbal is assigned to
+        /// </summary>
+        public KmlVessel AssignedVessel { get; private set; }
+
+        /// <summary>
+        /// Get the KmlPart this kerbal is assigned to
+        /// </summary>
+        public KmlPart AssignedPart { get; private set; }
 
         /// <summary>
         /// Creates a KmlKerbal as a copy of a given KmlNode.
@@ -68,8 +83,11 @@ namespace KML
 
             Type = "";
             Trait = "";
+            State = "";
             Brave = 0.0;
             Dumb = 0.0;
+            AssignedVessel = null;
+            AssignedPart = null;
 
             // TODO KmlKerbal.KmlKerbal(): Make kerbals deletable
             CanBeDeleted = false;
@@ -104,6 +122,14 @@ namespace KML
 
                     // Get notified when Trait changes
                     attrib.AttribValueChanged += Trait_Changed;
+                    attrib.CanBeDeleted = false;
+                }
+                else if (attrib.Name.ToLower() == "state")
+                {
+                    State = attrib.Value;
+
+                    // Get notified when State changes
+                    attrib.AttribValueChanged += State_Changed;
                     attrib.CanBeDeleted = false;
                 }
                 else if (attrib.Name.ToLower() == "brave")
@@ -175,6 +201,14 @@ namespace KML
                 }
                 s += Trait;
             }
+            if (State.Length > 0)
+            {
+                if (s.Length > 0)
+                {
+                    s += ", ";
+                }
+                s += State;
+            }
             if (s.Length > 0)
             {
                 s = " (" + s + ")"; ;
@@ -200,15 +234,21 @@ namespace KML
             base.IdentifyParent();
         }
 
+        private void Type_Changed(object sender, System.Windows.RoutedEventArgs e)
+        {
+            Type = GetAttribWhereValueChanged(sender).Value;
+            InvokeToStringChanged();
+        }
+
         private void Trait_Changed(object sender, System.Windows.RoutedEventArgs e)
         {
             Trait = GetAttribWhereValueChanged(sender).Value;
             InvokeToStringChanged();
         }
 
-        private void Type_Changed(object sender, System.Windows.RoutedEventArgs e)
+        private void State_Changed(object sender, System.Windows.RoutedEventArgs e)
         {
-            Type = GetAttribWhereValueChanged(sender).Value;
+            State = GetAttribWhereValueChanged(sender).Value;
             InvokeToStringChanged();
         }
 
