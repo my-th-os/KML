@@ -179,7 +179,7 @@ namespace KML
 
         /// <summary>
         /// Generates a nice informative string to be used in display for this kerbal.
-        /// It will contain the "Tag", "Name", "Type" and "Trait".
+        /// It will contain the "Tag", "Name", "Type", "Trait" and "State".
         /// </summary>
         /// <returns>A string to display this node</returns>
         public override string ToString()
@@ -232,6 +232,64 @@ namespace KML
                 Origin = KerbalOrigin.Other;
             }
             base.IdentifyParent();
+        }
+
+        /// <summary>
+        /// After all items are loaded, each items Finalize is called.
+        /// The roots list will contain all loaded items in KML tree structure.
+        /// Each item can then check for other items to get further propertied.
+        /// </summary>
+        /// <param name="roots">The loaded root items list</param>
+        protected override void Finalize(List<KmlItem> roots)
+        {
+            foreach (KmlItem gameItem in roots)
+            {
+                if (gameItem is KmlNode)
+                {
+                    KmlNode gameNode = (KmlNode)gameItem;
+                    if (gameNode.Tag.ToLower() == "game")
+                    {
+                        foreach (KmlNode flightStateNode in gameNode.Children)
+                        {
+                            if (flightStateNode.Tag.ToLower() == "flightstate")
+                            {
+                                foreach (KmlNode vesselNode in flightStateNode.Children)
+                                {
+                                    if (vesselNode is KmlVessel)
+                                    {
+                                        KmlVessel vessel = (KmlVessel)vesselNode;
+                                        foreach (KmlPart part in vessel.Parts)
+                                        {
+                                            foreach (KmlAttrib attrib in part.Attribs)
+                                            {
+                                                if (attrib.Name.ToLower() == "crew" && attrib.Value.ToLower() == Name.ToLower())
+                                                {
+                                                    if (AssignedVessel != null && AssignedPart != null)
+                                                    {
+                                                        Syntax.Warning(this, "Kerbal is listed in multiple vessels/parts crew. Old vessel: " + AssignedVessel + ", Old part: " + AssignedPart + 
+                                                            ", New vessel: " + vessel + ", New part: " + part);
+                                                    }
+                                                    if (State.ToLower() != "assigned")
+                                                    {
+                                                        Syntax.Warning(this, "Kerbal is listed in a vessels crew list, but state is not 'Assigned'. Vessel: " + vessel + ", Part: " + part);
+                                                    }
+                                                    AssignedVessel = vessel;
+                                                    AssignedPart = part;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (AssignedVessel == null && AssignedPart == null && State.ToLower() == "assigned" && Type.ToLower() != "unowned")
+            {
+                Syntax.Warning(this, "Kerbal state is 'Assigned' but not listed in any vessels crew list");
+            }
+            base.Finalize(roots);
         }
 
         private void Type_Changed(object sender, System.Windows.RoutedEventArgs e)

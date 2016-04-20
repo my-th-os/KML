@@ -291,6 +291,33 @@ namespace KML
         }
 
         /// <summary>
+        /// After all items are loaded, each items Finalize is called.
+        /// The roots list will contain all loaded items in KML tree structure.
+        /// Each item can then check for other items to get further propertied.
+        /// </summary>
+        /// <param name="roots">The loaded root items list</param>
+        protected virtual void Finalize(List<KmlItem> roots)
+        {
+        }
+
+        private static void CallFinalize(List<KmlItem> roots)
+        {
+            CallFinalize(roots, roots);
+        }
+
+        private static void CallFinalize(List<KmlItem> roots, List<KmlItem> subItems)
+        {
+            foreach (KmlItem item in subItems)
+            {
+                item.Finalize(roots);
+                if (item is KmlNode)
+                {
+                    CallFinalize(roots, (item as KmlNode).AllItems);
+                }
+            }
+        }
+
+        /// <summary>
         /// Parse a KSP persistence file and return a list of the root nodes.
         /// In general there may be more than one item not containing other items.
         /// With correct KSP persistence data this doesn't happen and the list will
@@ -309,6 +336,7 @@ namespace KML
                 System.IO.StreamReader file = new System.IO.StreamReader(filename);
                 list.AddRange(ParseFile(file));
                 file.Close();
+                CallFinalize(list);
             }
             catch (Exception e)
             {

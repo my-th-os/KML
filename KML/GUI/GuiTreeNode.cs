@@ -456,6 +456,7 @@ namespace KML
             else if (DataNode is KmlKerbal)
             {
                 nodeName = "kerbal";
+                KmlKerbal node = (KmlKerbal)DataNode;
 
                 MenuItem m = new MenuItem();
                 m.DataContext = DataNode;
@@ -465,6 +466,33 @@ namespace KML
                 m.Header = "Switch _view";
                 m.Click += SwitchView_Click;
                 menu.Items.Add(m);
+
+                if ((node.AssignedVessel != null || node.AssignedPart != null) && menu.Items.Count > defaultMenuCount)
+                {
+                    menu.Items.Add(new Separator());
+                }
+                if (node.AssignedVessel != null)
+                {
+                    m = new MenuItem();
+                    m.DataContext = DataNode;
+                    img = GenerateImage(node.AssignedVessel);
+                    img.Margin = new Thickness(0);
+                    m.Icon = img;
+                    m.Header = "Select assigned v_essel: " + node.AssignedVessel.Name;
+                    m.Click += SelectAssignedVessel_Click;
+                    menu.Items.Add(m);
+                }
+                if (node.AssignedPart != null)
+                {
+                    m = new MenuItem();
+                    m.DataContext = DataNode;
+                    img = GenerateImage(node.AssignedPart);
+                    img.Margin = new Thickness(0);
+                    m.Icon = img;
+                    m.Header = "Select assigned _part: " + node.AssignedPart.Name;
+                    m.Click += SelectAssignedPart_Click;
+                    menu.Items.Add(m);
+                }
             }
 
             // Adding / deleting
@@ -689,6 +717,24 @@ namespace KML
             // Possibly need to update the details ListView, so force Selected event to be fired
             IsSelected = false;
             IsSelected = true;
+        }
+
+        private void SelectAssignedVessel_Click(object sender, RoutedEventArgs e)
+        {
+            KmlKerbal kerbal = (sender as MenuItem).DataContext as KmlKerbal;
+            if (kerbal.AssignedVessel != null)
+            {
+                GuiTabsManager.GetCurrent().Select(kerbal.AssignedVessel);
+            }
+        }
+
+        private void SelectAssignedPart_Click(object sender, RoutedEventArgs e)
+        {
+            KmlKerbal kerbal = (sender as MenuItem).DataContext as KmlKerbal;
+            if (kerbal.AssignedPart != null)
+            {
+                GuiTabsManager.GetCurrent().Select(kerbal.AssignedPart);
+            }
         }
 
         private void NodeAddAttrib_Click(object sender, RoutedEventArgs e)

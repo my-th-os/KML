@@ -165,6 +165,10 @@ namespace KML
             previous.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
             previous.Arrange(new Rect(previous.DesiredSize));
             string s = "\n" + kerbal.State;
+            if (kerbal.AssignedVessel != null)
+            {
+                s += "\n" + kerbal.AssignedVessel.Name;
+            }
             TextBlock text = new TextBlock(new Run(s));
             text.Margin = new Thickness(-previous.ActualWidth + 100, 0, 0, 0);
             return text;

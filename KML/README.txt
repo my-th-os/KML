@@ -8,6 +8,8 @@ The current version is not feature-complete but so far functional and already he
 Any feedback, more testing, bug reports and suggestions are very welcome.
 
 New Features
+• show kerbal state and assigned vessel
+• select assigned vessel / part from kerbal
 • search for nodes and attributes
 • insert nodes and attributes
 • rebuild part structure when repaired
