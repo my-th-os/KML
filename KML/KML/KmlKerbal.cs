@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace KML
 {
@@ -70,6 +71,8 @@ namespace KML
         /// </summary>
         public KmlPart AssignedPart { get; private set; }
 
+        private KmlAttrib AssignedCrewAttrib { get; set; }
+
         /// <summary>
         /// Creates a KmlKerbal as a copy of a given KmlNode.
         /// </summary>
@@ -88,6 +91,7 @@ namespace KML
             Dumb = 0.0;
             AssignedVessel = null;
             AssignedPart = null;
+            AssignedCrewAttrib = null;
 
             // TODO KmlKerbal.KmlKerbal(): Make kerbals deletable
             CanBeDeleted = false;
@@ -108,7 +112,14 @@ namespace KML
             if (newItem is KmlAttrib)
             {
                 KmlAttrib attrib = (KmlAttrib)newItem;
-                if (attrib.Name.ToLower() == "type")
+                if (attrib.Name.ToLower() == "name")
+                {
+                    // Name property is managed by KmlNode,
+                    // but we need another method to be called on name change event
+                    // to rename the crew attrib in assigned vessel part also
+                    attrib.AttribValueChanged += CrewName_Changed;
+                }
+                else if (attrib.Name.ToLower() == "type")
                 {
                     Type = attrib.Value;
 
@@ -174,6 +185,33 @@ namespace KML
             else
             {
                 return defaultValue;
+            }
+        }
+
+        /// <summary>
+        /// Send the kerbal home to astronaut complex.
+        /// Kerbal will be removed from assigned vessel/part
+        /// and state will be set to 'Available'.
+        /// </summary>
+        public void SendHome()
+        {
+            if (AssignedCrewAttrib != null)
+            {
+                AssignedCrewAttrib.CanBeDeleted = true;
+                AssignedCrewAttrib.Delete();
+                AssignedCrewAttrib = null;
+                AssignedPart = null;
+                AssignedVessel = null;
+                foreach (KmlAttrib attrib in Attribs)
+                {
+                    if (attrib.Name.ToLower() == "state")
+                    {
+                        attrib.Value = "Available";
+                        // This will invoke ToStringChanged so State property 
+                        // and all display items will be updated.
+                        // That's why this is the last action in this method
+                    }
+                }
             }
         }
 
@@ -264,18 +302,23 @@ namespace KML
                                             {
                                                 if (attrib.Name.ToLower() == "crew" && attrib.Value.ToLower() == Name.ToLower())
                                                 {
-                                                    if (AssignedVessel != null && AssignedPart != null)
+                                                    if (AssignedCrewAttrib == null)
                                                     {
-                                                        Syntax.Warning(this, "Kerbal is listed in multiple vessels/parts crew. Old vessel: " + AssignedVessel + ", Old part: " + AssignedPart + 
-                                                            ", New vessel: " + vessel + ", New part: " + part);
+                                                        AssignedVessel = vessel;
+                                                        AssignedPart = part;
+                                                        AssignedCrewAttrib = attrib;
+                                                        attrib.CanBeDeleted = false;
+                                                    }
+                                                    else
+                                                    {
+                                                        Syntax.Warning(attrib, "Kerbal is listed in multiple vessel part's crew. Kerbal: " + Name + 
+                                                            "Assigned vessel: " + AssignedVessel.Name + ", Assigned part: " + AssignedPart +
+                                                            ", Unused Vessel: " + vessel.Name + ", Unused part: " + part);
                                                     }
                                                     if (State.ToLower() != "assigned")
                                                     {
-                                                        Syntax.Warning(this, "Kerbal is listed in a vessels crew list, but state is not 'Assigned'. Vessel: " + vessel + ", Part: " + part);
+                                                        Syntax.Warning(this, "Kerbal is listed in a vessels crew list, but state is not 'Assigned'. Vessel: " + vessel.Name + ", Part: " + part);
                                                     }
-                                                    AssignedVessel = vessel;
-                                                    AssignedPart = part;
-                                                    attrib.CanBeDeleted = false;
                                                 }
                                             }
                                         }
@@ -286,11 +329,21 @@ namespace KML
                     }
                 }
             }
-            if (AssignedVessel == null && AssignedPart == null && State.ToLower() == "assigned" && Type.ToLower() != "unowned")
+            if (AssignedCrewAttrib == null && State.ToLower() == "assigned" && Type.ToLower() != "unowned")
             {
                 Syntax.Warning(this, "Kerbal state is 'Assigned' but not listed in any vessels crew list");
             }
             base.Finalize(roots);
+        }
+
+        private void CrewName_Changed(object sender, RoutedEventArgs e)
+        {
+            // Name propert has not changed yet (or maybe), to be sure get the changed attrib
+            KmlAttrib nameAttrib = GetAttribWhereValueChanged(sender);
+            if (AssignedCrewAttrib != null)
+            {
+                AssignedCrewAttrib.Value = nameAttrib.Value;
+            }
         }
 
         private void Type_Changed(object sender, System.Windows.RoutedEventArgs e)

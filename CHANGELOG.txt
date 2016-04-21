@@ -1,6 +1,8 @@
 Version 0.7 - in progress
 - show kerbal state and assigned vessel
 - select assigned vessel / part from kerbal
+- send kerbal home to astronaut complex
+- support renaming kerbals when assigned
 - search for nodes
 - search for attributes
 - insert nodes

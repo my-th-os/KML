@@ -46,6 +46,9 @@ namespace KML
 
         private bool TemplateWithImage { get; set; }
         private bool TemplateWithText { get; set; }
+        private bool TemplateWithMenu { get; set; }
+        private bool TemplateWithAddMenu { get; set; }
+        private bool TemplateWithDeleteMenu { get; set; }
 
         /// <summary>
         /// Creates a GuiTreeNode containing the given dataNode.
@@ -62,6 +65,9 @@ namespace KML
             DataNode = dataNode;
             TemplateWithImage = withImage;
             TemplateWithText = withText;
+            TemplateWithMenu = withMenu;
+            TemplateWithAddMenu = withAddMenu;
+            TemplateWithDeleteMenu = withDeleteMenu;
 
             AssignTemplate(withImage, withText);
             if (withChildren)
@@ -418,7 +424,7 @@ namespace KML
                 img = GenerateImage(DataNode);
                 img.Margin = new Thickness(0);
                 m.Icon = img;
-                m.Header = "Switch _view";
+                m.Header = "S_witch view";
                 m.Click += SwitchView_Click;
                 menu.Items.Add(m);
                 
@@ -463,34 +469,46 @@ namespace KML
                 img = GenerateImage(DataNode);
                 img.Margin = new Thickness(0);
                 m.Icon = img;
-                m.Header = "Switch _view";
+                m.Header = "S_witch view";
                 m.Click += SwitchView_Click;
                 menu.Items.Add(m);
 
-                if ((node.AssignedVessel != null || node.AssignedPart != null) && menu.Items.Count > defaultMenuCount)
+                if (node.AssignedVessel != null || node.AssignedPart != null)
                 {
+                    if (menu.Items.Count > defaultMenuCount)
+                    {
+                        menu.Items.Add(new Separator());
+                    }
+                    if (node.AssignedVessel != null)
+                    {
+                        m = new MenuItem();
+                        m.DataContext = DataNode;
+                        img = GenerateImage(node.AssignedVessel);
+                        img.Margin = new Thickness(0);
+                        m.Icon = img;
+                        m.Header = "Select assigned _vessel: " + node.AssignedVessel.Name;
+                        m.Click += KerbalSelectAssignedVessel_Click;
+                        menu.Items.Add(m);
+                    }
+                    if (node.AssignedPart != null)
+                    {
+                        m = new MenuItem();
+                        m.DataContext = DataNode;
+                        img = GenerateImage(node.AssignedPart);
+                        img.Margin = new Thickness(0);
+                        m.Icon = img;
+                        m.Header = "Select assigned _part: " + node.AssignedPart.Name;
+                        m.Click += KerbalSelectAssignedPart_Click;
+                        menu.Items.Add(m);
+                    }
                     menu.Items.Add(new Separator());
-                }
-                if (node.AssignedVessel != null)
-                {
+
                     m = new MenuItem();
                     m.DataContext = DataNode;
-                    img = GenerateImage(node.AssignedVessel);
-                    img.Margin = new Thickness(0);
+                    img = Icons.CreateImage(Icons.VesselSpaceObject);
                     m.Icon = img;
-                    m.Header = "Select assigned v_essel: " + node.AssignedVessel.Name;
-                    m.Click += SelectAssignedVessel_Click;
-                    menu.Items.Add(m);
-                }
-                if (node.AssignedPart != null)
-                {
-                    m = new MenuItem();
-                    m.DataContext = DataNode;
-                    img = GenerateImage(node.AssignedPart);
-                    img.Margin = new Thickness(0);
-                    m.Icon = img;
-                    m.Header = "Select assigned _part: " + node.AssignedPart.Name;
-                    m.Click += SelectAssignedPart_Click;
+                    m.Header = "Send _home to astronaut complex";
+                    m.Click += KerbalSendHome_Click;
                     menu.Items.Add(m);
                 }
             }
@@ -719,7 +737,20 @@ namespace KML
             IsSelected = true;
         }
 
-        private void SelectAssignedVessel_Click(object sender, RoutedEventArgs e)
+        private void KerbalSendHome_Click(object sender, RoutedEventArgs e)
+        {
+            KmlKerbal kerbal = (sender as MenuItem).DataContext as KmlKerbal;
+            if (DlgConfirmation.Show("Do you really wand to send " + kerbal.Name + " home to astronaut complex?\n\n"+
+                "- The kerbal will be removed from assigned crew part\n"+
+                "- State will be set to 'Available'\n"+
+                "- Experience or contract progress may get lost", 
+                "Send home kerbal", (sender as MenuItem).Icon as Image))
+            {
+                kerbal.SendHome();
+            }
+        }
+
+        private void KerbalSelectAssignedVessel_Click(object sender, RoutedEventArgs e)
         {
             KmlKerbal kerbal = (sender as MenuItem).DataContext as KmlKerbal;
             if (kerbal.AssignedVessel != null)
@@ -728,7 +759,7 @@ namespace KML
             }
         }
 
-        private void SelectAssignedPart_Click(object sender, RoutedEventArgs e)
+        private void KerbalSelectAssignedPart_Click(object sender, RoutedEventArgs e)
         {
             KmlKerbal kerbal = (sender as MenuItem).DataContext as KmlKerbal;
             if (kerbal.AssignedPart != null)
@@ -795,6 +826,7 @@ namespace KML
         private void DataNode_ToStringChanged(object sender, RoutedEventArgs e)
         {
             AssignTemplate(TemplateWithImage, TemplateWithText);
+            BuildContextMenu(TemplateWithAddMenu, TemplateWithDeleteMenu);
         }
     }
 }
