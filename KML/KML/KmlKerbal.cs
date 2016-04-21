@@ -275,6 +275,7 @@ namespace KML
                                                     }
                                                     AssignedVessel = vessel;
                                                     AssignedPart = part;
+                                                    attrib.CanBeDeleted = false;
                                                 }
                                             }
                                         }
