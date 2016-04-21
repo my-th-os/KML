@@ -8,9 +8,10 @@ The current version is not feature-complete but so far functional and already he
 Any feedback, more testing, bug reports and suggestions are very welcome.
 
 New Features
+• send vessel to low kerbin orbit
+• send kerbal home to astronaut complex
 • show kerbal state and assigned vessel
 • select assigned vessel / part from kerbal
-• send kerbal home to astronaut complex
 • support renaming kerbals when assigned
 • search for nodes and attributes
 • insert nodes and attributes

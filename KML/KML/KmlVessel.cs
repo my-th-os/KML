@@ -184,6 +184,53 @@ namespace KML
             base.Clear();
         }
 
+
+        /// <summary>
+        /// Send vessel to low kerbin orbit.
+        /// Situation and orbit data will be changed.
+        /// <param name="altitude">The altitude of the orbit in km</param>
+        /// </summary>
+        public void SendToKerbinOrbit(double altitude)
+        {
+            double radius = 600000.0 + altitude;
+            foreach (KmlNode node in Children)
+            {
+                if (node.Tag.ToLower() == "orbit")
+                {
+                    foreach (KmlAttrib attrib in node.Attribs)
+                    {
+                        if (attrib.Name.ToLower() == "sma")
+                        {
+                            attrib.Value = radius.ToString("F", System.Globalization.CultureInfo.InvariantCulture);
+                        }
+                        else if (attrib.Name.ToLower() == "ecc")
+                        {
+                            attrib.Value = "0.0";
+                        }
+                        else if (attrib.Name.ToLower() == "inc")
+                        {
+                            attrib.Value = "0.0";
+                        }
+                        else if (attrib.Name.ToLower() == "ref")
+                        {
+                            attrib.Value = "1";
+                        }
+                    }
+                }
+            }
+            foreach (KmlAttrib attrib in Attribs)
+            {
+                if (attrib.Name.ToLower() == "sit")
+                {
+                    attrib.Value = "ORBITING";
+                }
+                else if (attrib.Name.ToLower() == "landed")
+                {
+                    attrib.Value = "False";
+                }
+            }
+        }
+
         /// <summary>
         /// Refill all resources in all parts of this vessel.
         /// </summary>

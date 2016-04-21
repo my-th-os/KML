@@ -427,7 +427,15 @@ namespace KML
                 m.Header = "S_witch view";
                 m.Click += SwitchView_Click;
                 menu.Items.Add(m);
-                
+
+                menu.Items.Add(new Separator());
+                m = new MenuItem();
+                m.DataContext = DataNode;
+                m.Icon = Icons.CreateImage(Icons.VesselSpaceObject);
+                m.Header = "Send to _low kerbin orbit";
+                m.Click += VesselToLKO_Click;
+                menu.Items.Add(m);
+
                 if (node.HasResources)
                 {
                     menu.Items.Add(new Separator());
@@ -673,6 +681,19 @@ namespace KML
             }
         }
 
+        private void VesselToLKO_Click(object sender, RoutedEventArgs e)
+        {
+            KmlVessel vessel = (sender as MenuItem).DataContext as KmlVessel;
+            if (DlgConfirmation.Show("Do you really want to send " + vessel.Name + " to low kerbin orbit?\n\n" +
+                "- The vessel situation and orbit data will be changed\n" +
+                "- Orbit height will be 80km\n" +
+                "- Do not use when your kerbin is scaled bigger (RSS)",
+                "Send vessel to LKO", (sender as MenuItem).Icon as Image))
+            {
+                vessel.SendToKerbinOrbit(80000.0);
+            }
+        }
+
         private void VesselRefill_Click(object sender, RoutedEventArgs e)
         {
             if ((sender as MenuItem).Tag != null)
@@ -740,7 +761,7 @@ namespace KML
         private void KerbalSendHome_Click(object sender, RoutedEventArgs e)
         {
             KmlKerbal kerbal = (sender as MenuItem).DataContext as KmlKerbal;
-            if (DlgConfirmation.Show("Do you really wand to send " + kerbal.Name + " home to astronaut complex?\n\n"+
+            if (DlgConfirmation.Show("Do you really want to send " + kerbal.Name + " home to astronaut complex?\n\n"+
                 "- The kerbal will be removed from assigned crew part\n"+
                 "- State will be set to 'Available'\n"+
                 "- Experience or contract progress may get lost", 
