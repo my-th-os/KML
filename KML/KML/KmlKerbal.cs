@@ -280,48 +280,37 @@ namespace KML
         /// <param name="roots">The loaded root items list</param>
         protected override void Finalize(List<KmlItem> roots)
         {
-            foreach (KmlItem gameItem in roots)
+            string[] tags = { "game", "flightstate" };
+            KmlNode flightStateNode = GetNodeFromDeep(roots, tags);
+            if (flightStateNode != null)
             {
-                if (gameItem is KmlNode)
+                foreach (KmlNode vesselNode in flightStateNode.Children)
                 {
-                    KmlNode gameNode = (KmlNode)gameItem;
-                    if (gameNode.Tag.ToLower() == "game")
+                    if (vesselNode is KmlVessel)
                     {
-                        foreach (KmlNode flightStateNode in gameNode.Children)
+                        KmlVessel vessel = (KmlVessel)vesselNode;
+                        foreach (KmlPart part in vessel.Parts)
                         {
-                            if (flightStateNode.Tag.ToLower() == "flightstate")
+                            foreach (KmlAttrib attrib in part.Attribs)
                             {
-                                foreach (KmlNode vesselNode in flightStateNode.Children)
+                                if (attrib.Name.ToLower() == "crew" && attrib.Value.ToLower() == Name.ToLower())
                                 {
-                                    if (vesselNode is KmlVessel)
+                                    if (AssignedCrewAttrib == null)
                                     {
-                                        KmlVessel vessel = (KmlVessel)vesselNode;
-                                        foreach (KmlPart part in vessel.Parts)
-                                        {
-                                            foreach (KmlAttrib attrib in part.Attribs)
-                                            {
-                                                if (attrib.Name.ToLower() == "crew" && attrib.Value.ToLower() == Name.ToLower())
-                                                {
-                                                    if (AssignedCrewAttrib == null)
-                                                    {
-                                                        AssignedVessel = vessel;
-                                                        AssignedPart = part;
-                                                        AssignedCrewAttrib = attrib;
-                                                        attrib.CanBeDeleted = false;
-                                                    }
-                                                    else
-                                                    {
-                                                        Syntax.Warning(attrib, "Kerbal is listed in multiple vessel part's crew. Kerbal: " + Name + 
-                                                            "Assigned vessel: " + AssignedVessel.Name + ", Assigned part: " + AssignedPart +
-                                                            ", Unused Vessel: " + vessel.Name + ", Unused part: " + part);
-                                                    }
-                                                    if (State.ToLower() != "assigned")
-                                                    {
-                                                        Syntax.Warning(this, "Kerbal is listed in a vessels crew list, but state is not 'Assigned'. Vessel: " + vessel.Name + ", Part: " + part);
-                                                    }
-                                                }
-                                            }
-                                        }
+                                        AssignedVessel = vessel;
+                                        AssignedPart = part;
+                                        AssignedCrewAttrib = attrib;
+                                        attrib.CanBeDeleted = false;
+                                    }
+                                    else
+                                    {
+                                        Syntax.Warning(attrib, "Kerbal is listed in multiple vessel part's crew. Kerbal: " + Name +
+                                            "Assigned vessel: " + AssignedVessel.Name + ", Assigned part: " + AssignedPart +
+                                            ", Unused Vessel: " + vessel.Name + ", Unused part: " + part);
+                                    }
+                                    if (State.ToLower() != "assigned")
+                                    {
+                                        Syntax.Warning(this, "Kerbal is listed in a vessels crew list, but state is not 'Assigned'. Vessel: " + vessel.Name + ", Part: " + part);
                                     }
                                 }
                             }

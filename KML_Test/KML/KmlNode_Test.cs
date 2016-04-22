@@ -524,6 +524,39 @@ namespace KML_Test.KML
         }
 
         [TestMethod]
+        public void ChildGetFrom()
+        {
+            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
+            KmlNode node1 = KmlItem.CreateItem("node1") as KmlNode;
+            root.Add(node1);
+            KmlNode node2 = KmlItem.CreateItem("node2") as KmlNode;
+            root.Add(node2);
+            KmlNode node3 = KmlItem.CreateItem("node3") as KmlNode;
+            root.Add(node3);
+
+            Assert.AreEqual(node2, KmlNode.GetChildNodeFrom(root, "node2"));
+            Assert.IsNull(KmlNode.GetChildNodeFrom(root, "node4"));
+            KmlNode empty = null;
+            Assert.IsNull(KmlNode.GetChildNodeFrom(empty, "node2"));
+
+            List<KmlItem> list = new List<KmlItem>();
+            list.AddRange(root.Children);
+
+            Assert.AreEqual(node2, KmlNode.GetNodeFrom(list, "node2"));
+            Assert.IsNull(KmlNode.GetNodeFrom(list, "node4"));
+
+            list.Clear();
+            list.Add(root);
+            string[] tags1 = { "root", "node2" };
+            string[] tags2 = { "root2", "node2" };
+            string[] tags3 = { "root", "node4" };
+
+            Assert.AreEqual(node2, KmlNode.GetNodeFromDeep(list, tags1));
+            Assert.IsNull(KmlNode.GetNodeFromDeep(list, tags2));
+            Assert.IsNull(KmlNode.GetNodeFromDeep(list, tags3));
+        }
+
+        [TestMethod]
         public void ChildGetOrCreate()
         {
             KmlNode root = KmlItem.CreateItem("root") as KmlNode;

@@ -434,6 +434,65 @@ namespace KML
         }
 
         /// <summary>
+        /// Serach all child nodes of sourceNode for a certain tag.
+        /// Does not search recursive.
+        /// </summary>
+        /// <param name="sourceNode">The node to search in its chgild nodes</param>
+        /// <param name="tag">The tag of the KmlNode to search for</param>
+        /// <returns>The found KmlNode or null if no such is found</returns>
+        public static KmlNode GetChildNodeFrom(KmlNode sourceNode, string tag)
+        {
+            if (sourceNode != null)
+            {
+                return sourceNode.GetChildNode(tag);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Serach all nodes in sourceItems for a certain tag.
+        /// Does not search recursive.
+        /// </summary>
+        /// <param name="sourceItems">The list of KmlItems to search in</param>
+        /// <param name="tag">The tag of the KmlNode to search for</param>
+        /// <returns>The found KmlNode or null if no such is found</returns>
+        public static KmlNode GetNodeFrom(List<KmlItem> sourceItems, string tag)
+        {
+            foreach (KmlItem item in sourceItems)
+            {
+                if (item is KmlNode && (item as KmlNode).Tag.ToLower() == tag.ToLower())
+                {
+                    return (KmlNode)item;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Serach all nodes in sourceItems for the first tag in tag.
+        /// Then search recursive in the found node's children for next tag in tags.
+        /// </summary>
+        /// <param name="sourceItems">The list of KmlItems to search in</param>
+        /// <param name="tags">An array of tags of the KmlNodes to search for</param>
+        /// <returns>The found KmlNode or null if no such is found</returns>
+        public static KmlNode GetNodeFromDeep(List<KmlItem> sourceItems, string[] tags)
+        {
+            if (tags.Length > 0)
+            {
+                KmlNode node = GetNodeFrom(sourceItems, tags[0]);
+                for (int i = 1; i < tags.Length && node != null; i++)
+                {
+                    node = GetChildNodeFrom(node, tags[i]);
+                }
+                return node;
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Search all child nodes of this node for a certain tag and name, 
         /// create one if not found. Does not search recursive.
         /// </summary>
