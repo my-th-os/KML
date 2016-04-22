@@ -283,7 +283,7 @@ namespace KML
             }
             else
             {
-                return false;
+                return Unknown.Remove(item);
             }
         }
 
