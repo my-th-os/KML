@@ -18,6 +18,7 @@ Version 0.7 - in progress
 - no multiselect on lists, wasn't interpreted anyway
 - some keyboard usage improvements
 - fix for debug messages "binding reference" in context menu creation
+- tested with KSP 1.1.0
 
 Version 0.6.2 - 2016-03-31
 - bugfix about unknown problem while loading flag - thanks to Enceos

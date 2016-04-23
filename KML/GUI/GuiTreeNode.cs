@@ -509,8 +509,14 @@ namespace KML
                         m.Click += KerbalSelectAssignedPart_Click;
                         menu.Items.Add(m);
                     }
-                    menu.Items.Add(new Separator());
+                }
 
+                if (node.AssignedVessel != null || node.AssignedPart != null || node.State.ToLower() == "missing")
+                {
+                    if (menu.Items.Count > defaultMenuCount)
+                    {
+                        menu.Items.Add(new Separator());
+                    }
                     m = new MenuItem();
                     m.DataContext = DataNode;
                     img = Icons.CreateImage(Icons.VesselSpaceObject);

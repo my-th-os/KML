@@ -844,7 +844,7 @@ namespace KML
                                 }
                                 else
                                 {
-                                    Syntax.Warning(dock, "Dock part is docked to other dock part. Docking state should be 'Docked (same vessel)' or 'Docked (dockee)' but is '" + dock.DockState + "', other dock: " + otherDock);
+                                    Syntax.Warning(otherDock, "Dock part is docked to other dock part. Docking state should be 'Docked (same vessel)' or 'Docked (dockee)' but is '" + otherDock.DockState + "', other dock: " + dock);
                                     dock.NeedsRepair = true;
                                     otherDock.NeedsRepair = true;
                                 }

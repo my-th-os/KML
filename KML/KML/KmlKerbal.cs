@@ -202,15 +202,15 @@ namespace KML
                 AssignedCrewAttrib = null;
                 AssignedPart = null;
                 AssignedVessel = null;
-                foreach (KmlAttrib attrib in Attribs)
+            }
+            foreach (KmlAttrib attrib in Attribs)
+            {
+                if (attrib.Name.ToLower() == "state")
                 {
-                    if (attrib.Name.ToLower() == "state")
-                    {
-                        attrib.Value = "Available";
-                        // This will invoke ToStringChanged so State property 
-                        // and all display items will be updated.
-                        // That's why this is the last action in this method
-                    }
+                    attrib.Value = "Available";
+                    // This will invoke ToStringChanged so State property 
+                    // and all display items will be updated.
+                    // That's why this is the last action in this method
                 }
             }
         }

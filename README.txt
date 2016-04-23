@@ -16,6 +16,7 @@ New Features
 • search for nodes and attributes
 • insert nodes and attributes
 • rebuild part structure when repaired
+• tested with KSP 1.1.0
 
 Features 
 • open SFS and CRAFT files
@@ -39,7 +40,6 @@ Features
 TODO
 • copy nodes and attributes
 • identify add-on part connections (KAS)
-• some more kerbal-related (display assigned vessel, send home)
 • change position of nodes and attributes
 • more testing (uncommon vessel builds I didn't think of?)
 • documentation
