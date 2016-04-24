@@ -135,12 +135,12 @@ namespace KML
             {
 	            // Get the screen position of the button
                 GeneralTransform transform = elementToShowBelow.TransformToAncestor(dlg.Owner);
-                // Matrix transform = PresentationSource.FromVisual(dlg.Owner).CompositionTarget.TransformFromDevice;
+                // Matrix is Identity on my PC but scaled on my notebook, maybe DPI settings
+                Matrix m = PresentationSource.FromVisual(dlg.Owner).CompositionTarget.TransformFromDevice;
                 Point rootPoint = transform.Transform(new Point(-9, elementToShowBelow.ActualHeight + 3));
-
                 // Now get the point of the button in the screen
-                // TODO DlgSearch.Show(): PointToScreen returns wrong points on my notebook, but works on my pc
                 Point point = dlg.Owner.PointToScreen(rootPoint);
+                point = m.Transform(point);
                 dlg.Left = point.X;
                 dlg.Top = point.Y;
             }
