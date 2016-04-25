@@ -4,6 +4,7 @@ Version 0.7 - in progress
 - show kerbal state and assigned vessel
 - select assigned vessel / part from kerbal
 - support renaming kerbals when assigned
+- deleting kerbals, including send home
 - search for nodes
 - search for attributes
 - insert nodes

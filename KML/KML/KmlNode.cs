@@ -260,10 +260,16 @@ namespace KML
         /// <returns>True if item was deleted, false otherwise</returns>
         public virtual bool Delete(KmlItem item)
         {
-            if(!item.CanBeDeleted)
+            if (!item.CanBeDeleted)
             {
                 return false;
             }
+            // Call itme's Delete to call it's BeforeDelete()
+            // But there would usually be called this method,
+            // to avoid loop we set parent to null.
+            // We also ignore result, will be false in that case
+            RemapParent(item, null);
+            item.Delete();
             if (!AllItems.Remove(item))
             {
                 // It wasn't in the list, nothing to do

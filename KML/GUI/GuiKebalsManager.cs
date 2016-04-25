@@ -25,6 +25,7 @@ namespace KML
         private ListView KerbalsList { get; set; }
         private ListView KerbalsDetails { get; set; }
         private Label KerbalsCount { get; set; }
+        private KmlNode Roster { get; set; }
 
         /// <summary>
         /// Creates a GuiKebalsManager to link and manage the given two ListViews.
@@ -43,6 +44,7 @@ namespace KML
             KerbalsList = kerbalsList;
             KerbalsDetails = kerbalsDetails;
             KerbalsCount = kerbalsCount;
+            Roster = null;
 
             KerbalsList.SelectionChanged += KerbalsList_SelectionChanged;
         }
@@ -58,12 +60,23 @@ namespace KML
             KerbalsDetails.Items.Clear();
 
             List<KmlKerbal> list = master.GetFlatList<KmlKerbal>();
+            KmlNode roster = null;
             foreach (KmlKerbal kerbal in list)
             {
                 if (kerbal.Origin == KmlKerbal.KerbalOrigin.Roster)
                 {
+                    roster = kerbal.Parent;
                     Kerbals.Add(kerbal);
                 }
+            }
+            if (roster != null && roster != Roster)
+            {
+                if (Roster != null)
+                {
+                    Roster.ChildrenChanged -= KerbalsChanged;
+                }
+                roster.ChildrenChanged += KerbalsChanged;
+                Roster = roster;
             }
 
             // Sort the list
@@ -255,6 +268,21 @@ namespace KML
                 //KerbalsList.SelectedIndex = oldSelectedIndex - 1;
                 //Next();
                 Focus();
+            }
+        }
+
+        private void KerbalsChanged(object sender, RoutedEventArgs e)
+        {
+            // Kerbal was added or deleted
+            KmlKerbal oldSelected = null;
+            if (KerbalsList.SelectedItem is GuiKerbalsNode)
+            {
+                oldSelected = (KerbalsList.SelectedItem as GuiKerbalsNode).DataKerbal;
+            }
+            Load(Master.TreeManager);
+            if (oldSelected != null)
+            {
+                Select(oldSelected);
             }
         }
 

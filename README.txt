@@ -13,6 +13,7 @@ New Features
 • show kerbal state and assigned vessel
 • select assigned vessel / part from kerbal
 • support renaming kerbals when assigned
+• deleting kerbals, including send home
 • search for nodes and attributes
 • insert nodes and attributes
 • rebuild part structure when repaired
@@ -31,7 +32,6 @@ Features
 • deletion excludes in current version
   ◦ vessels (need to check crew and return home)
   ◦ parts (need to rebuild index numbers and attachments)
-  ◦ kerbals (need to check if they are in any vessel's crew)
 • change vessel flag in all its parts - for Enceos
 • refill part resources
 • repair broken docking ports and grappling devices

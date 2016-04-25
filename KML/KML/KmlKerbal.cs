@@ -93,9 +93,6 @@ namespace KML
             AssignedPart = null;
             AssignedCrewAttrib = null;
 
-            // TODO KmlKerbal.KmlKerbal(): Make kerbals deletable
-            CanBeDeleted = false;
-
             AddRange(node.AllItems);
         }
 
@@ -173,6 +170,14 @@ namespace KML
             Brave = 0.0;
             Dumb = 0.0;
             base.Clear();
+        }
+
+        /// <summary>
+        /// Gets called before item is deleted.
+        /// </summary>
+        protected override void BeforeDelete()
+        {
+            SendHome();
         }
 
         private double GetDoubleValue(string value, double defaultValue)

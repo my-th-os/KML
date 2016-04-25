@@ -56,6 +56,7 @@ namespace KML
             {
                 return false;
             }
+            BeforeDelete();
             if (Parent != null)
             {
                 return Parent.Delete(this);
@@ -64,6 +65,14 @@ namespace KML
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Gets called before item is deleted.
+        /// Deriving classes can perform needed actions here.
+        /// </summary>
+        protected virtual void BeforeDelete()
+        {
         }
 
         /// <summary>
