@@ -823,7 +823,22 @@ namespace KML
         private void NodeDelete_Click(object sender, RoutedEventArgs e)
         {
             KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
-            if (DlgConfirmation.Show("Do your really want to delete this node and all its content?\n" + node, "DELETE node", Icons.Delete))
+            string nodeName = "node";
+            string specialText = "";
+            if (node is KmlKerbal)
+            {
+                nodeName = "kerbal";
+                specialText = "\n\n- The kerbal will be removed from assigned crew part";
+            }
+            else if (node is KmlVessel)
+            {
+                nodeName = "vessel";
+                specialText = "\n\n- Kerbal crew will be send home to astronaut complex\n" +
+                    "- Their state will be set to 'Available'\n" +
+                    "- Experience or contract progress may get lost"; 
+            }
+            if (DlgConfirmation.Show("Do your really want to delete this " + nodeName + " and all its content?\n" + 
+                node + specialText, "DELETE " + nodeName, Icons.Delete))
             {
                 node.Delete();
                 // View will be refreshed in parent's ChildrenChanged event
