@@ -27,6 +27,7 @@ namespace KML
         private ListView VesselsList { get; set; }
         private Canvas VesselsDetails { get; set; }
         private Label VesselsCount { get; set; }
+        private KmlNode Flightstate { get; set; }
 
         private GuiVesselsPartGraph PartGraph { get; set; }
 
@@ -65,12 +66,23 @@ namespace KML
             VesselsDetails.Children.Clear();
 
             List<KmlVessel> list = master.GetFlatList<KmlVessel>();
+            KmlNode flightstate = null;
             foreach (KmlVessel vessel in list)
             {
                 if (vessel.Origin == KmlVessel.VesselOrigin.Flightstate)
                 {
+                    flightstate = vessel.Parent;
                     Vessels.Add(vessel);
                 }
+            }
+            if (flightstate != null && flightstate != Flightstate)
+            {
+                if (Flightstate != null)
+                {
+                    Flightstate.ChildrenChanged -= VesselsChanged;
+                }
+                flightstate.ChildrenChanged += VesselsChanged;
+                Flightstate = flightstate;
             }
 
             // Sort the list
@@ -264,6 +276,21 @@ namespace KML
             {
                 VesselsList.SelectedIndex = oldSelectedIndex - 1;
                 Next();
+            }
+        }
+
+        private void VesselsChanged(object sender, RoutedEventArgs e)
+        {
+            // Vessel was added or deleted
+            KmlVessel oldSelected = null;
+            if (VesselsList.SelectedItem is GuiVesselsNode)
+            {
+                oldSelected = (VesselsList.SelectedItem as GuiVesselsNode).DataVessel;
+            }
+            Load(Master.TreeManager);
+            if (oldSelected != null)
+            {
+                Select(oldSelected);
             }
         }
 

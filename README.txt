@@ -14,6 +14,7 @@ New Features
 • select assigned vessel / part from kerbal
 • support renaming kerbals when assigned
 • deleting kerbals, including send home
+• deleting vessels, incl. send home all crew
 • search for nodes and attributes
 • insert nodes and attributes
 • rebuild part structure when repaired

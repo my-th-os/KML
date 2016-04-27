@@ -280,11 +280,12 @@ namespace KML
         /// <summary>
         /// After all items are loaded, each items Finalize is called.
         /// The roots list will contain all loaded items in KML tree structure.
-        /// Each item can then check for other items to get further propertied.
+        /// Each item can then check for other items to get further properties.
         /// </summary>
         /// <param name="roots">The loaded root items list</param>
         protected override void Finalize(List<KmlItem> roots)
         {
+            base.Finalize(roots);
             string[] tags = { "game", "flightstate" };
             KmlNode flightStateNode = GetNodeFromDeep(roots, tags);
             if (flightStateNode != null)
@@ -327,7 +328,6 @@ namespace KML
             {
                 Syntax.Warning(this, "Kerbal state is 'Assigned' but not listed in any vessels crew list");
             }
-            base.Finalize(roots);
         }
 
         private void CrewName_Changed(object sender, RoutedEventArgs e)

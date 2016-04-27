@@ -302,7 +302,7 @@ namespace KML
         /// <summary>
         /// After all items are loaded, each items Finalize is called.
         /// The roots list will contain all loaded items in KML tree structure.
-        /// Each item can then check for other items to get further propertied.
+        /// Each item can then check for other items to get further properties.
         /// </summary>
         /// <param name="roots">The loaded root items list</param>
         protected virtual void Finalize(List<KmlItem> roots)

@@ -57,6 +57,11 @@ namespace KML
         public List<string> Flags { get; private set; }
 
         /// <summary>
+        /// Get a list of all assigned crew KmlKerbal
+        /// </summary>
+        public List<KmlKerbal> AssignedCrew { get; private set; }
+
+        /// <summary>
         /// Get a set of all types (names) of resources in this vessel.
         /// </summary>
         public SortedSet<string> ResourceTypes { get; private set; }
@@ -94,11 +99,12 @@ namespace KML
             Situation = "";
             Parts = new List<KmlPart>();
             Flags = new List<string>();
+            AssignedCrew = new List<KmlKerbal>();
             ResourceTypes = new SortedSet<string>();
             RootPart = null;
 
             // TODO KmlVessel.KmlVessel(): Make vessels deletable
-            CanBeDeleted = false;
+            // CanBeDeleted = false;
 
             AddRange(node.AllItems);
         }
@@ -184,6 +190,16 @@ namespace KML
             base.Clear();
         }
 
+        /// <summary>
+        /// Gets called before item is deleted.
+        /// </summary>
+        protected override void BeforeDelete()
+        {
+            foreach (KmlKerbal kerbal in AssignedCrew)
+            {
+                kerbal.SendHome();
+            }
+        }
 
         /// <summary>
         /// Send vessel to low kerbin orbit.
@@ -354,6 +370,55 @@ namespace KML
                 Origin = VesselOrigin.Other;
             }
             base.IdentifyParent();
+        }
+
+        /// <summary>
+        /// After all items are loaded, each items Finalize is called.
+        /// The roots list will contain all loaded items in KML tree structure.
+        /// Each item can then check for other items to get further properties.
+        /// </summary>
+        /// <param name="roots">The loaded root items list</param>
+        protected override void Finalize(List<KmlItem> roots)
+        {
+            base.Finalize(roots);
+            AssignedCrew.Clear();
+            string[] tags = { "game", "roster" };
+            KmlNode rosterNode = GetNodeFromDeep(roots, tags);
+            if (rosterNode != null)
+            {
+                foreach (KmlPart part in Parts)
+                {
+                    foreach (KmlAttrib attrib in part.Attribs)
+                    {
+                        if (attrib.Name.ToLower() == "crew" && attrib.Value.Length > 0)
+                        {
+                            int oldCrewCount = AssignedCrew.Count;
+                            foreach (KmlNode kerbalNode in rosterNode.Children)
+                            {
+                                if (kerbalNode is KmlKerbal)
+                                {
+                                    KmlKerbal kerbal = (KmlKerbal)kerbalNode;
+                                    if (attrib.Value.ToLower() == kerbal.Name.ToLower())
+                                    {
+                                        // Duplicate entries are checked on the kerbal side,
+                                        // here only duplicates within one vessel could be checked, 
+                                        // there all vessels are checked
+                                        AssignedCrew.Add(kerbal);
+                                    }
+                                }
+                            }
+                            if (AssignedCrew.Count < oldCrewCount + 1)
+                            {
+                                Syntax.Warning(attrib, "Crew could not be assigned, this kerbal does not exist: " + attrib.Value);
+                            }
+                            else if (AssignedCrew.Count > oldCrewCount + 1)
+                            {
+                                Syntax.Warning(attrib, "Crew member not unique, there are multiple kerbals with name: " + attrib.Value);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void SetRootPart(string value)

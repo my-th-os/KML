@@ -828,16 +828,22 @@ namespace KML
             if (node is KmlKerbal)
             {
                 nodeName = "kerbal";
-                specialText = "\n\n- The kerbal will be removed from assigned crew part";
+                if ((node as KmlKerbal).AssignedPart != null)
+                {
+                    specialText = "\n\n- The kerbal will be removed from assigned crew part";
+                }
             }
             else if (node is KmlVessel)
             {
                 nodeName = "vessel";
-                specialText = "\n\n- Kerbal crew will be send home to astronaut complex\n" +
-                    "- Their state will be set to 'Available'\n" +
-                    "- Experience or contract progress may get lost"; 
+                if ((node as KmlVessel).AssignedCrew.Count > 0)
+                {
+                    specialText = "\n\n- Kerbal crew will be send home to astronaut complex\n" +
+                        "- Their state will be set to 'Available'\n" +
+                        "- Experience or contract progress may get lost";
+                }
             }
-            if (DlgConfirmation.Show("Do your really want to delete this " + nodeName + " and all its content?\n" + 
+            if (DlgConfirmation.Show("Do you really want to delete this " + nodeName + " and all its content?\n" + 
                 node + specialText, "DELETE " + nodeName, Icons.Delete))
             {
                 node.Delete();

@@ -5,6 +5,7 @@ Version 0.7 - in progress
 - select assigned vessel / part from kerbal
 - support renaming kerbals when assigned
 - deleting kerbals, including send home
+- deleting vessels, incl. send home all crew
 - search for nodes
 - search for attributes
 - insert nodes
