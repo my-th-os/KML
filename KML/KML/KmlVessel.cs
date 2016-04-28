@@ -103,9 +103,6 @@ namespace KML
             ResourceTypes = new SortedSet<string>();
             RootPart = null;
 
-            // TODO KmlVessel.KmlVessel(): Make vessels deletable
-            // CanBeDeleted = false;
-
             AddRange(node.AllItems);
         }
 

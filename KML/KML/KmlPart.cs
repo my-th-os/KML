@@ -397,11 +397,13 @@ namespace KML
                 Resources.Add(res);
                 ResourceTypes.Add(res.Name);
 
-                // Get notified when Resources change
+                // Get notified when resources change
                 res.MaxAmount.AttribValueChanged += Resources_Changed;
                 res.MaxAmount.CanBeDeleted = false;
                 res.Amount.AttribValueChanged += Resources_Changed;
                 res.Amount.CanBeDeleted = false;
+                // TODO KmlPart.Add(): Get notified when resource is deleted
+                // Or make resource not deletable?
             }
             base.Add(beforeItem, newItem);
         }

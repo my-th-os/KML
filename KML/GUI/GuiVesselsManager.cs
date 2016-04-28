@@ -274,8 +274,9 @@ namespace KML
             // Don't know why this should be necessary, but when selection didn't change it loses focus
             if (VesselsList.SelectedIndex >= 0 && VesselsList.SelectedIndex == oldSelectedIndex)
             {
-                VesselsList.SelectedIndex = oldSelectedIndex - 1;
-                Next();
+                // VesselsList.SelectedIndex = oldSelectedIndex - 1;
+                // Next();
+                Focus();
             }
         }
 

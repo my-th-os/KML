@@ -304,13 +304,13 @@
     <Resource Include="Images\GrapplingHook48.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="LICENSE.txt" />
+    <None Include="LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="CHANGELOG.txt" />
+    <None Include="CHANGELOG.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="README.txt" />
+    <None Include="README.txt" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\DummyFlag.png" />

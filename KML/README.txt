@@ -1,4 +1,4 @@
-KML - Kerbal Markup Lister v0.7 - 2016-04-?? (WIP) - A persistence file editor for Kerbal Space Program
+KML - Kerbal Markup Lister v0.7 - 2016-04-28 (WIP) - A persistence file editor for Kerbal Space Program
 KSP Forum: http://forum.kerbalspaceprogram.com/index.php?/topic/133971-win-kml-persistence-file-editor/
 
 Do you face a problem with broken docking ports or need just a little fuel-cheating? Do you got tired of editing save games in a text editor with long loading time and so much scrolling to compare different parts and vessels? So did I and decided to make a more helpful external editor to display the XML-like structure (the "KML" - Kerbal Markup Language) in a tree view and pick out vessels, kerbals and parts to be displayed in more eye-candy way.
@@ -31,7 +31,6 @@ Features
 • display warnings about structural problems
 • adding, inserting and deleting nodes and attributes
 • deletion excludes in current version
-  ◦ vessels (need to check crew and return home)
   ◦ parts (need to rebuild index numbers and attachments)
 • change vessel flag in all its parts - for Enceos
 • refill part resources

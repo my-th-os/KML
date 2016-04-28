@@ -1,4 +1,4 @@
-Version 0.7 - in progress
+Version 0.7 - 2016-04-28
 - send vessel to low kerbin orbit
 - send kerbal home to astronaut complex
 - show kerbal state and assigned vessel
@@ -23,7 +23,7 @@ Version 0.7 - in progress
 - tested with KSP 1.1.0
 
 Version 0.6.2 - 2016-03-31
-- bugfix about unknown problem while loading flag - thanks to Enceos
+- bugfix about loading dds flags on older OS - thanks to Enceos
 
 Version 0.6.1 - 2016-03-31
 - bugfix finding KSP directory - thanks to Enceos
