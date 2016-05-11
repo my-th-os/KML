@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,11 +47,11 @@ namespace KML
             private set
             {
                 _filename = value;
-                string ext = System.IO.Path.GetExtension(_filename).ToLower();
+                string ext = Path.GetExtension(_filename).ToLower();
                 FileIsCraft = ext == ".craft";
                 FileKspDirectory = "";
 
-                System.IO.DirectoryInfo dir = System.IO.Directory.GetParent(_filename);
+                DirectoryInfo dir = Directory.GetParent(_filename);
                 int parentDirs = 2;
                 if (FileIsCraft)
                 {
@@ -64,7 +65,7 @@ namespace KML
                 {
                     FileKspDirectory = dir.FullName;
                 }
-                FileGamedataDirectory = System.IO.Path.Combine(FileKspDirectory, "GameData");
+                FileGamedataDirectory = Path.Combine(FileKspDirectory, "GameData");
             }
         }
         private string _filename = "";

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -146,13 +147,13 @@ namespace KML
             {
                 string flag = vessel.RootPart.Flag;
                 flag = flag.Replace('/', '\\');
-                flag = System.IO.Path.Combine(GuiTabsManager.GetCurrent().FileGamedataDirectory, flag);
+                flag = Path.Combine(GuiTabsManager.GetCurrent().FileGamedataDirectory, flag);
 
-                flag = System.IO.Path.ChangeExtension(flag, ".png");
-                if (!System.IO.File.Exists(flag))
+                flag = Path.ChangeExtension(flag, ".png");
+                if (!File.Exists(flag))
                 {
-                    flag = System.IO.Path.ChangeExtension(flag, ".dds");
-                    if (!System.IO.File.Exists(flag))
+                    flag = Path.ChangeExtension(flag, ".dds");
+                    if (!File.Exists(flag))
                     {
                         // keep dummy image
                         return image; 

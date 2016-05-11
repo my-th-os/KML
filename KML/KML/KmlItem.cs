@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -224,7 +225,7 @@ namespace KML
             return newNode;
         }
 
-        private static List<KmlItem> ParseFile(System.IO.StreamReader file)
+        private static List<KmlItem> ParseFile(StreamReader file)
         {
             List<KmlItem> list = new List<KmlItem>();
 
@@ -341,8 +342,8 @@ namespace KML
             try
             {
                 // Explicit setting UTF8 doesn't look the same, if I compare loaded and saved with MinMerge
-                // System.IO.StreamReader file = new System.IO.StreamReader(Filename, Encoding.UTF8);
-                System.IO.StreamReader file = new System.IO.StreamReader(filename);
+                // StreamReader file = new StreamReader(Filename, Encoding.UTF8);
+                StreamReader file = new StreamReader(filename);
                 list.AddRange(ParseFile(file));
                 file.Close();
                 CallFinalize(list);
@@ -355,7 +356,7 @@ namespace KML
             return list;
         }
 
-        private static void WriteFile (System.IO.StreamWriter file, KmlItem item, int indent)
+        private static void WriteFile (StreamWriter file, KmlItem item, int indent)
         {
             bool ghost = item is KmlGhostNode;
             if (!ghost)
@@ -395,19 +396,19 @@ namespace KML
             try
             {
                 string Backupname = "";
-                if (System.IO.File.Exists(filename))
+                if (File.Exists(filename))
                 {
-                    string dir = System.IO.Path.GetDirectoryName(filename) + @"\";
-                    string name = System.IO.Path.GetFileNameWithoutExtension(filename);
-                    string ext = System.IO.Path.GetExtension(filename);
+                    string dir = Path.GetDirectoryName(filename) + @"\";
+                    string name = Path.GetFileNameWithoutExtension(filename);
+                    string ext = Path.GetExtension(filename);
                     string timestamp = string.Format("{0:yyyyMMddHHmmss}", DateTime.Now);
                     Backupname = dir + "zKMLBACKUP" + timestamp + "-" + name + ext;
-                    System.IO.File.Move(filename, Backupname);
+                    File.Move(filename, Backupname);
                 }
 
-                // Explicit setting UTF8 doesn't look the same, if I compare loaded and saved with MinMerge
-                // System.IO.StreamWriter file = new System.IO.StreamWriter(Filename, false, Encoding.UTF8);
-                System.IO.StreamWriter file = new System.IO.StreamWriter(filename);
+                // Explicit setting UTF8 doesn't look the same, if I compare loaded and saved with WinMerge
+                // StreamWriter file = new StreamWriter(Filename, false, Encoding.UTF8);
+                StreamWriter file = new StreamWriter(filename);
                 try
                 {
                     foreach (KmlItem item in items)
@@ -421,8 +422,8 @@ namespace KML
                     file.Close();
                     if (Backupname.Length > 0)
                     {
-                        System.IO.File.Delete(filename);
-                        System.IO.File.Move(Backupname, filename);
+                        File.Delete(filename);
+                        File.Move(Backupname, filename);
                     }
                     throw e;
                 }

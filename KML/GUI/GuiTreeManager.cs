@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -91,7 +92,7 @@ namespace KML
             // If so, pack all roots into a new ghost root
             if (KmlRoots.Any(x => !(x is KmlNode)))
             {
-                KmlGhostNode root = new KmlGhostNode(System.IO.Path.GetFileName(filename));
+                KmlGhostNode root = new KmlGhostNode(Path.GetFileName(filename));
                 root.AddRange(KmlRoots);
                 KmlRoots.Clear();
                 KmlRoots.Add(root);

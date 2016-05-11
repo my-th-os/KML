@@ -3,12 +3,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using KML;
 using System.Collections.Generic;
 using System.Windows;
+using KML_Test.Data;
 
 namespace KML_Test.KML
 {
     [TestClass]
     public class KmlNode_Test
     {
+        private TestData data = new TestData();
         private bool _testEventHandlerVisited = false;
 
         private void TestEventHandler(object sender, RoutedEventArgs e)
@@ -28,481 +30,389 @@ namespace KML_Test.KML
         [TestMethod]
         public void CreateItem()
         {
-            KmlItem item = KmlItem.CreateItem("root");
-            Assert.IsNotNull(item);
-            Assert.IsTrue(item is KmlNode);
-            KmlNode root = item as KmlNode;
-            Assert.IsNull(root.Parent);
-            Assert.AreEqual("root", root.Tag);
-            Assert.AreEqual("", root.Name);
+            Assert.IsNotNull(data.Root1);
+            Assert.IsTrue(data.Root1 is KmlNode);
+            Assert.IsNull(data.Root1.Parent);
+            Assert.AreEqual("Root1", data.Root1.Tag);
+            Assert.AreEqual("", data.Root1.Name);
+        }
+
+        [TestMethod]
+        public void CreateTestData()
+        {
+            Assert.AreEqual(data.RootCount, data.Roots.Count);
+            Assert.AreEqual(data.RootAttrib1, data.Roots[0]);
+            Assert.AreEqual(data.Root1, data.Roots[1]);
+            Assert.AreEqual(data.Root2, data.Roots[2]);
+            Assert.AreEqual(data.Root1AttribCount, data.Root1.Attribs.Count);
+            Assert.AreEqual(data.Root1ChildCount, data.Root1.Children.Count);
+            Assert.AreEqual(data.Root1AttribCount + data.Root1ChildCount, data.Root1.AllItems.Count);
+            Assert.AreEqual(data.Node1, data.Root1.Children[0]);
+            Assert.AreEqual(data.Node2, data.Root1.Children[1]);
         }
 
         [TestMethod]
         public void AttribAdd()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlAttrib attrib = KmlItem.CreateItem("attrib = value") as KmlAttrib;
-            root.Add(attrib);
+            Assert.AreEqual(data.Node1, data.Node1Attrib1.Parent);
+            Assert.AreEqual(data.Node1AttribCount, data.Node1.Attribs.Count);
+            Assert.AreEqual(data.Node1AttribCount + data.Node1ChildCount, data.Node1.AllItems.Count);
+            // data.Node1.Attribs[0] is the name attrib
+            Assert.AreEqual(data.Node1Attrib1, data.Node1.Attribs[1]);
+            Assert.AreEqual(data.Node1Attrib2, data.Node1.Attribs[2]);
 
-            Assert.AreEqual(root, attrib.Parent);
-            Assert.AreEqual(1, root.Attribs.Count);
-            Assert.AreEqual(1, root.AllItems.Count);
-            Assert.AreEqual(attrib, root.Attribs[0]);
+            Assert.AreEqual(data.Node2, data.Node2Attrib1.Parent);
+            Assert.AreEqual(data.Node2AttribCount, data.Node2.Attribs.Count);
+            Assert.AreEqual(data.Node2AttribCount + data.Node2ChildCount, data.Node2.AllItems.Count);
+            // data.Node2.Attribs[0] is the name attrib
+            Assert.AreEqual(data.Node2Attrib1, data.Node2.Attribs[1]);
         }
 
         [TestMethod]
         public void AttribAddName()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlAttrib attrib = KmlItem.CreateItem("name = rootname") as KmlAttrib;
-            root.Add(attrib);
-
-            Assert.AreEqual(attrib.Value, root.Name);
+            Assert.AreEqual("Node1Name", data.Node1.Name);
         }
 
         [TestMethod]
         public void AttribChangeName()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
             KmlAttrib attrib = KmlItem.CreateItem("name = rootname") as KmlAttrib;
-            root.Add(attrib);
+            data.Root1.Add(attrib);
 
-            Assert.AreEqual("rootname", root.Name);
+            Assert.AreEqual("rootname", data.Root1.Name);
             attrib.Value = "newname";
-            Assert.AreEqual("newname", root.Name);
+            Assert.AreEqual("newname", data.Root1.Name);
         }
 
         [TestMethod]
         public void AttribChangedEvent()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            root.AttribChanged += TestEventHandler;
+            data.Root1.AttribChanged += TestEventHandler;
             _testEventHandlerVisited = false;
             KmlAttrib attrib = KmlItem.CreateItem("attrib = value") as KmlAttrib;
-            root.Add(attrib);
-
+            data.Root1.Add(attrib);
             Assert.IsTrue(_testEventHandlerVisited);
             _testEventHandlerVisited = false;
-            root.Delete(attrib);
+            data.Root1.Delete(attrib);
             Assert.IsTrue(_testEventHandlerVisited);
         }
 
         [TestMethod]
         public void AttribAddToEnd()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
             KmlAttrib attrib1 = KmlItem.CreateItem("attrib1 = value1") as KmlAttrib;
-            root.Add(attrib1);
+            data.Root2.Add(attrib1);
             KmlAttrib attrib2 = KmlItem.CreateItem("attrib2 = value2") as KmlAttrib;
-            root.Add(attrib2);
+            data.Root2.Add(attrib2);
 
-            Assert.AreEqual(2, root.Attribs.Count);
-            Assert.AreEqual(2, root.AllItems.Count);
-            Assert.AreEqual(attrib1, root.Attribs[0]);
-            Assert.AreEqual(attrib2, root.Attribs[1]);
+            Assert.AreEqual(2, data.Root2.Attribs.Count);
+            Assert.AreEqual(2, data.Root2.AllItems.Count);
+            Assert.AreEqual(attrib1, data.Root2.Attribs[0]);
+            Assert.AreEqual(attrib2, data.Root2.Attribs[1]);
         }
 
         [TestMethod]
         public void AttribAddRange()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
             List<KmlItem> list = new List<KmlItem>();
             KmlAttrib attrib1 = KmlItem.CreateItem("attrib1 = value1") as KmlAttrib;
             list.Add(attrib1);
             KmlAttrib attrib2 = KmlItem.CreateItem("attrib2 = value2") as KmlAttrib;
             list.Add(attrib2);
-            root.AddRange(list);
+            data.Root2.AddRange(list);
 
-            Assert.AreEqual(2, root.Attribs.Count);
-            Assert.AreEqual(2, root.AllItems.Count);
-            Assert.AreEqual(attrib1, root.Attribs[0]);
-            Assert.AreEqual(attrib2, root.Attribs[1]);
+            Assert.AreEqual(2, data.Root2.Attribs.Count);
+            Assert.AreEqual(2, data.Root2.AllItems.Count);
+            Assert.AreEqual(attrib1, data.Root2.Attribs[0]);
+            Assert.AreEqual(attrib2, data.Root2.Attribs[1]);
         }
 
         [TestMethod]
         public void AttribInsertAfter()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlAttrib attrib1 = KmlItem.CreateItem("attrib1 = value1") as KmlAttrib;
-            root.Add(attrib1);
-            KmlAttrib attrib2 = KmlItem.CreateItem("attrib2 = value2") as KmlAttrib;
-            root.Add(attrib2);
             KmlAttrib attrib3 = KmlItem.CreateItem("attrib3 = value3") as KmlAttrib;
-            root.InsertAfter(attrib1, attrib3);
+            data.Node1.InsertAfter(data.Node1Attrib1, attrib3);
 
-            Assert.AreEqual(3, root.Attribs.Count);
-            Assert.AreEqual(3, root.AllItems.Count);
-            Assert.AreEqual(attrib1, root.Attribs[0]);
-            Assert.AreEqual(attrib3, root.Attribs[1]);
-            Assert.AreEqual(attrib2, root.Attribs[2]);
+            Assert.AreEqual(data.Node1AttribCount + 1, data.Node1.Attribs.Count);
+            Assert.AreEqual(data.Node1AttribCount + data.Node1ChildCount + 1, data.Node1.AllItems.Count);
+            // data.Node1.Attribs[0] is name attrib
+            Assert.AreEqual(data.Node1Attrib1, data.Node1.Attribs[1]);
+            Assert.AreEqual(attrib3, data.Node1.Attribs[2]);
+            Assert.AreEqual(data.Node1Attrib2, data.Node1.Attribs[3]);
         }
 
         [TestMethod]
         public void AttribInsertAfterEmpty()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
             KmlAttrib attrib = KmlItem.CreateItem("attrib = value") as KmlAttrib;
-            root.InsertAfter(null, attrib);
+            data.Node1.InsertAfter(null, attrib);
 
-            Assert.AreEqual(1, root.Attribs.Count);
-            Assert.AreEqual(1, root.AllItems.Count);
-            Assert.AreEqual(attrib, root.Attribs[0]);
+            Assert.AreEqual(data.Node1AttribCount + 1, data.Node1.Attribs.Count);
+            Assert.AreEqual(data.Node1AttribCount + data.Node1ChildCount + 1, data.Node1.AllItems.Count);
+            Assert.AreEqual(attrib, data.Node1.Attribs[data.Node1AttribCount]);
         }
 
         [TestMethod]
         public void AttribInsertAfterNotContained()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlAttrib attrib1 = KmlItem.CreateItem("attrib1 = value1") as KmlAttrib;
-            root.Add(attrib1);
-            KmlAttrib other = KmlItem.CreateItem("other = other value") as KmlAttrib;
-            KmlAttrib attrib2 = KmlItem.CreateItem("attrib2 = value2") as KmlAttrib;
-            root.InsertAfter(other, attrib2);
+            KmlAttrib attrib = KmlItem.CreateItem("attrib = value") as KmlAttrib;
+            data.Node1.InsertAfter(data.Node2Attrib1, attrib);
 
-            Assert.AreEqual(2, root.Attribs.Count);
-            Assert.AreEqual(2, root.AllItems.Count);
-            Assert.AreEqual(attrib1, root.Attribs[0]);
-            Assert.AreEqual(attrib2, root.Attribs[1]);
+            Assert.AreEqual(data.Node1AttribCount + 1, data.Node1.Attribs.Count);
+            Assert.AreEqual(data.Node1AttribCount + data.Node1ChildCount + 1, data.Node1.AllItems.Count);
+            Assert.AreEqual(attrib, data.Node1.Attribs[data.Node1AttribCount]);
         }
 
         [TestMethod]
         public void AttribInsertBefore()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlAttrib attrib1 = KmlItem.CreateItem("attrib1 = value1") as KmlAttrib;
-            root.Add(attrib1);
-            KmlAttrib attrib2 = KmlItem.CreateItem("attrib2 = value2") as KmlAttrib;
-            root.InsertBefore(attrib1, attrib2);
+            KmlAttrib attrib = KmlItem.CreateItem("attrib = value") as KmlAttrib;
+            data.Node1.InsertBefore(data.Node1Attrib1, attrib);
 
-            Assert.AreEqual(2, root.Attribs.Count);
-            Assert.AreEqual(2, root.AllItems.Count);
-            Assert.AreEqual(attrib2, root.Attribs[0]);
-            Assert.AreEqual(attrib1, root.Attribs[1]);
+            Assert.AreEqual(data.Node1AttribCount + 1, data.Node1.Attribs.Count);
+            Assert.AreEqual(data.Node1AttribCount + data.Node1ChildCount + 1, data.Node1.AllItems.Count);
+            // data.Node1.Attribs[0] is name attrib
+            Assert.AreEqual(attrib, data.Node1.Attribs[1]);
+            Assert.AreEqual(data.Node1Attrib1, data.Node1.Attribs[2]);
         }
 
         [TestMethod]
         public void AttribInsertBeforeEmpty()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
             KmlAttrib attrib = KmlItem.CreateItem("attrib = value") as KmlAttrib;
-            root.InsertBefore(null, attrib);
+            data.Node1.InsertBefore(null, attrib);
 
-            Assert.AreEqual(1, root.Attribs.Count);
-            Assert.AreEqual(1, root.AllItems.Count);
-            Assert.AreEqual(attrib, root.Attribs[0]);
+            Assert.AreEqual(data.Node1AttribCount + 1, data.Node1.Attribs.Count);
+            Assert.AreEqual(data.Node1AttribCount + data.Node1ChildCount + 1, data.Node1.AllItems.Count);
+            Assert.AreEqual(attrib, data.Node1.Attribs[data.Node1AttribCount]);
         }
 
         [TestMethod]
         public void AttribInsertBeforeNotContained()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlAttrib attrib1 = KmlItem.CreateItem("attrib1 = value1") as KmlAttrib;
-            root.Add(attrib1);
-            KmlAttrib other = KmlItem.CreateItem("other = other value") as KmlAttrib;
-            KmlAttrib attrib2 = KmlItem.CreateItem("attrib2 = value2") as KmlAttrib;
-            root.InsertBefore(other, attrib2);
+            KmlAttrib attrib = KmlItem.CreateItem("attrib = value") as KmlAttrib;
+            data.Node1.InsertBefore(data.Node2Attrib1, attrib);
 
-            Assert.AreEqual(2, root.Attribs.Count);
-            Assert.AreEqual(2, root.AllItems.Count);
-            Assert.AreEqual(attrib1, root.Attribs[0]);
-            Assert.AreEqual(attrib2, root.Attribs[1]);
+            Assert.AreEqual(data.Node1AttribCount + 1, data.Node1.Attribs.Count);
+            Assert.AreEqual(data.Node1AttribCount + data.Node1ChildCount + 1, data.Node1.AllItems.Count);
+            Assert.AreEqual(attrib, data.Node1.Attribs[data.Node1AttribCount]);
         }
 
         [TestMethod]
         public void AttribDeleteAtAttrib()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlAttrib attrib1 = KmlItem.CreateItem("attrib1 = value1") as KmlAttrib;
-            root.Add(attrib1);
-            KmlAttrib attrib2 = KmlItem.CreateItem("attrib2 = value2") as KmlAttrib;
-            root.Add(attrib2);
-            KmlAttrib attrib3 = KmlItem.CreateItem("attrib3 = value3") as KmlAttrib;
-            attrib3.CanBeDeleted = false;
-            root.Add(attrib3);
+            data.Node1Attrib2.CanBeDeleted = false;
 
-            Assert.IsTrue(attrib2.Delete());
-            Assert.IsFalse(attrib3.Delete());
-            Assert.AreEqual(2, root.Attribs.Count);
-            Assert.AreEqual(2, root.AllItems.Count);
-            Assert.AreEqual(attrib1, root.Attribs[0]);
-            Assert.AreEqual(attrib3, root.Attribs[1]);
+            Assert.IsTrue(data.Node1Attrib1.Delete());
+            Assert.IsFalse(data.Node1Attrib2.Delete());
+            Assert.AreEqual(data.Node1AttribCount - 1, data.Node1.Attribs.Count);
+            Assert.AreEqual(data.Node1AttribCount + data.Node1ChildCount - 1, data.Node1.AllItems.Count);
+            // data.Node1.Attribs[0] is name attrib
+            Assert.AreEqual(data.Node1Attrib2, data.Node1.Attribs[1]);
         }
 
         [TestMethod]
         public void AttribDeleteAtNode()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlAttrib attrib1 = KmlItem.CreateItem("attrib1 = value1") as KmlAttrib;
-            root.Add(attrib1);
-            KmlAttrib attrib2 = KmlItem.CreateItem("attrib2 = value2") as KmlAttrib;
-            root.Add(attrib2);
-            KmlAttrib attrib3 = KmlItem.CreateItem("attrib3 = value3") as KmlAttrib;
-            attrib3.CanBeDeleted = false;
-            root.Add(attrib3);
+            data.Node1Attrib2.CanBeDeleted = false;
 
-            Assert.IsTrue(root.Delete(attrib2));
-            Assert.IsFalse(root.Delete(attrib3));
-            Assert.AreEqual(2, root.Attribs.Count);
-            Assert.AreEqual(2, root.AllItems.Count);
-            Assert.AreEqual(attrib1, root.Attribs[0]);
-            Assert.AreEqual(attrib3, root.Attribs[1]);
+            Assert.IsTrue(data.Node1.Delete(data.Node1Attrib1));
+            Assert.IsFalse(data.Node1.Delete(data.Node1Attrib2));
+            Assert.AreEqual(data.Node1AttribCount - 1, data.Node1.Attribs.Count);
+            Assert.AreEqual(data.Node1AttribCount + data.Node1ChildCount - 1, data.Node1.AllItems.Count);
+            // data.Node1.Attribs[0] is name attrib
+            Assert.AreEqual(data.Node1Attrib2, data.Node1.Attribs[1]);
         }
 
         [TestMethod]
         public void AttribGet()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlAttrib attrib1 = KmlItem.CreateItem("attrib1 = value1") as KmlAttrib;
-            root.Add(attrib1);
-            KmlAttrib attrib2 = KmlItem.CreateItem("attrib2 = value2") as KmlAttrib;
-            root.Add(attrib2);
-            KmlAttrib attrib3 = KmlItem.CreateItem("attrib3 = value3") as KmlAttrib;
-            root.Add(attrib3);
-
-            KmlAttrib test = root.GetAttrib("attrib2");
-            Assert.AreEqual(attrib2, test);
-            KmlAttrib nonsense = root.GetAttrib("nonsense");
+            KmlAttrib test = data.Node1.GetAttrib("Attrib2");
+            Assert.AreEqual(data.Node1Attrib2, test);
+            KmlAttrib nonsense = data.Node1.GetAttrib("nonsense");
             Assert.IsNull(nonsense);
         }
 
         [TestMethod]
         public void AttribGetOrCreate()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlAttrib attrib1 = KmlItem.CreateItem("attrib1 = value1") as KmlAttrib;
-            root.Add(attrib1);
-            KmlAttrib attrib2 = KmlItem.CreateItem("attrib2 = value2") as KmlAttrib;
-            root.Add(attrib2);
-            KmlAttrib attrib3 = KmlItem.CreateItem("attrib3 = value3") as KmlAttrib;
-            root.Add(attrib3);
-            Assert.AreEqual(3, root.Attribs.Count);
+            KmlAttrib test = data.Node1.GetOrCreateAttrib("Attrib2", "default2");
+            Assert.AreEqual(data.Node1Attrib2, test);
+            Assert.AreEqual("Value2", test.Value);
+            Assert.AreEqual(data.Node1AttribCount, data.Node1.Attribs.Count);
 
-            KmlAttrib test = root.GetOrCreateAttrib("attrib2", "default2");
-            Assert.AreEqual(attrib2, test);
-            Assert.AreEqual("value2", attrib2.Value);
-            Assert.AreEqual(3, root.Attribs.Count);
-
-            KmlAttrib other = root.GetOrCreateAttrib("other", "default");
-            Assert.IsTrue(root.Attribs.Contains(other));
+            KmlAttrib other = data.Node1.GetOrCreateAttrib("other", "default");
+            Assert.IsTrue(data.Node1.Attribs.Contains(other));
             Assert.AreEqual("other", other.Name);
             Assert.AreEqual("default", other.Value);
-            Assert.AreEqual(4, root.Attribs.Count);
+            Assert.AreEqual(data.Node1AttribCount + 1, data.Node1.Attribs.Count);
         }
 
         [TestMethod]
         public void ChildAdd()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlItem item = KmlItem.CreateItem("node");
-            Assert.IsNotNull(item);
-            Assert.IsTrue(item is KmlNode);
-            KmlNode node = item as KmlNode;
-            root.Add(node);
+            Assert.AreEqual(data.Node1, data.Node1Child1.Parent);
+            Assert.AreEqual(data.Node1ChildCount, data.Node1.Children.Count);
+            Assert.AreEqual(data.Node1AttribCount + data.Node1ChildCount, data.Node1.AllItems.Count);
+            Assert.AreEqual(data.Node1Child1, data.Node1.Children[0]);
+            Assert.AreEqual(data.Node1Child2, data.Node1.Children[1]);
 
-            Assert.AreEqual(root, node.Parent);
-            Assert.AreEqual("node", node.Tag);
-            Assert.AreEqual(1, root.Children.Count);
-            Assert.AreEqual(1, root.AllItems.Count);
-            Assert.AreEqual(node, root.Children[0]);
+            Assert.AreEqual(data.Node2, data.Node2Child1.Parent);
+            Assert.AreEqual(data.Node2ChildCount, data.Node2.Children.Count);
+            Assert.AreEqual(data.Node2AttribCount + data.Node2ChildCount, data.Node2.AllItems.Count);
+            Assert.AreEqual(data.Node2Child1, data.Node2.Children[0]);
         }
 
         [TestMethod]
         public void ChildrenChangedEvent()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            root.ChildrenChanged += TestEventHandler;
+            data.Root1.ChildrenChanged += TestEventHandler;
             _testEventHandlerVisited = false;
-            KmlNode node = KmlItem.CreateItem("node") as KmlNode;
-            root.Add(node);
-
+            KmlNode child = KmlItem.CreateItem("child") as KmlNode;
+            data.Root1.Add(child);
             Assert.IsTrue(_testEventHandlerVisited);
             _testEventHandlerVisited = false;
-            root.Delete(node);
+            data.Root1.Delete(child);
             Assert.IsTrue(_testEventHandlerVisited);
         }
 
         [TestMethod]
         public void ChildAddToEnd()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
             KmlNode node1 = KmlItem.CreateItem("node1") as KmlNode;
-            root.Add(node1);
+            data.Root2.Add(node1);
             KmlNode node2 = KmlItem.CreateItem("node2") as KmlNode;
-            root.Add(node2);
+            data.Root2.Add(node2);
 
-            Assert.AreEqual(2, root.Children.Count);
-            Assert.AreEqual(2, root.AllItems.Count);
-            Assert.AreEqual(node1, root.Children[0]);
-            Assert.AreEqual(node2, root.Children[1]);
+            Assert.AreEqual(2, data.Root2.Children.Count);
+            Assert.AreEqual(2, data.Root2.AllItems.Count);
+            Assert.AreEqual(node1, data.Root2.Children[0]);
+            Assert.AreEqual(node2, data.Root2.Children[1]);
         }
 
         [TestMethod]
         public void ChildAddRange()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
             List<KmlItem> list = new List<KmlItem>();
             KmlNode node1 = KmlItem.CreateItem("node1") as KmlNode;
             list.Add(node1);
             KmlNode node2 = KmlItem.CreateItem("node2") as KmlNode;
             list.Add(node2);
-            root.AddRange(list);
+            data.Root2.AddRange(list);
 
-            Assert.AreEqual(2, root.Children.Count);
-            Assert.AreEqual(2, root.AllItems.Count);
-            Assert.AreEqual(node1, root.Children[0]);
-            Assert.AreEqual(node2, root.Children[1]);
+            Assert.AreEqual(2, data.Root2.Children.Count);
+            Assert.AreEqual(2, data.Root2.AllItems.Count);
+            Assert.AreEqual(node1, data.Root2.Children[0]);
+            Assert.AreEqual(node2, data.Root2.Children[1]);
         }
 
         [TestMethod]
         public void ChildInsertAfter()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlNode node1 = KmlItem.CreateItem("node1") as KmlNode;
-            root.Add(node1);
-            KmlNode node2 = KmlItem.CreateItem("node2") as KmlNode;
-            root.Add(node2);
-            KmlNode node3 = KmlItem.CreateItem("node3") as KmlNode;
-            root.InsertAfter(node1, node3);
+            KmlNode child3 = KmlItem.CreateItem("child3") as KmlNode;
+            data.Node1.InsertAfter(data.Node1Child1, child3);
 
-            Assert.AreEqual(3, root.Children.Count);
-            Assert.AreEqual(3, root.AllItems.Count);
-            Assert.AreEqual(node1, root.Children[0]);
-            Assert.AreEqual(node3, root.Children[1]);
-            Assert.AreEqual(node2, root.Children[2]);
+            Assert.AreEqual(data.Node1ChildCount + 1, data.Node1.Children.Count);
+            Assert.AreEqual(data.Node1AttribCount + data.Node1ChildCount + 1, data.Node1.AllItems.Count);
+            Assert.AreEqual(data.Node1Child1, data.Node1.Children[0]);
+            Assert.AreEqual(child3, data.Node1.Children[1]);
+            Assert.AreEqual(data.Node1Child2, data.Node1.Children[2]);
         }
 
         [TestMethod]
         public void ChildInsertAfterEmpty()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlNode node = KmlItem.CreateItem("node") as KmlNode;
-            root.InsertAfter(null, node);
+            KmlNode child = KmlItem.CreateItem("child") as KmlNode;
+            data.Node1.InsertAfter(null, child);
 
-            Assert.AreEqual(1, root.Children.Count);
-            Assert.AreEqual(1, root.AllItems.Count);
-            Assert.AreEqual(node, root.Children[0]);
+            Assert.AreEqual(data.Node1ChildCount + 1, data.Node1.Children.Count);
+            Assert.AreEqual(data.Node1AttribCount + data.Node1ChildCount + 1, data.Node1.AllItems.Count);
+            Assert.AreEqual(child, data.Node1.Children[data.Node1ChildCount]);
         }
 
         [TestMethod]
         public void ChildInsertAfterNotContained()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlNode node1 = KmlItem.CreateItem("node1") as KmlNode;
-            root.Add(node1);
-            KmlNode other = KmlItem.CreateItem("other") as KmlNode;
-            KmlNode node2 = KmlItem.CreateItem("node2") as KmlNode;
-            root.InsertAfter(other, node2);
+            KmlNode child = KmlItem.CreateItem("child") as KmlNode;
+            data.Node1.InsertAfter(data.Node2Child1, child);
 
-            Assert.AreEqual(2, root.Children.Count);
-            Assert.AreEqual(2, root.AllItems.Count);
-            Assert.AreEqual(node1, root.Children[0]);
-            Assert.AreEqual(node2, root.Children[1]);
+            Assert.AreEqual(data.Node1ChildCount + 1, data.Node1.Children.Count);
+            Assert.AreEqual(data.Node1AttribCount + data.Node1ChildCount + 1, data.Node1.AllItems.Count);
+            Assert.AreEqual(child, data.Node1.Children[data.Node1ChildCount]);
         }
 
         [TestMethod]
         public void ChildInsertBefore()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlNode node1 = KmlItem.CreateItem("node1") as KmlNode;
-            root.Add(node1);
-            KmlNode node2 = KmlItem.CreateItem("node2") as KmlNode;
-            root.InsertBefore(node1, node2);
+            KmlNode child = KmlItem.CreateItem("child") as KmlNode;
+            data.Node1.InsertBefore(data.Node1Child1, child);
 
-            Assert.AreEqual(2, root.Children.Count);
-            Assert.AreEqual(2, root.AllItems.Count);
-            Assert.AreEqual(node2, root.Children[0]);
-            Assert.AreEqual(node1, root.Children[1]);
+            Assert.AreEqual(data.Node1ChildCount + 1, data.Node1.Children.Count);
+            Assert.AreEqual(data.Node1AttribCount + data.Node1ChildCount + 1, data.Node1.AllItems.Count);
+            Assert.AreEqual(child, data.Node1.Children[0]);
+            Assert.AreEqual(data.Node1Child1, data.Node1.Children[1]);
         }
 
         [TestMethod]
         public void ChildInsertBeforeEmpty()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlNode node = KmlItem.CreateItem("node") as KmlNode;
-            root.InsertBefore(null, node);
+            KmlNode child = KmlItem.CreateItem("child") as KmlNode;
+            data.Node1.InsertBefore(null, child);
 
-            Assert.AreEqual(1, root.Children.Count);
-            Assert.AreEqual(1, root.AllItems.Count);
-            Assert.AreEqual(node, root.Children[0]);
+            Assert.AreEqual(data.Node1ChildCount + 1, data.Node1.Children.Count);
+            Assert.AreEqual(data.Node1AttribCount + data.Node1ChildCount + 1, data.Node1.AllItems.Count);
+            Assert.AreEqual(child, data.Node1.Children[data.Node1ChildCount]);
         }
 
         [TestMethod]
         public void ChildInsertBeforeNotContained()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlNode node1 = KmlItem.CreateItem("node1") as KmlNode;
-            root.Add(node1);
-            KmlNode other = KmlItem.CreateItem("other") as KmlNode;
-            KmlNode node2 = KmlItem.CreateItem("node2") as KmlNode;
-            root.InsertBefore(other, node2);
+            KmlNode child = KmlItem.CreateItem("child") as KmlNode;
+            data.Node1.InsertBefore(data.Node2Child1, child);
 
-            Assert.AreEqual(2, root.Children.Count);
-            Assert.AreEqual(2, root.AllItems.Count);
-            Assert.AreEqual(node1, root.Children[0]);
-            Assert.AreEqual(node2, root.Children[1]);
+            Assert.AreEqual(data.Node1ChildCount + 1, data.Node1.Children.Count);
+            Assert.AreEqual(data.Node1AttribCount + data.Node1ChildCount + 1, data.Node1.AllItems.Count);
+            Assert.AreEqual(child, data.Node1.Children[data.Node1ChildCount]);
         }
 
         [TestMethod]
         public void ChildDeleteAtChild()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlNode node1 = KmlItem.CreateItem("node1") as KmlNode;
-            root.Add(node1);
-            KmlNode node2 = KmlItem.CreateItem("node2") as KmlNode;
-            root.Add(node2);
-            KmlNode node3 = KmlItem.CreateItem("node3") as KmlNode;
-            node3.CanBeDeleted = false;
-            root.Add(node3);
+            data.Node1Child2.CanBeDeleted = false;
 
-            Assert.IsTrue(node2.Delete());
-            Assert.IsFalse(node3.Delete());
-            Assert.AreEqual(2, root.Children.Count);
-            Assert.AreEqual(2, root.AllItems.Count);
-            Assert.AreEqual(node1, root.Children[0]);
-            Assert.AreEqual(node3, root.Children[1]);
+            Assert.IsTrue(data.Node1Child1.Delete());
+            Assert.IsFalse(data.Node1Child2.Delete());
+            Assert.AreEqual(data.Node1ChildCount - 1, data.Node1.Children.Count);
+            Assert.AreEqual(data.Node1AttribCount + data.Node1ChildCount - 1, data.Node1.AllItems.Count);
+            Assert.AreEqual(data.Node1Child2, data.Node1.Children[0]);
         }
 
         [TestMethod]
         public void ChildDeleteAtNode()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlNode node1 = KmlItem.CreateItem("node1") as KmlNode;
-            root.Add(node1);
-            KmlNode node2 = KmlItem.CreateItem("node2") as KmlNode;
-            root.Add(node2);
-            KmlNode node3 = KmlItem.CreateItem("node3") as KmlNode;
-            node3.CanBeDeleted = false;
-            root.Add(node3);
+            data.Node1Child2.CanBeDeleted = false;
 
-            Assert.IsTrue(root.Delete(node2));
-            Assert.IsFalse(root.Delete(node3));
-            Assert.AreEqual(2, root.Children.Count);
-            Assert.AreEqual(2, root.AllItems.Count);
-            Assert.AreEqual(node1, root.Children[0]);
-            Assert.AreEqual(node3, root.Children[1]);
+            Assert.IsTrue(data.Node1.Delete(data.Node1Child1));
+            Assert.IsFalse(data.Node1.Delete(data.Node1Child2));
+            Assert.AreEqual(data.Node1ChildCount - 1, data.Node1.Children.Count);
+            Assert.AreEqual(data.Node1AttribCount + data.Node1ChildCount - 1, data.Node1.AllItems.Count);
+            Assert.AreEqual(data.Node1Child2, data.Node1.Children[0]);
         }
 
         [TestMethod]
         public void ChildGetTag()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlNode node1 = KmlItem.CreateItem("node1") as KmlNode;
-            root.Add(node1);
-            KmlNode node2 = KmlItem.CreateItem("node2") as KmlNode;
-            root.Add(node2);
-            KmlNode node3 = KmlItem.CreateItem("node3") as KmlNode;
-            root.Add(node3);
-
-            KmlNode test = root.GetChildNode("node2");
-            Assert.AreEqual(node2, test);
-            KmlNode nonsense = root.GetChildNode("nonsense");
+            KmlNode test = data.Root1.GetChildNode("Node2Tag");
+            Assert.AreEqual(data.Node2, test);
+            KmlAttrib nonsense = data.Root1.GetAttrib("nonsense");
             Assert.IsNull(nonsense);
         }
 
         [TestMethod]
         public void ChildGetName()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
+            KmlNode root = data.Root2;
             KmlNode node1 = KmlItem.CreateItem("node") as KmlNode;
             node1.Add(KmlItem.CreateItem("name = name1"));
             root.Add(node1);
@@ -526,32 +436,24 @@ namespace KML_Test.KML
         [TestMethod]
         public void ChildGetFrom()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlNode node1 = KmlItem.CreateItem("node1") as KmlNode;
-            root.Add(node1);
-            KmlNode node2 = KmlItem.CreateItem("node2") as KmlNode;
-            root.Add(node2);
-            KmlNode node3 = KmlItem.CreateItem("node3") as KmlNode;
-            root.Add(node3);
-
-            Assert.AreEqual(node2, KmlNode.GetChildNodeFrom(root, "node2"));
-            Assert.IsNull(KmlNode.GetChildNodeFrom(root, "node4"));
+            Assert.AreEqual(data.Node2, KmlNode.GetChildNodeFrom(data.Root1, "Node2Tag"));
+            Assert.IsNull(KmlNode.GetChildNodeFrom(data.Root1, "AnotherNodeTag"));
             KmlNode empty = null;
-            Assert.IsNull(KmlNode.GetChildNodeFrom(empty, "node2"));
+            Assert.IsNull(KmlNode.GetChildNodeFrom(empty, "Node2Tag"));
 
             List<KmlItem> list = new List<KmlItem>();
-            list.AddRange(root.Children);
+            list.AddRange(data.Root1.Children);
 
-            Assert.AreEqual(node2, KmlNode.GetNodeFrom(list, "node2"));
-            Assert.IsNull(KmlNode.GetNodeFrom(list, "node4"));
+            Assert.AreEqual(data.Node2, KmlNode.GetNodeFrom(list, "Node2Tag"));
+            Assert.IsNull(KmlNode.GetNodeFrom(list, "AnotherNodeTag"));
 
             list.Clear();
-            list.Add(root);
-            string[] tags1 = { "root", "node2" };
-            string[] tags2 = { "root2", "node2" };
-            string[] tags3 = { "root", "node4" };
+            list.Add(data.Root1);
+            string[] tags1 = { "Root1", "Node2Tag" };
+            string[] tags2 = { "Root2", "Node2Tag" };
+            string[] tags3 = { "Root1", "AnotherNodeTag" };
 
-            Assert.AreEqual(node2, KmlNode.GetNodeFromDeep(list, tags1));
+            Assert.AreEqual(data.Node2, KmlNode.GetNodeFromDeep(list, tags1));
             Assert.IsNull(KmlNode.GetNodeFromDeep(list, tags2));
             Assert.IsNull(KmlNode.GetNodeFromDeep(list, tags3));
         }
@@ -559,7 +461,7 @@ namespace KML_Test.KML
         [TestMethod]
         public void ChildGetOrCreate()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
+            KmlNode root = data.Root2;
             KmlNode node1 = KmlItem.CreateItem("node") as KmlNode;
             node1.Add(KmlItem.CreateItem("name = name1"));
             root.Add(node1);
@@ -597,7 +499,7 @@ namespace KML_Test.KML
         [TestMethod]
         public void MixedAdd()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
+            KmlNode root = data.Root2;
             KmlNode node1 = KmlItem.CreateItem("node1") as KmlNode;
             root.Add(node1);
             KmlAttrib attrib1 = KmlItem.CreateItem("attrib1 = value1") as KmlAttrib;
@@ -624,7 +526,7 @@ namespace KML_Test.KML
         [TestMethod]
         public void MixedInsert()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
+            KmlNode root = data.Root2;
             KmlNode node1 = KmlItem.CreateItem("node1") as KmlNode;
             root.Add(node1);
             KmlAttrib attrib1 = KmlItem.CreateItem("attrib1 = value1") as KmlAttrib;
@@ -651,7 +553,7 @@ namespace KML_Test.KML
         [TestMethod]
         public void MixedAddWellOrdered()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
+            KmlNode root = data.Root2;
             KmlAttrib attrib1 = KmlItem.CreateItem("attrib1 = value1") as KmlAttrib;
             root.Add(attrib1);
             KmlNode node1 = KmlItem.CreateItem("node1") as KmlNode;
@@ -677,7 +579,7 @@ namespace KML_Test.KML
         [TestMethod]
         public void ToStringChangedEvent()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
+            KmlNode root = data.Root2;
             root.ToStringChanged += TestEventHandler;
 
             //_testEventHandlerVisited = false;
@@ -702,22 +604,12 @@ namespace KML_Test.KML
         [TestMethod]
         public void Clear()
         {
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            root.Add(KmlItem.CreateItem("attrib1 = 1"));
-            root.Add(KmlItem.CreateItem("attrib2 = 2"));
-            root.Add(KmlItem.CreateItem("name = rootname"));
-            root.Add(KmlItem.CreateItem("node1"));
-            root.Add(KmlItem.CreateItem("node2"));
-            Assert.AreEqual(3, root.Attribs.Count);
-            Assert.AreEqual(2, root.Children.Count);
-            Assert.AreEqual(5, root.AllItems.Count);
-            Assert.AreEqual("rootname", root.Name);
-            root.Clear();
+            data.Root1.Clear();
 
-            Assert.AreEqual(0, root.Attribs.Count);
-            Assert.AreEqual(0, root.Children.Count);
-            Assert.AreEqual(0, root.AllItems.Count);
-            Assert.AreEqual("", root.Name);
+            Assert.AreEqual(0, data.Root1.Attribs.Count);
+            Assert.AreEqual(0, data.Root1.Children.Count);
+            Assert.AreEqual(0, data.Root1.AllItems.Count);
+            Assert.AreEqual("", data.Root1.Name);
         }
 
         [TestMethod]
@@ -726,12 +618,11 @@ namespace KML_Test.KML
             // Syntax.Messages are static, there may be some from other tests
             int messageCount = Syntax.Messages.Count;
 
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
             KmlItem unknown = new KmlItem("unknown");
-            root.Add(unknown);
+            data.Root1.Add(unknown);
 
             Assert.AreEqual(messageCount + 1, Syntax.Messages.Count);
-            Assert.AreEqual(root, Syntax.Messages[Syntax.Messages.Count - 1].Source);
+            Assert.AreEqual(data.Root1, Syntax.Messages[Syntax.Messages.Count - 1].Source);
         }
 
         [TestMethod]
@@ -740,16 +631,11 @@ namespace KML_Test.KML
             // Syntax.Messages are static, there may be some from other tests
             int messageCount = Syntax.Messages.Count;
 
-            KmlNode root = KmlItem.CreateItem("root") as KmlNode;
-            KmlAttrib attrib1 = KmlItem.CreateItem("attrib1 = value1") as KmlAttrib;
-            root.Add(attrib1);
-            KmlNode node1 = KmlItem.CreateItem("node1") as KmlNode;
-            root.Add(node1);
-            KmlAttrib attrib2 = KmlItem.CreateItem("attrib2 = value1") as KmlAttrib;
-            root.Add(attrib2);
+            KmlAttrib attrib = KmlItem.CreateItem("attrib = value") as KmlAttrib;
+            data.Root1.Add(attrib);
 
             Assert.AreEqual(messageCount + 1, Syntax.Messages.Count);
-            Assert.AreEqual(attrib2, Syntax.Messages[Syntax.Messages.Count - 1].Source);
+            Assert.AreEqual(attrib, Syntax.Messages[Syntax.Messages.Count - 1].Source);
         }
     }
 }

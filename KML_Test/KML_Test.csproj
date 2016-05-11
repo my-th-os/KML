@@ -53,6 +53,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Data\TestData.cs" />
     <Compile Include="KML\KmlNode_Test.cs" />
     <Compile Include="KML\KmlItem_Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -62,6 +63,10 @@
       <Project>{6be20cf1-9008-4012-8745-955e261701a0}</Project>
       <Name>KML</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\Files_Ok\" />
+    <Folder Include="Data\Files_Warning\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
