@@ -167,6 +167,7 @@ namespace KML
         {
             Type = "";
             Trait = "";
+            State = "";
             Brave = 0.0;
             Dumb = 0.0;
             base.Clear();

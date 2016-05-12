@@ -29,6 +29,18 @@ namespace KML_Test.Data
         public int Node2AttribCount { get; private set; }
         public int Node2ChildCount { get; private set; }
 
+        public KmlNode Flightstate { get; private set; }
+        public KmlNode Roster { get; private set; }
+        public KmlVessel Vessel1 { get; private set; }
+        public KmlPart Vessel1Part1 { get; private set; }
+        public KmlResource Vessel1Part1Resource1 { get; private set; }
+        public KmlResource Vessel1Part1Resource2 { get; private set; }
+        public KmlPart Vessel1Part2 { get; private set; }
+        public KmlVessel Vessel2 { get; private set; }
+        public KmlPart Vessel2Part1 { get; private set; }
+        public KmlKerbal Kerbal1 { get; private set; }
+        public KmlKerbal Kerbal2 { get; private set; }
+
         public TestData()
         {
             Roots = new List<KmlItem>();
@@ -67,6 +79,54 @@ namespace KML_Test.Data
             Add(Node2, Node2Attrib1);
             Node2Child1 = NewNode("Child1");
             Add(Node2, Node2Child1);
+
+            KmlNode game = NewNode("GAME");
+            Add(null, game);
+            Flightstate = NewNode("FLIGHTSTATE");
+            Add(game, Flightstate);
+            Roster = NewNode("ROSTER");
+            Add(game, Roster);
+
+            Kerbal1 = NewNode("KERBAL", "Kerbal1") as KmlKerbal;
+            Roster.Add(Kerbal1);
+            Add(Kerbal1, NewAttrib("state", "Assigned"));
+            Add(Kerbal1, NewAttrib("type", "Crew"));
+            Add(Kerbal1, NewAttrib("trait", "Pilot"));
+            Add(Kerbal1, NewAttrib("brave", "0.1"));
+            Add(Kerbal1, NewAttrib("dumb", "0.2"));
+
+            Kerbal2 = NewNode("KERBAL", "Kerbal2") as KmlKerbal;
+            Add(Kerbal2, NewAttrib("state", "Available"));
+            Add(Kerbal2, NewAttrib("type", "Crew"));
+            Add(Kerbal2, NewAttrib("trait", "Scientist"));
+            Add(Kerbal2, NewAttrib("brave", "0.2"));
+            Add(Kerbal2, NewAttrib("dumb", "0.4"));
+            Roster.Add(Kerbal2);
+
+            Vessel1 = NewNode("VESSEL", "Vessel1") as KmlVessel;
+            Vessel1Part1 = NewNode("PART", "Vessel1Part1") as KmlPart;
+            Add(Vessel1Part1, NewAttrib("uid", "Vessel1Part1Uid"));
+            Add(Vessel1Part1, NewAttrib("parent", "0"));
+            Add(Vessel1Part1, NewAttrib("position", "1.0,2.0,3.0"));
+            Add(Vessel1Part1, NewAttrib("flag", "Vessel1Flag1"));
+            Add(Vessel1Part1, NewAttrib("crew", Kerbal1.Name));
+            Vessel1Part1Resource1 = NewNode("RESOURCE", "Resource1") as KmlResource;
+            Add(Vessel1Part1Resource1, NewAttrib("amount", "50"));
+            Add(Vessel1Part1Resource1, NewAttrib("maxAmount", "100"));
+            Add(Vessel1Part1, Vessel1Part1Resource1);
+            Vessel1Part1Resource2 = NewNode("RESOURCE", "Resource2") as KmlResource;
+            Add(Vessel1Part1Resource2, NewAttrib("amount", "200"));
+            Add(Vessel1Part1Resource2, NewAttrib("maxAmount", "200"));
+            Add(Vessel1Part1, Vessel1Part1Resource2);
+            Add(Vessel1, Vessel1Part1);
+            Vessel1Part2 = NewNode("PART", "Vessel1Part2") as KmlPart;
+            Add(Vessel1Part2, NewAttrib("uid", "Vessel1Part2Uid"));
+            Add(Vessel1Part2, NewAttrib("parent", "1"));
+            Add(Vessel1Part2, NewAttrib("position", "2.0,3.0,4.0"));
+            Add(Vessel1Part2, NewAttrib("flag", "Vessel1Flag2"));
+            Add(Vessel1, Vessel1Part2);
+            Add(Vessel1, NewAttrib("root", "0"));
+            Add(Flightstate, Vessel1);
         }
 
         private void Add(KmlNode parent, KmlItem child)
