@@ -265,11 +265,16 @@ namespace KML
             return list;
         }
 
-        private static void Identify(List<KmlItem> list)
+        private static void Identify(List<KmlItem> list, bool recursive = false)
         {
             for (int i = 0; i < list.Count; i++)
             {
                 KmlItem item = list[i];
+                if (recursive && item is KmlNode)
+                {
+                    KmlNode node = (KmlNode)item;
+                    Identify(node.AllItems, recursive);
+                }
                 KmlItem replaceItem = item.Identify();
                 if (replaceItem != null)
                 {
@@ -354,6 +359,21 @@ namespace KML
             }
 
             return list;
+        }
+
+        /// <summary>
+        /// Parse KML tree data from memory and return a list of the root nodes.
+        /// In general there may be more than one item not containing other items.
+        /// Method used for testing, to call Identify() and Finalize for a list
+        /// of items not read from file but built in memory via CreateItem()
+        /// </summary>
+        /// <param name="roots">A list of root / top level KmlItems</param>
+        /// <returns>A list of root / top level KmlItems</returns>
+        public static List<KmlItem> ParseMemory(List<KmlItem> roots)
+        {
+            Identify(roots, true);
+            CallFinalize(roots);
+            return roots;
         }
 
         private static void WriteFile (StreamWriter file, KmlItem item, int indent)

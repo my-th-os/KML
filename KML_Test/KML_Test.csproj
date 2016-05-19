@@ -58,7 +58,9 @@
     <Compile Include="KML\KmlItem_Test.cs" />
     <Compile Include="KML\KmlAttrib_Test.cs" />
     <Compile Include="KML\KmlKerbal_Test.cs" />
+    <Compile Include="KML\KmlPartDock_Test.cs" />
     <Compile Include="KML\KmlPart_Test.cs" />
+    <Compile Include="KML\KmlResource_Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -82,10 +82,8 @@ namespace KML_Test.KML
         [TestMethod]
         public void SendHome()
         {
-            // TODO: KmlKerbal_Test.SendHome() Could not call Finazlize outside ParseFile,
-            // so kerbal-vessel links are not built
-            // Assert.AreEqual(data.Vessel1, data.Kerbal1.AssignedVessel);
-            // Assert.AreEqual(data.Vessel1Part1, data.Kerbal1.AssignedPart);
+            Assert.AreEqual(data.Vessel1, data.Kerbal1.AssignedVessel);
+            Assert.AreEqual(data.Vessel1Part1, data.Kerbal1.AssignedPart);
             Assert.AreEqual("Assigned", data.Kerbal1.State);
             data.Kerbal1.SendHome();
             Assert.IsNull(data.Kerbal1.AssignedVessel);

@@ -36,6 +36,12 @@ namespace KML_Test.Data
         public KmlResource Vessel1Part1Resource1 { get; private set; }
         public KmlResource Vessel1Part1Resource2 { get; private set; }
         public KmlPart Vessel1Part2 { get; private set; }
+        public KmlPart Vessel1Part3 { get; private set; }
+        public KmlPart Vessel1Part4 { get; private set; }
+        public KmlPart Vessel1Part5 { get; private set; }
+        public KmlPart Vessel1Part6 { get; private set; }
+        public KmlPart Vessel1Part7 { get; private set; }
+        public KmlPart Vessel1Part8 { get; private set; }
         public KmlVessel Vessel2 { get; private set; }
         public KmlPart Vessel2Part1 { get; private set; }
         public KmlKerbal Kerbal1 { get; private set; }
@@ -104,10 +110,18 @@ namespace KML_Test.Data
             Roster.Add(Kerbal2);
 
             Vessel1 = NewNode("VESSEL", "Vessel1") as KmlVessel;
+            Add(Vessel1, NewAttrib("root", "0"));
+            
             Vessel1Part1 = NewNode("PART", "Vessel1Part1") as KmlPart;
             Add(Vessel1Part1, NewAttrib("uid", "Vessel1Part1Uid"));
             Add(Vessel1Part1, NewAttrib("parent", "0"));
-            Add(Vessel1Part1, NewAttrib("position", "1.0,2.0,3.0"));
+            Add(Vessel1Part1, NewAttrib("position", "0,0,0"));
+            Add(Vessel1Part1, NewAttrib("attN", "bottom, 1"));
+            Add(Vessel1Part1, NewAttrib("attN", "top, 2"));
+            Add(Vessel1Part1, NewAttrib("attN", "left, 3"));
+            Add(Vessel1Part1, NewAttrib("attN", "right, 4"));
+            Add(Vessel1Part1, NewAttrib("attN", "back, 5"));
+            Add(Vessel1Part1, NewAttrib("attN", "front, 6"));
             Add(Vessel1Part1, NewAttrib("flag", "Vessel1Flag1"));
             Add(Vessel1Part1, NewAttrib("crew", Kerbal1.Name));
             Vessel1Part1Resource1 = NewNode("RESOURCE", "Resource1") as KmlResource;
@@ -119,14 +133,61 @@ namespace KML_Test.Data
             Add(Vessel1Part1Resource2, NewAttrib("maxAmount", "200"));
             Add(Vessel1Part1, Vessel1Part1Resource2);
             Add(Vessel1, Vessel1Part1);
+            
             Vessel1Part2 = NewNode("PART", "Vessel1Part2") as KmlPart;
             Add(Vessel1Part2, NewAttrib("uid", "Vessel1Part2Uid"));
-            Add(Vessel1Part2, NewAttrib("parent", "1"));
-            Add(Vessel1Part2, NewAttrib("position", "2.0,3.0,4.0"));
+            Add(Vessel1Part2, NewAttrib("parent", "0"));
+            Add(Vessel1Part2, NewAttrib("position", "0.0,-1.0,0.0"));
+            Add(Vessel1Part2, NewAttrib("attN", "top, 0"));
+            Add(Vessel1Part2, NewAttrib("attN", "bottom, -1"));
             Add(Vessel1Part2, NewAttrib("flag", "Vessel1Flag2"));
             Add(Vessel1, Vessel1Part2);
-            Add(Vessel1, NewAttrib("root", "0"));
+
+            Vessel1Part3 = NewNode("PART", "Vessel1Part3") as KmlPart;
+            Add(Vessel1Part3, NewAttrib("parent", "0"));
+            Add(Vessel1Part3, NewAttrib("position", "0.0,1.0,0.0"));
+            Add(Vessel1Part3, NewAttrib("attN", "top, -1"));
+            Add(Vessel1Part3, NewAttrib("attN", "bottom, 0"));
+            Add(Vessel1, Vessel1Part3);
+
+            Vessel1Part4 = NewNode("PART", "Vessel1Part4") as KmlPart;
+            Add(Vessel1Part4, NewAttrib("parent", "0"));
+            Add(Vessel1Part4, NewAttrib("position", "-1.0,0.0,0.0"));
+            Add(Vessel1Part4, NewAttrib("attN", "top, 0"));
+            Add(Vessel1Part4, NewAttrib("attN", "bottom, -1"));
+            Add(Vessel1, Vessel1Part4);
+
+            Vessel1Part5 = NewNode("PART", "Vessel1Part5") as KmlPart;
+            Add(Vessel1Part5, NewAttrib("parent", "0"));
+            Add(Vessel1Part5, NewAttrib("position", "1.0,0.0,0.0"));
+            Add(Vessel1Part5, NewAttrib("attN", "top, 0"));
+            Add(Vessel1Part5, NewAttrib("attN", "bottom, -1"));
+            Add(Vessel1, Vessel1Part5);
+
+            Vessel1Part6 = NewNode("PART", "Vessel1Part6") as KmlPart;
+            Add(Vessel1Part6, NewAttrib("parent", "0"));
+            Add(Vessel1Part6, NewAttrib("position", "0.0,0.0,-1.0"));
+            Add(Vessel1Part6, NewAttrib("attN", "top, 0"));
+            Add(Vessel1Part6, NewAttrib("attN", "bottom, -1"));
+            Add(Vessel1, Vessel1Part6);
+
+            Vessel1Part7 = NewNode("PART", "Vessel1Part7") as KmlPart;
+            Add(Vessel1Part7, NewAttrib("parent", "0"));
+            Add(Vessel1Part7, NewAttrib("position", "0.0,0.0,1.0"));
+            Add(Vessel1Part7, NewAttrib("attN", "top, 0"));
+            Add(Vessel1Part7, NewAttrib("attN", "bottom, -1"));
+            Add(Vessel1, Vessel1Part7);
+
+            Vessel1Part8 = NewNode("PART", "Vessel1Part8") as KmlPart;
+            Add(Vessel1Part8, NewAttrib("parent", "1"));
+            Add(Vessel1Part8, NewAttrib("position", "0.0,-2.0,0.0"));
+            Add(Vessel1Part8, NewAttrib("srfN", "srfAttach, 1"));
+            Add(Vessel1, Vessel1Part8);
             Add(Flightstate, Vessel1);
+
+            // TODO TestData.Generate(): Maybe one item is replaced within Identify
+            // and needs to be reassigned to a property.
+            KmlItem.ParseMemory(Roots);
         }
 
         private void Add(KmlNode parent, KmlItem child)
