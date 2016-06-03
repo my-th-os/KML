@@ -78,8 +78,8 @@ namespace KML
                     }
                     else
                     {
-                        // TODO KmlPartDock.Repair(): Is it same vessel docking or no docking? 
-                        // Semi-functional same vessel docking would be fixed above
+                        // Semi-functional same vessel docking would be fixed above, this is no docking
+                        RepairClearDocking(this);
                     }
                 }
             }

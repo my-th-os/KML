@@ -212,7 +212,7 @@
         <StatusBar Height="23" VerticalAlignment="Bottom" Background="Gray">
             <Label Content="KML - Kerbal Markup Lister" Padding="0"/>
             <Separator/>
-            <Label Content="Version 0.7" Padding="0"/>
+            <Label Content="Version 0.7.1" Padding="0"/>
             <Separator/>
             <Label Content="© 2016 Oliver Pola (Mythos)" Padding="0"/>
             <Separator/>

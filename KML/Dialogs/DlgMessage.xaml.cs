@@ -130,6 +130,17 @@ namespace KML
             {
                 str.Append(Syntax.Messages[0].ToString(true));
             }
+            else
+            {
+                // Usually Show is called when either a warning/error
+                // or a successful message is expected.
+                // Should be avoided to have no feedback.
+                string txt = "Sorry, nothing happened or no feedback from action!\n\n" +
+                    "Please report your steps and any details on the KSP forum thread or via GitHub issue.";
+                title = "KML Warning";
+                img = Icons.Warning;
+                str.Append(txt);
+            }
             for (int i = 1; i < Syntax.Messages.Count; i++)
             {
                 str.AppendLine();

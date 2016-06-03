@@ -1,3 +1,7 @@
+Version 0.7.1 - in progress
+- reset docking on one-sided same vessel docking errors
+- request bug report when actions return neither warning nor success
+
 Version 0.7 - 2016-04-28
 - send vessel to low kerbin orbit
 - send kerbal home to astronaut complex
