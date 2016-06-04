@@ -378,39 +378,42 @@ namespace KML
         protected override void Finalize(List<KmlItem> roots)
         {
             base.Finalize(roots);
-            AssignedCrew.Clear();
-            string[] tags = { "game", "roster" };
-            KmlNode rosterNode = GetNodeFromDeep(roots, tags);
-            if (rosterNode != null)
+            if (Origin == VesselOrigin.Flightstate)
             {
-                foreach (KmlPart part in Parts)
+                AssignedCrew.Clear();
+                string[] tags = { "game", "roster" };
+                KmlNode rosterNode = GetNodeFromDeep(roots, tags);
+                if (rosterNode != null)
                 {
-                    foreach (KmlAttrib attrib in part.Attribs)
+                    foreach (KmlPart part in Parts)
                     {
-                        if (attrib.Name.ToLower() == "crew" && attrib.Value.Length > 0)
+                        foreach (KmlAttrib attrib in part.Attribs)
                         {
-                            int oldCrewCount = AssignedCrew.Count;
-                            foreach (KmlNode kerbalNode in rosterNode.Children)
+                            if (attrib.Name.ToLower() == "crew" && attrib.Value.Length > 0)
                             {
-                                if (kerbalNode is KmlKerbal)
+                                int oldCrewCount = AssignedCrew.Count;
+                                foreach (KmlNode kerbalNode in rosterNode.Children)
                                 {
-                                    KmlKerbal kerbal = (KmlKerbal)kerbalNode;
-                                    if (attrib.Value.ToLower() == kerbal.Name.ToLower())
+                                    if (kerbalNode is KmlKerbal)
                                     {
-                                        // Duplicate entries are checked on the kerbal side,
-                                        // here only duplicates within one vessel could be checked, 
-                                        // there all vessels are checked
-                                        AssignedCrew.Add(kerbal);
+                                        KmlKerbal kerbal = (KmlKerbal)kerbalNode;
+                                        if (attrib.Value.ToLower() == kerbal.Name.ToLower())
+                                        {
+                                            // Duplicate entries are checked on the kerbal side,
+                                            // here only duplicates within one vessel could be checked, 
+                                            // there all vessels are checked
+                                            AssignedCrew.Add(kerbal);
+                                        }
                                     }
                                 }
-                            }
-                            if (AssignedCrew.Count < oldCrewCount + 1)
-                            {
-                                Syntax.Warning(attrib, "Crew could not be assigned, this kerbal does not exist: " + attrib.Value);
-                            }
-                            else if (AssignedCrew.Count > oldCrewCount + 1)
-                            {
-                                Syntax.Warning(attrib, "Crew member not unique, there are multiple kerbals with name: " + attrib.Value);
+                                if (AssignedCrew.Count < oldCrewCount + 1)
+                                {
+                                    Syntax.Warning(attrib, "Crew could not be assigned, this kerbal does not exist: " + attrib.Value);
+                                }
+                                else if (AssignedCrew.Count > oldCrewCount + 1)
+                                {
+                                    Syntax.Warning(attrib, "Crew member not unique, there are multiple kerbals with name: " + attrib.Value);
+                                }
                             }
                         }
                     }
