@@ -1,6 +1,7 @@
 Version 0.7.1 - in progress
-- reset docking on one-sided same vessel docking errors
-- request bug report when actions return neither warning nor success
+- reset docking on one-sided same vessel docking errors - thanks to schneida
+- request bug report when actions return neither warning nor success - thanks to schneida
+- report only crew assignment problems for kerbals from roster
 
 Version 0.7 - 2016-04-28
 - send vessel to low kerbin orbit

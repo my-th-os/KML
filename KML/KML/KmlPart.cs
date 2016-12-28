@@ -665,6 +665,8 @@ namespace KML
                         // this situation may happen and this leads to this additional check
                         else if (part.ParentPart.AttachedToSurfaceIndex != i)
                         {
+                            //if (part.ParentPart.AttachedToNodeIndices.Contains(i))
+                            //    Syntax.Warning(part, "gotcha");
                             Syntax.Warning(part, "Part not attached to parent part: " + part.ParentPart);
                         }
                     }

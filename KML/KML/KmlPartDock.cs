@@ -216,6 +216,11 @@ namespace KML
         {
             foreach (KmlNode node in part.Children)
             {
+                if (node.Tag.ToLower() != "module")
+                {
+                    continue;
+                }
+
                 if (node.Name.ToLower() == "moduledockingnode")
                 {
                     return true;
