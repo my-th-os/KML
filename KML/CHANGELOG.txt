@@ -1,9 +1,11 @@
-Version 0.7.2 - in progress
+Version 0.7.2 - 2017-01-15
 - new vessel types plane and relay
+- tested with KSP 1.2.2
+
+Version 0.7.1 - 2016 preview, never released
 - reset docking on one-sided same vessel docking errors - thanks to schneida
 - request bug report when actions return neither warning nor success - thanks to schneida
 - report only crew assignment problems for kerbals from roster
-- tested with KSP 1.2.2
 
 Version 0.7 - 2016-04-28
 - send vessel to low kerbin orbit
