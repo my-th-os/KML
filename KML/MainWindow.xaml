@@ -115,7 +115,7 @@
                             <Image Source="Images\Station16.png"/>
                         </ToggleButton>
                         <ToggleButton ToolTip="Toggle Bases" IsChecked="True" Click="VesselsFilterBases_Click">
-                            <Image Source="Images\Radar16.png"/>
+                            <Image Source="Images\Base16.png"/>
                         </ToggleButton>
                         <ToggleButton ToolTip="Toggle Planes" IsChecked="True" Click="VesselsFilterPlanes_Click">
                             <Image Source="Images\Plane16.png"/>

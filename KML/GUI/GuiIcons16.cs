@@ -37,7 +37,7 @@ namespace KML
             PartGrapple.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/GrapplingHook16.png"));
             Resource.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Battery16.png"));
             Vessel.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/ApolloCsm16.png"));
-            VesselBase.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Radar16.png"));
+            VesselBase.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Base16.png"));
             VesselDebris.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Trash16.png"));
             VesselEVA.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Astronaut16.png"));
             VesselFlag.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Flag16.png"));
