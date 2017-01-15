@@ -111,9 +111,17 @@ namespace KML
             {
                 image.Source = Icons.VesselLander.Source;
             }
+            else if (vessel.Type.ToLower() == "plane")
+            {
+                image.Source = Icons.VesselPlane.Source;
+            }
             else if (vessel.Type.ToLower() == "probe")
             {
                 image.Source = Icons.VesselProbe.Source;
+            }
+            else if (vessel.Type.ToLower() == "relay")
+            {
+                image.Source = Icons.VesselRelay.Source;
             }
             else if (vessel.Type.ToLower() == "rover")
             {

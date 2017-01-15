@@ -130,9 +130,19 @@ namespace KML
         public Image VesselLander = new Image();
 
         /// <summary>
+        /// The icon for plane vessels in the vessels list or the KML tree.
+        /// </summary>
+        public Image VesselPlane= new Image();
+
+        /// <summary>
         /// The icon for probe vessels in the vessels list or the KML tree.
         /// </summary>
         public Image VesselProbe = new Image();
+
+        /// <summary>
+        /// The icon for relay vessels in the vessels list or the KML tree.
+        /// </summary>
+        public Image VesselRelay = new Image();
 
         /// <summary>
         /// The icon for rover vessels in the vessels list or the KML tree.

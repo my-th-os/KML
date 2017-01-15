@@ -42,7 +42,9 @@ namespace KML
             VesselEVA.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Astronaut48.png"));
             VesselFlag.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Flag48.png"));
             VesselLander.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/LunarModule48.png"));
+            VesselPlane.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Plane48.png"));
             VesselProbe.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Satellite48.png"));
+            VesselRelay.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Radar48.png"));
             VesselRover.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Rover48.png"));
             VesselSpaceObject.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/GlobeGray48.png"));
             VesselStation.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Station48.png"));

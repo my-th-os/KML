@@ -218,8 +218,14 @@ namespace KML
                     case "lander":
                         visible = visible && Filter.Lander;
                         break;
+                    case "plane":
+                        visible = visible && Filter.Plane;
+                        break;
                     case "probe":
                         visible = visible && Filter.Probe;
+                        break;
+                    case "relay":
+                        visible = visible && Filter.Relay;
                         break;
                     case "rover":
                         visible = visible && Filter.Rover;

@@ -337,6 +337,20 @@ namespace KML
             SetToggleButtonStyle(sender as ToggleButton);
         }
 
+        private void VesselsFilterPlanes_Click(object sender, RoutedEventArgs e)
+        {
+            TabsManager.VesselsManager.Filter.Plane = (sender as ToggleButton).IsChecked == true;
+            TabsManager.VesselsManager.UpdateVisibility();
+            SetToggleButtonStyle(sender as ToggleButton);
+        }
+
+        private void VesselsFilterRelays_Click(object sender, RoutedEventArgs e)
+        {
+            TabsManager.VesselsManager.Filter.Relay = (sender as ToggleButton).IsChecked == true;
+            TabsManager.VesselsManager.UpdateVisibility();
+            SetToggleButtonStyle(sender as ToggleButton);
+        }
+
         private void VesselsFilterRovers_Click(object sender, RoutedEventArgs e)
         {
             TabsManager.VesselsManager.Filter.Rover = (sender as ToggleButton).IsChecked == true;

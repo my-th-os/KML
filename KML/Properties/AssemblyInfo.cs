@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("KML - Kerbal Markup Lister")]
-[assembly: AssemblyCopyright("Copyright © 2016 Oliver Pola (Mythos)")]
+[assembly: AssemblyCopyright("Copyright © 2017 Oliver Pola (Mythos)")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,5 +51,5 @@ using System.Windows;
 // Sie können alle Werte angeben oder die standardmäßigen Build- und Revisionsnummern 
 // übernehmen, indem Sie "*" eingeben:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.7.1.0")]
-[assembly: AssemblyFileVersion("0.7.1.0")]
+[assembly: AssemblyVersion("0.7.2.0")]
+[assembly: AssemblyFileVersion("0.7.2.0")]

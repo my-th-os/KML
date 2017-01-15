@@ -356,6 +356,8 @@ namespace KML
                 case "7": return "Station";
                 case "8": return "Base";
                 case "9": return "EVA";
+                // KSP 1.2 does not work with numbers but with same strings now
+                // so no need to translate type Plane or Relay here
                 default: return nr;
             }
         }

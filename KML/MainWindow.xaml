@@ -117,6 +117,12 @@
                         <ToggleButton ToolTip="Toggle Bases" IsChecked="True" Click="VesselsFilterBases_Click">
                             <Image Source="Images\Radar16.png"/>
                         </ToggleButton>
+                        <ToggleButton ToolTip="Toggle Planes" IsChecked="True" Click="VesselsFilterPlanes_Click">
+                            <Image Source="Images\Plane16.png"/>
+                        </ToggleButton>
+                        <ToggleButton ToolTip="Toggle Relays" IsChecked="True" Click="VesselsFilterRelays_Click">
+                            <Image Source="Images\Radar16.png"/>
+                        </ToggleButton>
                         <ToggleButton ToolTip="Toggle EVA" IsChecked="True" Click="VesselsFilterEVA_Click">
                             <Image Source="Images\Astronaut16.png"/>
                         </ToggleButton>
@@ -212,9 +218,9 @@
         <StatusBar Height="23" VerticalAlignment="Bottom" Background="Gray">
             <Label Content="KML - Kerbal Markup Lister" Padding="0"/>
             <Separator/>
-            <Label Content="Version 0.7.1" Padding="0"/>
+            <Label Content="Version 0.7.2" Padding="0"/>
             <Separator/>
-            <Label Content="© 2016 Oliver Pola (Mythos)" Padding="0"/>
+            <Label Content="© 2017 Oliver Pola (Mythos)" Padding="0"/>
             <Separator/>
             <Hyperlink NavigateUri="http://www.gnu.org/licenses/gpl.html" RequestNavigate="Hyperlink_RequestNavigate">GPL License</Hyperlink>
             <Separator/>

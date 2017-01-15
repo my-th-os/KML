@@ -36,9 +36,24 @@ namespace KML
         public bool Lander { get; set; }
 
         /// <summary>
+        /// Get or set whether type "Plane" is visible
+        /// </summary>
+        public bool Plane { get; set; }
+
+        /// <summary>
         /// Get or set whether type "Probe" is visible
         /// </summary>
         public bool Probe { get; set; }
+
+        /// <summary>
+        /// Get or set whether type "Relay" is visible
+        /// </summary>
+        public bool Relay { get; set; }
+
+        /// <summary>
+        /// Get or set whether type "Rover" is visible
+        /// </summary>
+        public bool Rover { get; set; }
 
         /// <summary>
         /// Get or set whether type "Ship" is visible
@@ -54,11 +69,6 @@ namespace KML
         /// Get or set whether type "Station" is visible
         /// </summary>
         public bool Station { get; set; }
-
-        /// <summary>
-        /// Get or set whether type "Rover" is visible
-        /// </summary>
-        public bool Rover { get; set; }
 
         /// <summary>
         /// Get or set whether vessels are visible with type unidentified
@@ -84,11 +94,13 @@ namespace KML
             EVA = value;
             Flag = value;
             Lander = value;
+            Plane = value;
             Probe = value;
+            Relay = value;
+            Rover = value;
             Ships = value;
             SpaceObject = value;
             Station = value;
-            Rover = value;
             Others = value;
         }
     }
