@@ -30,6 +30,7 @@ namespace KML
         private static bool _checkAttribName = true;
         private static bool _checkAttribValue = true;
         private static KmlItem _selectedItem;
+        private static int _searchContinued = 0;
 
         private DispatcherTimer SearchTimer { get; set; }
         
@@ -78,12 +79,18 @@ namespace KML
                     }
                 }
             }
+            
 
             if (_width > 0 && _height > 0)
             {
                 Width = _width;
                 Height = _height;
             }
+
+            // Scroll to selected item
+            if (Tree.SelectedItem is TreeViewItem)
+                (Tree.SelectedItem as TreeViewItem).BringIntoView();
+
             // We need to measure the ActualHeight of TextBoxInput,
             // because it reads 0.0 if it's not set, unlesse Arrage is called.
             // And it's not set on purpose to use system default.
@@ -169,21 +176,44 @@ namespace KML
             return result == true;
         }
 
-        private void Search()
+        private void Search(bool continued = false)
         {
+            const int SEARCHLIMIT = 100;
+
             List<KmlItem> list;
+            // TODO DlgSearch.Search(): loading the list on every continuation isn't the best choice
+            // but it's ok, because that is fast, only loading items into tree is slow
             list = GuiTabsManager.GetCurrent().TreeManager.Search(TextBoxInput.Text,
                 CheckNodeTag.IsChecked == true, CheckNodeText.IsChecked == true,
                 CheckAttribName.IsChecked == true, CheckAttribValue.IsChecked == true);
-            Tree.Items.Clear();
+            int maxItemCount = SEARCHLIMIT;
             KmlNode parentNode = null;
             TreeViewItem parentItem = null;
-            foreach (KmlItem item in list)
+            if (continued)
             {
-                if (Tree.Items.Count >= 100)
+                _searchContinued++;
+                maxItemCount = SEARCHLIMIT * (_searchContinued + 1);
+                parentItem = (TreeViewItem)Tree.Items[Tree.Items.Count - 1];
+                parentNode = list[maxItemCount - SEARCHLIMIT - 1].Parent;
+            }
+            else
+            {
+                _searchContinued = 0;
+                Tree.Items.Clear();
+            }
+            for (int i = maxItemCount - SEARCHLIMIT; i < list.Count; i++)
+            {
+                KmlItem item = list[i];
+                // if (Tree.Items.Count >= maxParentCount)
+                if (i >= maxItemCount)
                 {
-                    // TODO DlgSearch.Search(): Make dummy item expandable and then load further items
-                    Tree.Items.Add("... " + (list.Count - 100) + " other items ...");
+                    TreeViewItem dummy = new TreeViewItem();
+                    dummy.Header = "...";
+                    TreeViewItem toBeContinued = new TreeViewItem();
+                    toBeContinued.Header = "... " + (list.Count - maxItemCount) + " more items ...";
+                    toBeContinued.Expanded += ToBeContinued_Expanded;
+                    toBeContinued.Items.Add(dummy);
+                    Tree.Items.Add(toBeContinued);
                     return;
                 }
                 if (item is KmlNode || item is KmlAttrib)
@@ -219,6 +249,15 @@ namespace KML
                     node.IsSelected = Tree.SelectedItem == null;
                 }
             }
+        }
+
+        private void ToBeContinued_Expanded(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem toBeContinued = (sender as TreeViewItem);
+            // toBeContinued.Expanded -= ToBeContinued_Expanded;
+            // toBeContinued.Items.Clear();
+            Tree.Items.Remove(toBeContinued);
+            Search(true);
         }
 
         void SearchTimer_Tick(object sender, EventArgs e)

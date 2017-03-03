@@ -1,4 +1,4 @@
-KML - Kerbal Markup Lister v0.7 - 2016-04-28 (WIP) - A persistence file editor for Kerbal Space Program
+KML - Kerbal Markup Lister v0.7.2 - 2017-01-15 (WIP) - A persistence file editor for Kerbal Space Program
 KSP Forum: http://forum.kerbalspaceprogram.com/index.php?/topic/133971-win-kml-persistence-file-editor/
 
 Do you face a problem with broken docking ports or need just a little fuel-cheating? Do you got tired of editing save games in a text editor with long loading time and so much scrolling to compare different parts and vessels? So did I and decided to make a more helpful external editor to display the XML-like structure (the "KML" - Kerbal Markup Language) in a tree view and pick out vessels, kerbals and parts to be displayed in more eye-candy way.
@@ -8,17 +8,10 @@ The current version is not feature-complete but so far functional and already he
 Any feedback, more testing, bug reports and suggestions are very welcome.
 
 New Features
-• send vessel to low kerbin orbit
-• send kerbal home to astronaut complex
-• show kerbal state and assigned vessel
-• select assigned vessel / part from kerbal
-• support renaming kerbals when assigned
-• deleting kerbals, including send home
-• deleting vessels, incl. send home all crew
-• search for nodes and attributes
-• insert nodes and attributes
-• rebuild part structure when repaired
-• tested with KSP 1.1.0
+• new vessel types plane and relay 
+• reset docking on one-sided same vessel docking errors - thanks to schneida 
+• report only crew assignment problems for kerbals from roster 
+• tested with KSP 1.2.2 
 
 Features 
 • open SFS and CRAFT files
@@ -29,13 +22,19 @@ Features
 • display all kerbals in a sorted and filtered list
 • display vessel's part attachment structure
 • display warnings about structural problems
+• search for nodes, attributes and their content 
 • adding, inserting and deleting nodes and attributes
 • deletion excludes in current version
   ◦ parts (need to rebuild index numbers and attachments)
+• deletion of kerbals and vessels will fix crew assignment 
+• support renaming kerbals when assigned 
+• send kerbal home to astronaut complex 
+• send vessel to low kerbin orbit 
 • change vessel flag in all its parts - for Enceos
 • refill part resources
 • repair broken docking ports and grappling devices
-• tested with KSP 1.0.5
+• tested with KSP 1.0, 1.1 and 1.2
+  (newest KML version should still work with at least all these KSP versions) 
 
 TODO
 • copy nodes and attributes
