@@ -96,43 +96,43 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Orientation="Horizontal">
-                        <ToggleButton ToolTip="Toggle Debris" IsChecked="True" Click="VesselsFilterDebris_Click">
+                        <ToggleButton ToolTip="Toggle Debris" IsChecked="True" Click="VesselsFilter_Click" MouseRightButtonDown="VesselsFilter_MouseRightButtonDown">
                             <Image Source="Images\Trash16.png"/>
                         </ToggleButton>
-                        <ToggleButton ToolTip="Toggle Probes" IsChecked="True" Click="VesselsFilterProbes_Click">
+                        <ToggleButton ToolTip="Toggle Probes" IsChecked="True" Click="VesselsFilter_Click" MouseRightButtonDown="VesselsFilter_MouseRightButtonDown">
                             <Image Source="Images\Satellite16.png"/>
                         </ToggleButton>
-                        <ToggleButton ToolTip="Toggle Rovers" IsChecked="True" Click="VesselsFilterRovers_Click">
+                        <ToggleButton ToolTip="Toggle Rovers" IsChecked="True" Click="VesselsFilter_Click" MouseRightButtonDown="VesselsFilter_MouseRightButtonDown">
                             <Image Source="Images\Rover16.png"/>
                         </ToggleButton>
-                        <ToggleButton ToolTip="Toggle Landers" IsChecked="True" Click="VesselsFilterLanders_Click">
+                        <ToggleButton ToolTip="Toggle Landers" IsChecked="True" Click="VesselsFilter_Click" MouseRightButtonDown="VesselsFilter_MouseRightButtonDown">
                             <Image Source="Images\LunarModule16.png"/>
                         </ToggleButton>
-                        <ToggleButton ToolTip="Toggle Ships" IsChecked="True" Click="VesselsFilterShips_Click">
+                        <ToggleButton ToolTip="Toggle Ships" IsChecked="True" Click="VesselsFilter_Click" MouseRightButtonDown="VesselsFilter_MouseRightButtonDown">
                             <Image Source="Images\ApolloCsm16.png"/>
                         </ToggleButton>
-                        <ToggleButton ToolTip="Toggle Stations" IsChecked="True" Click="VesselsFilterStations_Click">
+                        <ToggleButton ToolTip="Toggle Stations" IsChecked="True" Click="VesselsFilter_Click" MouseRightButtonDown="VesselsFilter_MouseRightButtonDown">
                             <Image Source="Images\Station16.png"/>
                         </ToggleButton>
-                        <ToggleButton ToolTip="Toggle Bases" IsChecked="True" Click="VesselsFilterBases_Click">
+                        <ToggleButton ToolTip="Toggle Bases" IsChecked="True" Click="VesselsFilter_Click" MouseRightButtonDown="VesselsFilter_MouseRightButtonDown">
                             <Image Source="Images\Base16.png"/>
                         </ToggleButton>
-                        <ToggleButton ToolTip="Toggle Planes" IsChecked="True" Click="VesselsFilterPlanes_Click">
+                        <ToggleButton ToolTip="Toggle Planes" IsChecked="True" Click="VesselsFilter_Click" MouseRightButtonDown="VesselsFilter_MouseRightButtonDown">
                             <Image Source="Images\Plane16.png"/>
                         </ToggleButton>
-                        <ToggleButton ToolTip="Toggle Relays" IsChecked="True" Click="VesselsFilterRelays_Click">
+                        <ToggleButton ToolTip="Toggle Relays" IsChecked="True" Click="VesselsFilter_Click" MouseRightButtonDown="VesselsFilter_MouseRightButtonDown">
                             <Image Source="Images\Radar16.png"/>
                         </ToggleButton>
-                        <ToggleButton ToolTip="Toggle EVA" IsChecked="True" Click="VesselsFilterEVA_Click">
+                        <ToggleButton ToolTip="Toggle EVA" IsChecked="True" Click="VesselsFilter_Click" MouseRightButtonDown="VesselsFilter_MouseRightButtonDown">
                             <Image Source="Images\Astronaut16.png"/>
                         </ToggleButton>
-                        <ToggleButton ToolTip="Toggle Flags" IsChecked="True" Click="VesselsFilterFlags_Click">
+                        <ToggleButton ToolTip="Toggle Flags" IsChecked="True" Click="VesselsFilter_Click" MouseRightButtonDown="VesselsFilter_MouseRightButtonDown">
                             <Image Source="Images\Flag16.png"/>
                         </ToggleButton>
-                        <ToggleButton ToolTip="Toggle SpaceObjects" IsChecked="True" Click="VesselsFilterSpaceObjects_Click">
+                        <ToggleButton ToolTip="Toggle SpaceObjects" IsChecked="True" Click="VesselsFilter_Click" MouseRightButtonDown="VesselsFilter_MouseRightButtonDown">
                             <Image Source="Images\GlobeGray16.png"/>
                         </ToggleButton>
-                        <ToggleButton ToolTip="Toggle Others" IsChecked="True" Click="VesselsFilterOthers_Click">
+                        <ToggleButton ToolTip="Toggle Others" IsChecked="True" Click="VesselsFilter_Click" MouseRightButtonDown="VesselsFilter_MouseRightButtonDown">
                             <Image Source="Images\Document16.png"/>
                         </ToggleButton>
                         <Label x:Name="VesselsCount" Height="16" Padding="0, 0" Margin="3, 0, 3, 0">(0 Vessels)</Label>
@@ -157,25 +157,25 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Orientation="Horizontal">
-                        <ToggleButton ToolTip="Toggle Crew" IsChecked="True" Click="KerbalsFilterCrew_Click">
+                        <ToggleButton ToolTip="Toggle Crew" IsChecked="True" Click="KerbalsFilter_Click" MouseRightButtonDown="KerbalsFilterType_MouseRightButtonDown">
                             <Image Source="Images\Astronaut16.png"/>
                         </ToggleButton>
-                        <ToggleButton ToolTip="Toggle Applicants" IsChecked="True" Click="KerbalsFilterApplicants_Click">
+                        <ToggleButton ToolTip="Toggle Applicants" IsChecked="True" Click="KerbalsFilter_Click" MouseRightButtonDown="KerbalsFilterType_MouseRightButtonDown">
                             <Image Source="Images\Student16.png"/>
                         </ToggleButton>
-                        <ToggleButton ToolTip="Toggle Tourists" IsChecked="True" Click="KerbalsFilterTourists_Click">
+                        <ToggleButton ToolTip="Toggle Tourists" IsChecked="True" Click="KerbalsFilter_Click" MouseRightButtonDown="KerbalsFilterType_MouseRightButtonDown">
                             <Image Source="Images\Photographer16.png"/>
                         </ToggleButton>
-                        <ToggleButton ToolTip="Toggle Pilots" IsChecked="True" Click="KerbalsFilterPilots_Click">
+                        <ToggleButton ToolTip="Toggle Pilots" IsChecked="True" Click="KerbalsFilter_Click" MouseRightButtonDown="KerbalsFilterTrait_MouseRightButtonDown">
                             <Image Source="Images\ApolloCsm16.png"/>
                         </ToggleButton>
-                        <ToggleButton ToolTip="Toggle Engineeers" IsChecked="True" Click="KerbalsFilterEngineers_Click">
+                        <ToggleButton ToolTip="Toggle Engineeers" IsChecked="True" Click="KerbalsFilter_Click" MouseRightButtonDown="KerbalsFilterTrait_MouseRightButtonDown">
                             <Image Source="Images\Wrench16.png"/>
                         </ToggleButton>
-                        <ToggleButton ToolTip="Toggle Scientists" IsChecked="True" Click="KerbalsFilterScientists_Click">
+                        <ToggleButton ToolTip="Toggle Scientists" IsChecked="True" Click="KerbalsFilter_Click" MouseRightButtonDown="KerbalsFilterTrait_MouseRightButtonDown">
                             <Image Source="Images\Science16.png"/>
                         </ToggleButton>
-                        <ToggleButton ToolTip="Toggle Others" IsChecked="True" Click="KerbalsFilterOthers_Click">
+                        <ToggleButton ToolTip="Toggle Others" IsChecked="True" Click="KerbalsFilter_Click" MouseRightButtonDown="KerbalsFilterType_MouseRightButtonDown">
                             <Image Source="Images\Document16.png"/>
                         </ToggleButton>
                         <Label x:Name="KerbalsCount" Height="16" Padding="0, 0" Margin="3, 0, 3, 0">(0 Kerbals)</Label>

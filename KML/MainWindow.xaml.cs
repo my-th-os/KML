@@ -223,151 +223,152 @@ namespace KML
             e.Handled = true;
         }
 
-        // TODO MainWindow.KerbalsFilter... Capsulate filter handling, make filter changes visible to buttons, right click filter behaviour
+        // TODO MainWindow.KerbalsFilter... Capsulate filter handling
 
-        private void KerbalsFilterCrew_Click(object sender, RoutedEventArgs e)
+        private void KerbalsFilter_Click(object sender, RoutedEventArgs e)
         {
-            TabsManager.KerbalsManager.Filter.Crew = (sender as ToggleButton).IsChecked == true;
+            KerbalsFilterSetProperty(sender, (sender as ToggleButton).IsChecked == true);
+            SetToggleButtonStyle(sender as ToggleButton);
             TabsManager.KerbalsManager.UpdateVisibility();
-            SetToggleButtonStyle(sender as ToggleButton);
         }
 
-        private void KerbalsFilterApplicants_Click(object sender, RoutedEventArgs e)
+        private void KerbalsFilterType_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            TabsManager.KerbalsManager.Filter.Applicants = (sender as ToggleButton).IsChecked == true;
+            TabsManager.KerbalsManager.Filter.SetAllType(false);
+            KerbalsFilterSetProperty(sender, true);
+            KerbalsFilterUpdateAll(sender);
             TabsManager.KerbalsManager.UpdateVisibility();
-            SetToggleButtonStyle(sender as ToggleButton);
         }
 
-        private void KerbalsFilterTourists_Click(object sender, RoutedEventArgs e)
+        private void KerbalsFilterTrait_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            TabsManager.KerbalsManager.Filter.Tourists = (sender as ToggleButton).IsChecked == true;
+            TabsManager.KerbalsManager.Filter.SetAllTrait(false);
+            KerbalsFilterSetProperty(sender, true);
+            KerbalsFilterUpdateAll(sender);
             TabsManager.KerbalsManager.UpdateVisibility();
-            SetToggleButtonStyle(sender as ToggleButton);
         }
 
-        private void KerbalsFilterPilots_Click(object sender, RoutedEventArgs e)
+        private void KerbalsFilterUpdateAll(object sender)
         {
-            TabsManager.KerbalsManager.Filter.Pilots = (sender as ToggleButton).IsChecked == true;
-            TabsManager.KerbalsManager.UpdateVisibility();
-            SetToggleButtonStyle(sender as ToggleButton);
+            if (sender is ToggleButton)
+            {
+                foreach (var c in (((ToggleButton)sender).Parent as StackPanel).Children)
+                {
+                    if (c is ToggleButton)
+                    {
+                        ToggleButton b = (ToggleButton)c;
+                        b.IsChecked = KerbalsFilterGetProperty(b);
+                        SetToggleButtonStyle(b);
+                    }
+                }
+            }
         }
 
-        private void KerbalsFilterEngineers_Click(object sender, RoutedEventArgs e)
+        private bool KerbalsFilterGetProperty(object sender)
         {
-            TabsManager.KerbalsManager.Filter.Engineeers = (sender as ToggleButton).IsChecked == true;
-            TabsManager.KerbalsManager.UpdateVisibility();
-            SetToggleButtonStyle(sender as ToggleButton);
+            if (sender is ToggleButton)
+            {
+                ToggleButton b = (ToggleButton)sender;
+                if (b.ToolTip.ToString() == "Toggle Crew") return TabsManager.KerbalsManager.Filter.Crew;
+                else if (b.ToolTip.ToString() == "Toggle Applicants") return TabsManager.KerbalsManager.Filter.Applicants;
+                else if (b.ToolTip.ToString() == "Toggle Tourists") return TabsManager.KerbalsManager.Filter.Tourists;
+                else if (b.ToolTip.ToString() == "Toggle Pilots") return TabsManager.KerbalsManager.Filter.Pilots;
+                else if (b.ToolTip.ToString() == "Toggle Engineeers") return TabsManager.KerbalsManager.Filter.Engineeers;
+                else if (b.ToolTip.ToString() == "Toggle Scientists") return TabsManager.KerbalsManager.Filter.Scientists;
+                else if (b.ToolTip.ToString() == "Toggle Others") return TabsManager.KerbalsManager.Filter.Others;
+            }
+            return false;
         }
 
-        private void KerbalsFilterScientists_Click(object sender, RoutedEventArgs e)
+        private void KerbalsFilterSetProperty(object sender, bool value)
         {
-            TabsManager.KerbalsManager.Filter.Scientists = (sender as ToggleButton).IsChecked == true;
-            TabsManager.KerbalsManager.UpdateVisibility();
-            SetToggleButtonStyle(sender as ToggleButton);
+            if (sender is ToggleButton)
+            {
+                ToggleButton b = (ToggleButton)sender;
+                if (b.ToolTip.ToString() == "Toggle Crew") TabsManager.KerbalsManager.Filter.Crew = value;
+                else if (b.ToolTip.ToString() == "Toggle Applicants") TabsManager.KerbalsManager.Filter.Applicants = value;
+                else if (b.ToolTip.ToString() == "Toggle Tourists") TabsManager.KerbalsManager.Filter.Tourists = value;
+                else if (b.ToolTip.ToString() == "Toggle Pilots") TabsManager.KerbalsManager.Filter.Pilots = value;
+                else if (b.ToolTip.ToString() == "Toggle Engineeers") TabsManager.KerbalsManager.Filter.Engineeers = value;
+                else if (b.ToolTip.ToString() == "Toggle Scientists") TabsManager.KerbalsManager.Filter.Scientists = value;
+                else if (b.ToolTip.ToString() == "Toggle Others") TabsManager.KerbalsManager.Filter.Others = value;
+            }
         }
 
-        private void KerbalsFilterOthers_Click(object sender, RoutedEventArgs e)
-        {
-            TabsManager.KerbalsManager.Filter.Others = (sender as ToggleButton).IsChecked == true;
-            TabsManager.KerbalsManager.UpdateVisibility();
-            SetToggleButtonStyle(sender as ToggleButton);
-        }
+        // TODO MainWindow.VesselsFilter... Capsulate filter handling
 
-        private void VesselsFilterBases_Click(object sender, RoutedEventArgs e)
+        private void VesselsFilter_Click(object sender, RoutedEventArgs e)
         {
-            TabsManager.VesselsManager.Filter.Base = (sender as ToggleButton).IsChecked == true;
+            VesselsFilterSetProperty(sender, (sender as ToggleButton).IsChecked == true);
+            SetToggleButtonStyle(sender as ToggleButton);
             TabsManager.VesselsManager.UpdateVisibility();
-            SetToggleButtonStyle(sender as ToggleButton);
         }
 
-        private void VesselsFilterDebris_Click(object sender, RoutedEventArgs e)
+        private void VesselsFilter_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            TabsManager.VesselsManager.Filter.Debris = (sender as ToggleButton).IsChecked == true;
+            TabsManager.VesselsManager.Filter.SetAll(false);
+            VesselsFilterSetProperty(sender, true);
+            VesselsFilterUpdateAll(sender);
             TabsManager.VesselsManager.UpdateVisibility();
-            SetToggleButtonStyle(sender as ToggleButton);
         }
 
-        private void VesselsFilterEVA_Click(object sender, RoutedEventArgs e)
+        private void VesselsFilterUpdateAll(object sender)
         {
-            TabsManager.VesselsManager.Filter.EVA = (sender as ToggleButton).IsChecked == true;
-            TabsManager.VesselsManager.UpdateVisibility();
-            SetToggleButtonStyle(sender as ToggleButton);
+            if (sender is ToggleButton)
+            {
+                foreach (var c in (((ToggleButton)sender).Parent as StackPanel).Children)
+                {
+                    if (c is ToggleButton)
+                    {
+                        ToggleButton b = (ToggleButton)c;
+                        b.IsChecked = VesselsFilterGetProperty(b);
+                        SetToggleButtonStyle(b);
+                    }
+                }
+            }
         }
 
-        private void VesselsFilterFlags_Click(object sender, RoutedEventArgs e)
+        private bool VesselsFilterGetProperty(object sender)
         {
-            TabsManager.VesselsManager.Filter.Flag = (sender as ToggleButton).IsChecked == true;
-            TabsManager.VesselsManager.UpdateVisibility();
-            SetToggleButtonStyle(sender as ToggleButton);
+            if (sender is ToggleButton)
+            {
+                ToggleButton b = (ToggleButton)sender;
+                if (b.ToolTip.ToString() == "Toggle Debris") return TabsManager.VesselsManager.Filter.Debris;
+                else if (b.ToolTip.ToString() == "Toggle Probes") return TabsManager.VesselsManager.Filter.Probe;
+                else if (b.ToolTip.ToString() == "Toggle Rovers") return TabsManager.VesselsManager.Filter.Rover;
+                else if (b.ToolTip.ToString() == "Toggle Landers") return TabsManager.VesselsManager.Filter.Lander;
+                else if (b.ToolTip.ToString() == "Toggle Ships") return TabsManager.VesselsManager.Filter.Ships;
+                else if (b.ToolTip.ToString() == "Toggle Stations") return TabsManager.VesselsManager.Filter.Station;
+                else if (b.ToolTip.ToString() == "Toggle Bases") return TabsManager.VesselsManager.Filter.Base;
+                else if (b.ToolTip.ToString() == "Toggle Planes") return TabsManager.VesselsManager.Filter.Plane;
+                else if (b.ToolTip.ToString() == "Toggle Relays") return TabsManager.VesselsManager.Filter.Relay;
+                else if (b.ToolTip.ToString() == "Toggle EVA") return TabsManager.VesselsManager.Filter.EVA;
+                else if (b.ToolTip.ToString() == "Toggle Flags") return TabsManager.VesselsManager.Filter.Flag;
+                else if (b.ToolTip.ToString() == "Toggle SpaceObjects") return TabsManager.VesselsManager.Filter.SpaceObject;
+                else if (b.ToolTip.ToString() == "Toggle Others") return TabsManager.VesselsManager.Filter.Others;
+            }
+            return false;
         }
 
-        private void VesselsFilterLanders_Click(object sender, RoutedEventArgs e)
+        private void VesselsFilterSetProperty(object sender, bool value)
         {
-            TabsManager.VesselsManager.Filter.Lander = (sender as ToggleButton).IsChecked == true;
-            TabsManager.VesselsManager.UpdateVisibility();
-            SetToggleButtonStyle(sender as ToggleButton);
-        }
-
-        private void VesselsFilterProbes_Click(object sender, RoutedEventArgs e)
-        {
-            TabsManager.VesselsManager.Filter.Probe = (sender as ToggleButton).IsChecked == true;
-            TabsManager.VesselsManager.UpdateVisibility();
-            SetToggleButtonStyle(sender as ToggleButton);
-        }
-
-        private void VesselsFilterShips_Click(object sender, RoutedEventArgs e)
-        {
-            TabsManager.VesselsManager.Filter.Ships = (sender as ToggleButton).IsChecked == true;
-            TabsManager.VesselsManager.UpdateVisibility();
-            SetToggleButtonStyle(sender as ToggleButton);
-        }
-
-        private void VesselsFilterSpaceObjects_Click(object sender, RoutedEventArgs e)
-        {
-            TabsManager.VesselsManager.Filter.SpaceObject = (sender as ToggleButton).IsChecked == true;
-            TabsManager.VesselsManager.UpdateVisibility();
-            SetToggleButtonStyle(sender as ToggleButton);
-        }
-
-        private void VesselsFilterStations_Click(object sender, RoutedEventArgs e)
-        {
-            TabsManager.VesselsManager.Filter.Station = (sender as ToggleButton).IsChecked == true;
-            TabsManager.VesselsManager.UpdateVisibility();
-            SetToggleButtonStyle(sender as ToggleButton);
-        }
-
-        private void VesselsFilterPlanes_Click(object sender, RoutedEventArgs e)
-        {
-            TabsManager.VesselsManager.Filter.Plane = (sender as ToggleButton).IsChecked == true;
-            TabsManager.VesselsManager.UpdateVisibility();
-            SetToggleButtonStyle(sender as ToggleButton);
-        }
-
-        private void VesselsFilterRelays_Click(object sender, RoutedEventArgs e)
-        {
-            TabsManager.VesselsManager.Filter.Relay = (sender as ToggleButton).IsChecked == true;
-            TabsManager.VesselsManager.UpdateVisibility();
-            SetToggleButtonStyle(sender as ToggleButton);
-        }
-
-        private void VesselsFilterRovers_Click(object sender, RoutedEventArgs e)
-        {
-            TabsManager.VesselsManager.Filter.Rover = (sender as ToggleButton).IsChecked == true;
-            TabsManager.VesselsManager.UpdateVisibility();
-            SetToggleButtonStyle(sender as ToggleButton);
-        }
-
-        private void VesselsFilterOthers_Click(object sender, RoutedEventArgs e)
-        {
-            TabsManager.VesselsManager.Filter.Others = (sender as ToggleButton).IsChecked == true;
-            TabsManager.VesselsManager.UpdateVisibility();
-            SetToggleButtonStyle(sender as ToggleButton);
-        }
-
-        private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-
+            if (sender is ToggleButton)
+            {
+                ToggleButton b = (ToggleButton)sender;
+                if (b.ToolTip.ToString() == "Toggle Debris") TabsManager.VesselsManager.Filter.Debris = value;
+                else if (b.ToolTip.ToString() == "Toggle Probes") TabsManager.VesselsManager.Filter.Probe = value;
+                else if (b.ToolTip.ToString() == "Toggle Rovers") TabsManager.VesselsManager.Filter.Rover = value;
+                else if (b.ToolTip.ToString() == "Toggle Landers") TabsManager.VesselsManager.Filter.Lander = value;
+                else if (b.ToolTip.ToString() == "Toggle Ships") TabsManager.VesselsManager.Filter.Ships = value;
+                else if (b.ToolTip.ToString() == "Toggle Stations") TabsManager.VesselsManager.Filter.Station = value;
+                else if (b.ToolTip.ToString() == "Toggle Bases") TabsManager.VesselsManager.Filter.Base = value;
+                else if (b.ToolTip.ToString() == "Toggle Planes") TabsManager.VesselsManager.Filter.Plane = value;
+                else if (b.ToolTip.ToString() == "Toggle Relays") TabsManager.VesselsManager.Filter.Relay = value;
+                else if (b.ToolTip.ToString() == "Toggle EVA") TabsManager.VesselsManager.Filter.EVA = value;
+                else if (b.ToolTip.ToString() == "Toggle Flags") TabsManager.VesselsManager.Filter.Flag = value;
+                else if (b.ToolTip.ToString() == "Toggle SpaceObjects") TabsManager.VesselsManager.Filter.SpaceObject = value;
+                else if (b.ToolTip.ToString() == "Toggle Others") TabsManager.VesselsManager.Filter.Others = value;
+            }
         }
     }
 }

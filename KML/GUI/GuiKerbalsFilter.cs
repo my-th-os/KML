@@ -86,7 +86,6 @@ namespace KML
             Pilots = value;
             Engineeers = value;
             Scientists = value;
-            Others = value;
         }
     }
 }
