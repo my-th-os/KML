@@ -55,6 +55,34 @@ namespace KML
         }
 
         /// <summary>
+        /// Copies a GuiKerbalsFilter. 
+        /// </summary>
+        public GuiKerbalsFilter(GuiKerbalsFilter copyFrom)
+        {
+            Crew = copyFrom.Crew;
+            Applicants = copyFrom.Applicants;
+            Tourists = copyFrom.Tourists;
+            Pilots = copyFrom.Pilots;
+            Engineeers = copyFrom.Engineeers;
+            Scientists = copyFrom.Scientists;
+            Others = copyFrom.Others;
+        }
+
+        /// <summary>
+        /// Compares equality with other GuiKerbalsFilter. 
+        /// </summary>
+        public bool Equals(GuiKerbalsFilter other)
+        {
+            return (Crew == other.Crew &&
+                Applicants == other.Applicants &&
+                Tourists == other.Tourists &&
+                Pilots == other.Pilots &&
+                Engineeers == other.Engineeers &&
+                Scientists == other.Scientists &&
+                Others == other.Others);
+        }
+
+        /// <summary>
         /// Sets all filter settings to a given value.
         /// </summary>
         /// <param name="value">The bool value to apply to all settings</param>

@@ -1,5 +1,5 @@
 Version 0.7.3 - in progress
-- vessel / kerbal list filter right click
+- vessel / kerbal list filter right click (incl. un-single-select on second right click)
 - search dialog can now load further items (only 100 are loaded first)
 - bugfix in search dialog
 

@@ -234,16 +234,24 @@ namespace KML
 
         private void KerbalsFilterType_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
+            GuiKerbalsFilter copy = new GuiKerbalsFilter(TabsManager.KerbalsManager.Filter);
             TabsManager.KerbalsManager.Filter.SetAllType(false);
             KerbalsFilterSetProperty(sender, true);
+            // Imitate KSP behaviour to un-single-select this kind
+            if (copy.Equals(TabsManager.KerbalsManager.Filter))
+                TabsManager.KerbalsManager.Filter.SetAllType(true);
             KerbalsFilterUpdateAll(sender);
             TabsManager.KerbalsManager.UpdateVisibility();
         }
 
         private void KerbalsFilterTrait_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
+            GuiKerbalsFilter copy = new GuiKerbalsFilter(TabsManager.KerbalsManager.Filter);
             TabsManager.KerbalsManager.Filter.SetAllTrait(false);
             KerbalsFilterSetProperty(sender, true);
+            // Imitate KSP behaviour to un-single-select this kind
+            if (copy.Equals(TabsManager.KerbalsManager.Filter))
+                TabsManager.KerbalsManager.Filter.SetAllTrait(true);
             KerbalsFilterUpdateAll(sender);
             TabsManager.KerbalsManager.UpdateVisibility();
         }
@@ -306,8 +314,12 @@ namespace KML
 
         private void VesselsFilter_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
+            GuiVesselsFilter copy = new GuiVesselsFilter(TabsManager.VesselsManager.Filter);
             TabsManager.VesselsManager.Filter.SetAll(false);
             VesselsFilterSetProperty(sender, true);
+            // Imitate KSP behaviour to un-single-select this kind
+            if (copy.Equals(TabsManager.VesselsManager.Filter))
+                TabsManager.VesselsManager.Filter.SetAll(true);
             VesselsFilterUpdateAll(sender);
             TabsManager.VesselsManager.UpdateVisibility();
         }

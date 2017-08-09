@@ -84,6 +84,46 @@ namespace KML
         }
 
         /// <summary>
+        /// Copies a GuiVesselsFilter. 
+        /// </summary>
+        public GuiVesselsFilter(GuiVesselsFilter copyFrom)
+        {
+            Base = copyFrom.Base;
+            Debris = copyFrom.Debris;
+            EVA = copyFrom.EVA;
+            Flag = copyFrom.Flag;
+            Lander = copyFrom.Lander;
+            Plane = copyFrom.Plane;
+            Probe = copyFrom.Probe;
+            Relay = copyFrom.Relay;
+            Rover = copyFrom.Rover;
+            Ships = copyFrom.Ships;
+            SpaceObject = copyFrom.SpaceObject;
+            Station = copyFrom.Station;
+            Others = copyFrom.Others;
+        }
+
+        /// <summary>
+        /// Compares equality with other GuiVesselsFilter. 
+        /// </summary>
+        public bool Equals(GuiVesselsFilter other)
+        {
+            return (Base == other.Base &&
+                Debris == other.Debris &&
+                EVA == other.EVA &&
+                Flag == other.Flag &&
+                Lander == other.Lander &&
+                Plane == other.Plane &&
+                Probe == other.Probe &&
+                Relay == other.Relay &&
+                Rover == other.Rover &&
+                Ships == other.Ships &&
+                SpaceObject == other.SpaceObject &&
+                Station == other.Station &&
+                Others == other.Others);
+        }
+
+        /// <summary>
         /// Sets all filter settings to a given value.
         /// </summary>
         /// <param name="value">The bool value to apply to all settings</param>
