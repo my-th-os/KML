@@ -342,7 +342,21 @@ namespace KML
                 }
                 s += " '" + DockName + "')";
             }
-            if (DockState.Length > 0)
+            if (DockType == DockTypes.KasCPort)
+            {
+                if (DockedVesselName.Length > 0)
+                {
+                    if (DockedVesselName == Parent.Name)
+                        s += ": Linked (dockee)";
+                    else
+                        s += ": Linked (docker): " + DockedVesselName; // +", " + DockedVesselType;
+                }
+                else
+                {
+                    s += ": Ready";
+                }
+            }
+            else if (DockState.Length > 0)
             {
                 s += ": " + DockState;
                 if (DockState.ToLower() == "docked (docker)")
