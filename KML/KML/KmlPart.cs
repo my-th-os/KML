@@ -612,6 +612,11 @@ namespace KML
                                     KmlPartDock.BuildDockStructure(docker, dockee);
                                 }
                             }
+                            else if (docker.DockType == KmlPartDock.DockTypes.KasCPort && dockee.DockType == KmlPartDock.DockTypes.KasCPort)
+                            {
+                                // TODO KmlPart.BuildAttachmentStructure(): Some sanity checks on KAS links?
+                                KmlPartDock.BuildDockStructure(dockee, docker);
+                            }
                             else
                             {
                                 if (dockee.DockState.ToLower() == "docked (dockee)")
@@ -657,8 +662,6 @@ namespace KML
                                 grapple.NeedsRepair = true;
                             }
                         }
-
-                        // TODO KmlPart.BuildAttachmentStructure(): How do KAS links work?
 
                         // Usually you can only attach a new part by a node to the surface of parent
                         // and not attach a part by surface to parents node. But if you have vessels docked

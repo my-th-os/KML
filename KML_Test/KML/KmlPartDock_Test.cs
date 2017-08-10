@@ -71,6 +71,8 @@ namespace KML_Test.KML
             Assert.IsTrue(KmlPartDock.PartIsDock(part));
             name.Value = "ModuleGrappleNode";
             Assert.IsTrue(KmlPartDock.PartIsDock(part));
+            name.Value = "KASModuleStrut";
+            Assert.IsTrue(KmlPartDock.PartIsDock(part));
         }
 
         // TODO KmlPartDock_Test: Do tests

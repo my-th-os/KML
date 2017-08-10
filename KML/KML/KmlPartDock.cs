@@ -24,7 +24,12 @@ namespace KML
             /// <summary>
             /// Grappling device
             /// </summary>
-            Grapple 
+            Grapple,
+
+            /// <summary>
+            /// CPort from KAS addon
+            /// </summary>
+            KasCPort
         };
 
         /// <summary>
@@ -110,12 +115,16 @@ namespace KML
 
             foreach (KmlNode node in Children)
             {
-                if (node.Tag.ToLower() == "module" && (node.Name.ToLower() == "moduledockingnode" || node.Name.ToLower() == "modulegrapplenode"))
+                if (node.Tag.ToLower() == "module" && 
+                    (node.Name.ToLower() == "moduledockingnode" ||
+                    node.Name.ToLower() == "modulegrapplenode" ||
+                    node.Name.ToLower() == "kasmodulestrut"))
                 {
                     if (node.Name.ToLower() == "modulegrapplenode")
-                    {
                         DockType = DockTypes.Grapple;
-                    }
+                    else if (node.Name.ToLower() == "kasmodulestrut")
+                        DockType = DockTypes.KasCPort;
+
                     foreach (KmlAttrib attrib in node.Attribs)
                     {
                         if (attrib.Name.ToLower() == "state")
@@ -125,6 +134,12 @@ namespace KML
                             attrib.CanBeDeleted = false;
                         }
                         else if (attrib.Name.ToLower() == "dockuid")
+                        {
+                            DockUid = attrib.Value;
+                            attrib.AttribValueChanged += DockUid_Changed;
+                            attrib.CanBeDeleted = false;
+                        }
+                        else if (DockType == DockTypes.KasCPort && attrib.Name.ToLower() == "dockedpartid")
                         {
                             DockUid = attrib.Value;
                             attrib.AttribValueChanged += DockUid_Changed;
@@ -233,6 +248,10 @@ namespace KML
                 {
                     return true;
                 }
+                else if (node.Name.ToLower() == "kasmodulestrut")
+                {
+                    return true;
+                }
             }
             return false;
         }
@@ -289,6 +308,15 @@ namespace KML
                         Syntax.Warning(dock, "Grapple sub-sub-node DOCKEDVESSEL_other is missing");
                         dock.NeedsRepair = true;
                     }
+                }
+            }
+            else if (dock.DockType == DockTypes.KasCPort)
+            {
+                KmlNode module = dock.GetChildNode("MODULE", "KASModuleStrut");
+                if (module == null)
+                {
+                    Syntax.Warning(dock, "KAS CPort sub-node MODULE with name = 'KASModuleStrut' is missing. Please copy one from functional CPort part or older save file");
+                    dock.NeedsRepair = true;
                 }
             }
         }

@@ -278,6 +278,10 @@ namespace KML
                 {
                     image.Source = Icons.PartGrapple.Source;
                 }
+                else if (dock.DockType == KmlPartDock.DockTypes.KasCPort)
+                {
+                    image.Source = Icons.PartKasCPort.Source;
+                }
                 else
                 {
                     image.Source = Icons.PartDock.Source;

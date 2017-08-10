@@ -35,6 +35,7 @@ namespace KML
             Part.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Box16.png"));
             PartDock.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Port16.png"));
             PartGrapple.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/GrapplingHook16.png"));
+            PartKasCPort.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/KasCPort16.png"));
             Resource.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Battery16.png"));
             Vessel.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/ApolloCsm16.png"));
             VesselBase.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Base16.png"));

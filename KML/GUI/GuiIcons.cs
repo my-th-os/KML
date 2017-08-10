@@ -92,6 +92,11 @@ namespace KML
         public Image PartGrapple = new Image();
 
         /// <summary>
+        /// The icon for a vessel KAS CPort part in the KML tree or the vessels list.
+        /// </summary>
+        public Image PartKasCPort = new Image();
+
+        /// <summary>
         /// The icon for part resources in the KML tree.
         /// Will be used only for context menu since the icon is replaced 
         /// by a progress bar to display the current amount.
