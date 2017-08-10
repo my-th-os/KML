@@ -3,6 +3,68 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="KML - Kerbal Markup Lister" Height="600" Width="800" MinWidth="450" MinHeight="300" Background="Gray" ResizeMode="CanResizeWithGrip" Loaded="Window_Loaded" Icon="Images/Astronaut.ico">
     <Window.Resources>
+        <Style x:Key="ListViewItemStyleFixed" TargetType="{x:Type ListViewItem}">
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Padding" Value="4,1" />
+            <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="FocusVisualStyle">
+                <Setter.Value>
+                    <Style>
+                        <Setter Property="Control.Template">
+                            <Setter.Value>
+                                <ControlTemplate>
+                                    <Rectangle Margin="2" SnapsToDevicePixels="True" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeDashArray="1 2" StrokeThickness="1" />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="Bd" Property="Background" Value="#1F26A0DA" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#A826A0DA" />
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Selector.IsSelectionActive" Value="False" />
+                                    <Condition Property="IsSelected" Value="True" />
+                                </MultiTrigger.Conditions>
+                                <!--<Setter TargetName="Bd" Property="Background" Value="#3DDADADA" />-->
+                                <!--<Setter TargetName="Bd" Property="BorderBrush" Value="#FFDADADA" />-->
+                                <!-- Set same as active selection -->
+                                <Setter TargetName="Bd" Property="Background" Value="#3D26A0DA" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#FF26A0DA" />
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Selector.IsSelectionActive" Value="True" />
+                                    <Condition Property="IsSelected" Value="True" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="Bd" Property="Background" Value="#3D26A0DA" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#FF26A0DA" />
+                            </MultiTrigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="TextElement.Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <RoutedUICommand x:Key="cmdSearch"/>
     </Window.Resources>
     <Window.CommandBindings>
@@ -59,7 +121,18 @@
                         <ColumnDefinition Width="5" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <TreeView x:Name="Tree" Background="LightGray"/>
+                    <TreeView x:Name="Tree" Background="LightGray">
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="{x:Type TreeViewItem}">
+                                <Style.Resources>
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+                                        Color="{DynamicResource {x:Static SystemColors.HighlightColorKey}}"/>
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}"
+                                        Color="{DynamicResource {x:Static SystemColors.HighlightTextColorKey}}"/>
+                                </Style.Resources>
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                    </TreeView>
                     <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="White"/>
                     <ListView x:Name="TreeDetails" Grid.Column="2" IsSynchronizedWithCurrentItem="True" Background="LightGray" Margin="0,1,0,-1" SelectionMode="Single">
                         <ListView.ItemContainerStyle>
@@ -76,7 +149,7 @@
                                     <GridViewColumnHeader HorizontalContentAlignment="Left">Value</GridViewColumnHeader>
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBox Margin="-6,-10,-6,-10" Text="{Binding Value}"/>
+                                            <TextBox Margin="-6,-10,-6,-10" Text="{Binding Value}" GotFocus="TreeDetailsTextBox_GotFocus"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
@@ -137,7 +210,7 @@
                         </ToggleButton>
                         <Label x:Name="VesselsCount" Height="16" Padding="0, 0" Margin="3, 0, 3, 0">(0 Vessels)</Label>
                     </StackPanel>
-                    <ListView x:Name="VesselsList" Margin="0,20,0,0" Background="LightGray" SelectionMode="Single"/>
+                    <ListView x:Name="VesselsList" Margin="0,20,0,0" Background="LightGray" SelectionMode="Single" ItemContainerStyle="{StaticResource ListViewItemStyleFixed}"/>
                     <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="White"/>
                     <Border Grid.Column="2" BorderThickness="1" BorderBrush="Gray" Background="LightGray">
                         <ScrollViewer HorizontalScrollBarVisibility="Visible">
@@ -180,7 +253,7 @@
                         </ToggleButton>
                         <Label x:Name="KerbalsCount" Height="16" Padding="0, 0" Margin="3, 0, 3, 0">(0 Kerbals)</Label>
                     </StackPanel>
-                    <ListView x:Name="KerbalsList" Background="LightGray" Margin="0,20,0,0" SelectionMode="Single"/>
+                    <ListView x:Name="KerbalsList" Background="LightGray" Margin="0,20,0,0" SelectionMode="Single" ItemContainerStyle="{StaticResource ListViewItemStyleFixed}"/>
                     <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="White"/>
                     <ListView x:Name="KerbalsDetails" Grid.Column="2" IsSynchronizedWithCurrentItem="True" Background="LightGray" SelectionMode="Single">
                         <ListView.ItemContainerStyle>
@@ -197,7 +270,7 @@
                                     <GridViewColumnHeader HorizontalContentAlignment="Left">Value</GridViewColumnHeader>
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBox Margin="-6,-10,-6,-10" Text="{Binding Value}"/>
+                                            <TextBox Margin="-6,-10,-6,-10" Text="{Binding Value}" GotFocus="KerbalsDetailsTextBox_GotFocus"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
@@ -211,7 +284,7 @@
                     <Image Width="48" Source="Images\Warning48.png" ToolTip="Warnings"/>
                 </TabItem.Header>
                 <Grid>
-                    <ListView x:Name="WarningsList" Background="LightGray" SelectionMode="Single"/>
+                    <ListView x:Name="WarningsList" Background="LightGray" SelectionMode="Single" ItemContainerStyle="{StaticResource ListViewItemStyleFixed}"/>
                 </Grid>
             </TabItem>
         </TabControl>

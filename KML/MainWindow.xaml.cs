@@ -382,5 +382,17 @@ namespace KML
                 else if (b.ToolTip.ToString() == "Toggle Others") TabsManager.VesselsManager.Filter.Others = value;
             }
         }
+
+        private void TreeDetailsTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            KmlAttrib attrib = (VisualTreeHelper.GetParent(sender as DependencyObject) as ContentPresenter).DataContext as KmlAttrib;
+            TreeDetails.SelectedIndex = attrib.Parent.Attribs.IndexOf(attrib); // Wow this seems straight forward!
+        }
+
+        private void KerbalsDetailsTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            KmlAttrib attrib = (VisualTreeHelper.GetParent(sender as DependencyObject) as ContentPresenter).DataContext as KmlAttrib;
+            KerbalsDetails.SelectedIndex = attrib.Parent.Attribs.IndexOf(attrib); // Wow this seems straight forward!
+        }
     }
 }
