@@ -95,7 +95,7 @@ namespace KML
             }
             else if (kerbal.Type.ToLower() == "tourist")
             {
-                image.Source = Icons48.KerbalTorist.Source;
+                image.Source = Icons48.KerbalTourist.Source;
             }
             else
             {

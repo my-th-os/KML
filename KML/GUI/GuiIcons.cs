@@ -48,7 +48,7 @@ namespace KML
         /// <summary>
         /// The icon for kerbal tourists in the kerbals list or the KML tree.
         /// </summary>
-        public Image KerbalTorist = new Image();
+        public Image KerbalTourist = new Image();
 
         /// <summary>
         /// The additional icon for kerbal pilots in the kerbals list.

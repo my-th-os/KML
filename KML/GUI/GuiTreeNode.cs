@@ -304,7 +304,7 @@ namespace KML
                 }
                 else if (kerbal.Type.ToLower() == "tourist")
                 {
-                    image.Source = Icons.KerbalTorist.Source;
+                    image.Source = Icons.KerbalTourist.Source;
                 }
                 else
                 {

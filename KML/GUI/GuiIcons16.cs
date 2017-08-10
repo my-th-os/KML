@@ -26,7 +26,7 @@ namespace KML
             Ghost.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Document16.png"));
             Kerbal.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Astronaut16.png"));
             KerbalApplicant.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Student16.png"));
-            KerbalTorist.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Photographer16.png"));
+            KerbalTourist.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Photographer16.png"));
             KerbalPilot.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/ApolloCsm16.png"));
             KerbalEngineer.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Wrench16.png"));
             KerbalScience.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Science16.png"));
