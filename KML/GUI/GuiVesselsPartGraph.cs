@@ -72,9 +72,13 @@ namespace KML
             VesselsDetails = vesselsDetails;
             Master = master;
             ConnectVerticalBrush = new SolidColorBrush(Colors.Green);
+            ConnectVerticalBrush.Freeze();
             ConnectSidesBrush = new SolidColorBrush(Colors.LimeGreen);
+            ConnectSidesBrush.Freeze();
             ConnectSurfaceBrush = new SolidColorBrush(Colors.DarkGoldenrod);
+            ConnectSurfaceBrush.Freeze();
             ConnectDockBrush = new SolidColorBrush(Colors.Blue);
+            ConnectDockBrush.Freeze();
             InitGrid();
         }
 

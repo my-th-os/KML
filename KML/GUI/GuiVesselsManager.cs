@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace KML
 {
@@ -30,6 +31,8 @@ namespace KML
         private KmlNode Flightstate { get; set; }
 
         private GuiVesselsPartGraph PartGraph { get; set; }
+        private GuiVesselsNode PartGraphNode { get; set; }
+        private DispatcherTimer partGraphTimer;
 
         /// <summary>
         /// Creates a GuiVesselsManager to link and manage the given two ListViews.
@@ -51,8 +54,15 @@ namespace KML
 
             PartGraph = new GuiVesselsPartGraph(vesselsDetails, master);
 
+            partGraphTimer = new DispatcherTimer(DispatcherPriority.Background);
+            partGraphTimer.Tick += new EventHandler(partGraphTimer_Tick);
+            partGraphTimer.Interval = new TimeSpan(0, 0, 0, 0, 200);
+            partGraphTimer.Start();
+
+            // Replaced by pulling from partGraphTimer
+            // TODO GuiVesselsManager: Delete the VesselsList Eventhandlers, if stay with DispatcherTimer
+            // vesselsDetails.SizeChanged += vesselsDetails_SizeChanged;
             VesselsList.SelectionChanged += VesselsList_SelectionChanged;
-            vesselsDetails.SizeChanged += vesselsDetails_SizeChanged;
         }
 
         /// <summary>
@@ -301,6 +311,14 @@ namespace KML
             }
         }
 
+        private void partGraphTimer_Tick(object sender, EventArgs e)
+        {
+            if ((VesselsList.SelectedItem as GuiVesselsNode) == PartGraphNode) 
+                return;
+            PartGraphNode = (VesselsList.SelectedItem as GuiVesselsNode);
+            PartGraph.DrawPartStructure(PartGraphNode);
+        }
+
         private void vesselsDetails_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             PartGraph.DrawPartStructure(VesselsList.SelectedItem as GuiVesselsNode);
@@ -308,7 +326,8 @@ namespace KML
 
         private void VesselsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            PartGraph.DrawPartStructure(VesselsList.SelectedItem as GuiVesselsNode);
+            VesselsDetails.Children.Clear();
+            // PartGraph.DrawPartStructure(VesselsList.SelectedItem as GuiVesselsNode);
         }
 
         private void VesselsNode_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)

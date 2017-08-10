@@ -1,8 +1,11 @@
 Version 0.7.3 - in progress
 - support KAS CPort parts as dock type (no repair abilities yet)
+- improved highlighting of list items
+- minimal delay on part graph drawing (still freezes app on large vessels)
 - vessel / kerbal list filter right click (incl. un-single-select on second right click)
 - search dialog can now load further items (only 100 are loaded first)
 - bugfix in search dialog
+- still not tested with KSP 1.3 (changes don't look relevant for KML) - feedback welcome!
 
 Version 0.7.2 - 2017-01-15
 - new vessel types plane and relay
