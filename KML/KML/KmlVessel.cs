@@ -190,12 +190,14 @@ namespace KML
         /// <summary>
         /// Gets called before item is deleted.
         /// </summary>
-        protected override void BeforeDelete()
+        /// <returns>Return true on success. If false is returned the deletion will be canceled</returns>
+        protected override bool BeforeDelete()
         {
             foreach (KmlKerbal kerbal in AssignedCrew)
             {
                 kerbal.SendHome();
             }
+            return true;
         }
 
         /// <summary>

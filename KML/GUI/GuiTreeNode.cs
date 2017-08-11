@@ -855,6 +855,25 @@ namespace KML
                         "- Experience or contract progress may get lost";
                 }
             }
+            else if (node is KmlPart)
+            {
+                nodeName = "part";
+                specialText = "\n\n- Part will be removed from vessel structure\n" +
+                    "- Attachment indices will be updated";
+                if (node.Parent is KmlVessel)
+                {
+                    foreach (KmlKerbal kerbal in (node.Parent as KmlVessel).AssignedCrew)
+                    {
+                        if (kerbal.AssignedPart == node)
+                        {
+                            specialText += "\n- Kerbal crew will be send home to astronaut complex\n" +
+                                "- Their state will be set to 'Available'\n" +
+                                "- Experience or contract progress may get lost";
+                            break;
+                        }
+                    }
+                }
+            }
             if (DlgConfirmation.Show("Do you really want to delete this " + nodeName + " and all its content?\n" + 
                 node + specialText, "DELETE " + nodeName, Icons.Delete))
             {

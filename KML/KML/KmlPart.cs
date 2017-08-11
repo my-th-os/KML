@@ -275,6 +275,7 @@ namespace KML
             CraftName = "";
 
             // TODO KmlPart.KmlPart(): Make parts deletable
+            // Default will always be not to delete, may be allowed after intense rule checking
             CanBeDeleted = false;
 
             AddRange(node.AllItems);
@@ -537,6 +538,30 @@ namespace KML
         }
 
         /// <summary>
+        /// Gets called before item is deleted.
+        /// </summary>
+        /// <returns>Return true on success. If false is returned the deletion will be canceled</returns>
+        protected override bool BeforeDelete()
+        {
+            System.Windows.MessageBox.Show("Part deletion not implemented yet");
+            return false;
+
+            if (Parent is KmlVessel)
+            {
+                foreach (KmlKerbal kerbal in (Parent as KmlVessel).AssignedCrew)
+                {
+                    if (kerbal.AssignedPart == this)
+                    {
+                        kerbal.SendHome();
+                    }
+                }
+            }
+            // TODO KmlPart.BeforeDelete(): Fix Attachment indices
+            // TODO KmlPart.BeforeDelete(): Rebuild structure, but AFTER deletion!
+            return true;
+        }
+
+        /// <summary>
         /// Parts of a vessel are first read one after the other, so the first part can only store indices of later parts it is connected to.
         /// After a complete vessel is read also all parts are read and the indices can be translated in references to now existing KmlParts.
         /// This is done by this method. Also reverse information (what parts are connected to this one) is then stored in a part.
@@ -616,6 +641,7 @@ namespace KML
                             {
                                 // TODO KmlPart.BuildAttachmentStructure(): Some sanity checks on KAS links?
                                 KmlPartDock.BuildDockStructure(dockee, docker);
+                                KmlPartDock.BuildDockStructure(docker, dockee);
                             }
                             else
                             {
@@ -865,6 +891,11 @@ namespace KML
                     }
                 }
             }
+            foreach (KmlPart part in parts)
+            {
+                // Based on attachment structure we can now decide if this part can be deleted
+                part.CanBeDeleted = part.CanPartBeDeleted();
+            }
             return roots;
         }
 
@@ -896,6 +927,53 @@ namespace KML
                 s += " (" + CraftName + ")";
             }
             return Tag + s;
+        }
+
+        private bool CanPartBeDeleted()
+        {
+            if (Parent == null) // Parent node, not parent part! Should never happen
+                return false;
+            if (!(Parent is KmlVessel)) // Just a node with the PART tag somewhere else
+                return true;
+            // Don't delete the root part
+            if (ParentPart == null)
+                return false;
+            // There may only be one part attached which is this parts parent part.
+            // Oterhwise some parts are attached having this part as parent, then disallow deletion
+            if (AttachedPartsBack.Count + AttachedPartsBottom.Count + AttachedPartsFront.Count + AttachedPartsLeft.Count + 
+                AttachedPartsRight.Count + AttachedPartsSurface.Count + AttachedPartsTop.Count > 1)
+            {
+                return false;
+            }
+            if (AttachedPartsBack.Count == 1 && AttachedPartsBack[0] != ParentPart)
+                return false;
+            if (AttachedPartsBottom.Count == 1 && AttachedPartsBottom[0] != ParentPart)
+                return false;
+            if (AttachedPartsFront.Count == 1 && AttachedPartsFront[0] != ParentPart)
+                return false;
+            if (AttachedPartsLeft.Count == 1 && AttachedPartsLeft[0] != ParentPart)
+                return false;
+            if (AttachedPartsRight.Count == 1 && AttachedPartsRight[0] != ParentPart)
+                return false;
+            if (AttachedPartsSurface.Count == 1 && AttachedPartsSurface[0] != ParentPart)
+                return false;
+            if (AttachedPartsTop.Count == 1 && AttachedPartsTop[0] != ParentPart)
+                return false;
+            // A docking port in use must also not be deleted
+            if (this is KmlPartDock && ((KmlPartDock)this).DockedPart != null)
+                return false;
+            // Don't delete parts that are docked but not a docking port (grappled)
+            // At least we also don't know the amount of connections of this type
+            // It's not stored in the part, we need to check all parts and look into all docks
+            foreach (KmlPart part in (Parent as KmlVessel).Parts)
+            {
+                if (part is KmlPartDock)
+                {
+                    if ((part as KmlPartDock).DockedPart == this)
+                        return false;
+                }
+            }
+            return true;
         }
 
         private void PartName_Changed(object sender, System.Windows.RoutedEventArgs e)
