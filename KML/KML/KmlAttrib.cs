@@ -79,6 +79,20 @@ namespace KML
         }
 
         /// <summary>
+        /// When Parent is set or changed UnlinkOldParent will be called before new parent is set.
+        /// Deriving classes can override this method and undo any bindings to old parent.
+        /// </summary>
+        protected override void UnbindOldParent()
+        {
+            // Unbind any changed events from old parent, will be bound to new parent on AddRange()
+            for(int i = AttribValueChangedList.Count - 1; i >= 0; i--)
+            {
+                if (AttribValueChangedList[i].Target == Parent)
+                    AttribValueChangedList.RemoveAt(i);
+            }
+        }
+
+        /// <summary>
         /// Generates a nice informative string to be used in display for this item.
         /// </summary>
         /// <returns>A string to display this item</returns>

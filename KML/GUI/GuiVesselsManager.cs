@@ -327,6 +327,7 @@ namespace KML
         private void VesselsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             VesselsDetails.Children.Clear();
+            PartGraphNode = null;
             // PartGraph.DrawPartStructure(VesselsList.SelectedItem as GuiVesselsNode);
         }
 

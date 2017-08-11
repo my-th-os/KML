@@ -181,6 +181,7 @@ namespace KML
                 // so we can not delete items from that list here.
                 // TODO KmlItem.RemapParent(): Delete item from old parent
                 // item.Delete(); // from previous parent
+                item.UnbindOldParent();
                 item.Parent = parent;
                 item.IdentifyParent();
             }
@@ -303,10 +304,18 @@ namespace KML
         }
 
         /// <summary>
-        /// When Parent is set or changed IdentifyParent will be called.
+        /// When Parent is set or changed IdentifyParent will be called after new parent is set.
         /// Deriving classes can override this method and check for the new parent.
         /// </summary>
         protected virtual void IdentifyParent()
+        {
+        }
+
+        /// <summary>
+        /// When Parent is set or changed UnlinkOldParent will be called before new parent is set.
+        /// Deriving classes can override this method and undo any bindings to old parent.
+        /// </summary>
+        protected virtual void UnbindOldParent()
         {
         }
 

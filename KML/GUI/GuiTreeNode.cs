@@ -879,6 +879,18 @@ namespace KML
             {
                 node.Delete();
                 // View will be refreshed in parent's ChildrenChanged event
+                // Special case: PartGraph is currently shown
+                if (Parent is GuiVesselsPartGraphNode)
+                {
+                    GuiVesselsPartGraphNode pgn = (GuiVesselsPartGraphNode)Parent;
+                    if (pgn.Parent is Canvas)
+                    {
+                        Canvas cnv = (Canvas)pgn.Parent;
+                        foreach (var line in pgn.Lines)
+                            cnv.Children.Remove(line);
+                        cnv.Children.Remove(pgn);
+                    }
+                }
             }
         }
 
@@ -906,6 +918,11 @@ namespace KML
         {
             AssignTemplate(TemplateWithImage, TemplateWithText);
             BuildContextMenu(TemplateWithAddMenu, TemplateWithDeleteMenu);
+            if (Parent is GuiVesselsPartGraphNode)
+            {
+                GuiVesselsPartGraphNode pgn = (GuiVesselsPartGraphNode)Parent;
+                pgn.UpdateFromGuiTreeNode();
+            }
         }
     }
 }

@@ -118,6 +118,21 @@ namespace KML
         {
         }
 
+        /// <summary>
+        /// The Child GuiTreeNode may change and some data is copied,
+        /// so there is need for update.
+        /// </summary>
+        public void UpdateFromGuiTreeNode()
+        {
+            Icon.ToolTip = DataPart.ToString();
+            if (DataPart.Parent is KmlVessel)
+            {
+                Text.Content = "[" + (DataPart.Parent as KmlVessel).Parts.IndexOf(DataPart) + "]";
+            }
+            Text.ToolTip = DataPart.ToString();
+            Text.ContextMenu = Icon.ContextMenu;
+        }
+
         private void Icon_Selected(object sender, RoutedEventArgs e)
         {
             (sender as GuiTreeNode).IsSelected = false;

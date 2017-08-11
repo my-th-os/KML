@@ -274,9 +274,8 @@ namespace KML
             Visited = false;
             CraftName = "";
 
-            // TODO KmlPart.KmlPart(): Make parts deletable
-            // Default will always be not to delete, may be allowed after intense rule checking
-            CanBeDeleted = false;
+            // Default is true for possible inserted empty nodes with "PART" tag
+            CanBeDeleted = true;
 
             AddRange(node.AllItems);
         }
@@ -543,22 +542,134 @@ namespace KML
         /// <returns>Return true on success. If false is returned the deletion will be canceled</returns>
         protected override bool BeforeDelete()
         {
-            System.Windows.MessageBox.Show("Part deletion not implemented yet");
-            return false;
-
             if (Parent is KmlVessel)
             {
-                foreach (KmlKerbal kerbal in (Parent as KmlVessel).AssignedCrew)
+                KmlVessel vessel = (KmlVessel)Parent;
+                foreach (KmlKerbal kerbal in vessel.AssignedCrew)
                 {
                     if (kerbal.AssignedPart == this)
                     {
                         kerbal.SendHome();
                     }
                 }
+                // Fix Attachment structure on all other parts
+                ReIndexStructureForPartDeletion(this, vessel);
             }
-            // TODO KmlPart.BeforeDelete(): Fix Attachment indices
-            // TODO KmlPart.BeforeDelete(): Rebuild structure, but AFTER deletion!
             return true;
+        }
+
+        private static void ReIndexStructureForPartDeletion(KmlPart delPart, KmlVessel vessel)
+        {
+            int delIndex = vessel.Parts.IndexOf(delPart);
+            if (delIndex < 0)
+                return;
+
+            // Remove part from vessels part list
+            vessel.Parts.Remove(delPart);
+
+            // After deletion in vessel.Parts we have changed ToString() to give a new result on the later parts
+            for (int i = delIndex; i < vessel.Parts.Count; i++)
+            {
+                vessel.Parts[i].InvokeToStringChanged();
+            }
+
+            foreach (KmlPart part in vessel.Parts)
+            {
+                // This is the essential part to change the persistent file data
+                for (int a = part.Attribs.Count - 1; a >= 0; a--)
+                {
+                    KmlAttrib attrib = part.Attribs[a];
+                    attrib.AttribValueChanged -= part.ParentPart_Changed;
+                    attrib.AttribValueChanged -= part.AttachmentSurface_Changed;
+                    attrib.AttribValueChanged -= part.AttachmentNode_Changed;
+                    switch (attrib.Name.ToLower())
+                    {
+                        case "parent":
+                            attrib.Value = ReIndexedValueForPartDeletion(delIndex, attrib.Value);
+                            break;
+                        case "sym":
+                            // Having "sym = -1" or "sym = " could crash KSP (at least version 1.1.3)
+                            attrib.Value = ReIndexedValueForPartDeletion(delIndex, attrib.Value);
+                            if (attrib.Value == "-1")
+                            {
+                                part.Attribs.RemoveAt(a);
+                                continue;
+                            }
+                            break;
+                        case "srfn":
+                        case "attn":
+                            char[] separator = { ',' };
+                            string[] s = attrib.Value.Split(separator);
+                            if (s.Length == 2)
+                            {
+                                attrib.Value = s[0] + ", " + ReIndexedValueForPartDeletion(delIndex, s[1].Trim());
+                            }
+                            break;
+                    }
+                    switch (attrib.Name.ToLower())
+                    {
+                        case "parent":
+                            attrib.AttribValueChanged += part.ParentPart_Changed;
+                            break;
+                        case "srfn":
+                            attrib.AttribValueChanged += part.AttachmentSurface_Changed;
+                            break;
+                        case "attn":
+                            attrib.AttribValueChanged += part.AttachmentNode_Changed;
+                            break;
+                    }
+                }
+
+                // Do additional fixup of redundant attachment informations
+                // First we need to fix indices like above
+                for (int i = part.AttachedToNodeIndices.Count - 1; i >= 0; i--)
+                {
+                    if (part.AttachedToNodeIndices[i] > delIndex)
+                        part.AttachedToNodeIndices[i]--;
+                    else if (part.AttachedToNodeIndices[i] == delIndex)
+                        part.AttachedToNodeIndices.RemoveAt(i);
+                }
+                
+                // Parent index needs to be updated here since we unbound ParentPart_Changed from the above changed attribute while changing
+                // TODO KmlPart.ReIndexStructureForPartDeletion(): Maybe find better usage of ParentPart_Changed
+                if (part.ParentPartIndex > delIndex)
+                    part.ParentPartIndex--;
+                // must be excluded by preconditions to call delete: else if (part.ParentPartIndex == delIndex)
+                
+                // Remove the part from any list, call to Remove() causes no problem if it's not contained
+                part.AttachedPartsBack.Remove(delPart);
+                part.AttachedPartsBottom.Remove(delPart);
+                part.AttachedPartsFront.Remove(delPart);
+                part.AttachedPartsLeft.Remove(delPart);
+                part.AttachedPartsRight.Remove(delPart);
+                part.AttachedPartsSurface.Remove(delPart);
+                part.AttachedPartsTop.Remove(delPart);
+                part.AttachedToPartsBack.Remove(delPart);
+                part.AttachedToPartsBottom.Remove(delPart);
+                part.AttachedToPartsFront.Remove(delPart);
+                part.AttachedToPartsLeft.Remove(delPart);
+                part.AttachedToPartsRight.Remove(delPart);
+                part.AttachedToPartsTop.Remove(delPart);
+                // must be excluded by preconditions to call delete: if (part.AttachedToPartSurface == delPart);
+                
+                // Based on new attachment structure we can now update if this part can be deleted
+                part.CanBeDeleted = part.CanPartBeDeleted();
+                // And force GuiTreeNode delete item enabled state to update
+                // TODO KmlPart:ReIndexStructureForPartDeletion(): Better event for change of CanBeDeleted
+                part.InvokeToStringChanged();
+            }
+        }
+
+        private static string ReIndexedValueForPartDeletion(int delIndex, string value)
+        {
+            int i;
+            if (!int.TryParse(value, out i))
+                return value;
+            if (i == delIndex)
+                return "-1";
+            if (i > delIndex)
+                return (i - 1).ToString();
+            return value;
         }
 
         /// <summary>
@@ -809,6 +920,19 @@ namespace KML
                     Syntax.Warning(part, "Part supposed to be surface attached to part index [" + part.AttachedToSurfaceIndex + "], which does not point to a valid part");
                 }
 
+                // Check symmetry attributes
+                foreach (KmlAttrib attrib in part.Attribs)
+                {
+                    if (attrib.Name.ToLower() == "sym")
+                    {
+                        int v;
+                        if (!int.TryParse(attrib.Value, out v) || v < 0 || v >= parts.Count || v == i)
+                        {
+                            Syntax.Warning(attrib, "Invalid symmetry entry '" + attrib.ToString() + "', you should delete this attribute");
+                        }
+                    }
+                }
+
                 // Check docking (with parent involved is already checked above, here needs to e checked a 'Docked (same vessel)'
                 // Need to check one side only, other part will be touched here in another iteration of the loop
                 if (part is KmlPartDock)
@@ -936,7 +1060,7 @@ namespace KML
             if (!(Parent is KmlVessel)) // Just a node with the PART tag somewhere else
                 return true;
             // Don't delete the root part
-            if (ParentPart == null)
+            if ((Parent as KmlVessel).RootPart == this)
                 return false;
             // There may only be one part attached which is this parts parent part.
             // Oterhwise some parts are attached having this part as parent, then disallow deletion
