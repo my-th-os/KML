@@ -147,7 +147,14 @@ namespace KML
             else if (newItem is KmlPart)
             {
                 KmlPart part = (KmlPart)newItem;
-                Parts.Add(part);
+                if (beforeItem != null && beforeItem is KmlPart && Parts.Contains(beforeItem))
+                {
+                    Parts.Insert(Parts.IndexOf((KmlPart)beforeItem), part);
+                }
+                else
+                {
+                    Parts.Add(part);
+                }
                 if (Parts.Count == rootPartIndex + 1)
                 {
                     RootPart = Parts[rootPartIndex];

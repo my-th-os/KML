@@ -567,12 +567,6 @@ namespace KML
             // Remove part from vessels part list
             vessel.Parts.Remove(delPart);
 
-            // After deletion in vessel.Parts we have changed ToString() to give a new result on the later parts
-            for (int i = delIndex; i < vessel.Parts.Count; i++)
-            {
-                vessel.Parts[i].InvokeToStringChanged();
-            }
-
             foreach (KmlPart part in vessel.Parts)
             {
                 // This is the essential part to change the persistent file data
