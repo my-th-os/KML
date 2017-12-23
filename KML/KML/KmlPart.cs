@@ -488,6 +488,34 @@ namespace KML
         }
 
         /// <summary>
+        /// Call on the part where to insert before to prepare part index structure.
+        /// </summary>
+        public void InsertionPreparation()
+        {
+            if (Parent is KmlVessel)
+            {
+                KmlVessel vessel = (KmlVessel)Parent;
+                ReIndexStructureForPartInsertion(this, vessel);
+            }
+        }
+
+        /// <summary>
+        /// Call on the part where to insert before after insertion happened.
+        /// </summary>
+        public void InsertionFinalization()
+        {
+            if (Parent is KmlVessel)
+            {
+                KmlVessel vessel = (KmlVessel)Parent;
+                int index = vessel.Parts.IndexOf(this);
+                for (int i = index; i < vessel.Parts.Count; i++)
+                {
+                    vessel.Parts[i].InvokeToStringChanged();
+                }
+            }
+        }
+
+        /// <summary>
         /// Refill all resources of this part.
         /// </summary>
         public void Refill()
@@ -654,6 +682,74 @@ namespace KML
             }
         }
 
+        private static void ReIndexStructureForPartInsertion(KmlPart insPart, KmlVessel vessel)
+        {
+            int insIndex = vessel.Parts.IndexOf(insPart);
+            if (insIndex < 0)
+                return;
+
+            foreach (KmlPart part in vessel.Parts)
+            {
+                // This is the essential part to change the persistent file data
+                for (int a = part.Attribs.Count - 1; a >= 0; a--)
+                {
+                    KmlAttrib attrib = part.Attribs[a];
+                    attrib.AttribValueChanged -= part.ParentPart_Changed;
+                    attrib.AttribValueChanged -= part.AttachmentSurface_Changed;
+                    attrib.AttribValueChanged -= part.AttachmentNode_Changed;
+                    switch (attrib.Name.ToLower())
+                    {
+                        case "parent":
+                            attrib.Value = ReIndexedValueForPartInsertion(insIndex, attrib.Value);
+                            break;
+                        case "sym":
+                            // Having "sym = -1" or "sym = " could crash KSP (at least version 1.1.3)
+                            attrib.Value = ReIndexedValueForPartInsertion(insIndex, attrib.Value);
+                            if (attrib.Value == "-1")
+                            {
+                                part.Attribs.RemoveAt(a);
+                                continue;
+                            }
+                            break;
+                        case "srfn":
+                        case "attn":
+                            char[] separator = { ',' };
+                            string[] s = attrib.Value.Split(separator);
+                            if (s.Length == 2)
+                            {
+                                attrib.Value = s[0] + ", " + ReIndexedValueForPartInsertion(insIndex, s[1].Trim());
+                            }
+                            break;
+                    }
+                    switch (attrib.Name.ToLower())
+                    {
+                        case "parent":
+                            attrib.AttribValueChanged += part.ParentPart_Changed;
+                            break;
+                        case "srfn":
+                            attrib.AttribValueChanged += part.AttachmentSurface_Changed;
+                            break;
+                        case "attn":
+                            attrib.AttribValueChanged += part.AttachmentNode_Changed;
+                            break;
+                    }
+                }
+
+                // Do additional fixup of redundant attachment informations
+                // First we need to fix indices like above
+                for (int i = part.AttachedToNodeIndices.Count - 1; i >= 0; i--)
+                {
+                    if (part.AttachedToNodeIndices[i] >= insIndex)
+                        part.AttachedToNodeIndices[i]++;
+                }
+
+                // Parent index needs to be updated here since we unbound ParentPart_Changed from the above changed attribute while changing
+                // TODO KmlPart.ReIndexStructureForPartInsertion(): Maybe find better usage of ParentPart_Changed
+                if (part.ParentPartIndex >= insIndex)
+                    part.ParentPartIndex++;
+            }
+        }
+
         private static string ReIndexedValueForPartDeletion(int delIndex, string value)
         {
             int i;
@@ -663,6 +759,16 @@ namespace KML
                 return "-1";
             if (i > delIndex)
                 return (i - 1).ToString();
+            return value;
+        }
+
+        private static string ReIndexedValueForPartInsertion(int insIndex, string value)
+        {
+            int i;
+            if (!int.TryParse(value, out i))
+                return value;
+            if (i >= insIndex)
+                return (i + 1).ToString();
             return value;
         }
 

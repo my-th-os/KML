@@ -65,13 +65,28 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <RoutedUICommand x:Key="cmdOpen"/>
+        <RoutedUICommand x:Key="cmdSave"/>
         <RoutedUICommand x:Key="cmdSearch"/>
+        <RoutedUICommand x:Key="cmdPrevious"/>
+        <RoutedUICommand x:Key="cmdNext"/>
+        <RoutedUICommand x:Key="cmdHelp"/>
     </Window.Resources>
     <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource cmdOpen}" Executed="ButtonOpen_Click"/>
+        <CommandBinding Command="{StaticResource cmdSave}" Executed="ButtonSave_Click"/>
         <CommandBinding Command="{StaticResource cmdSearch}" Executed="ButtonSearch_Click"/>
+        <CommandBinding Command="{StaticResource cmdPrevious}" Executed="ButtonPrevious_Click"/>
+        <CommandBinding Command="{StaticResource cmdNext}" Executed="ButtonNext_Click"/>
+        <CommandBinding Command="{StaticResource cmdHelp}" Executed="CommandHelp_Executed"/>
     </Window.CommandBindings>
     <Window.InputBindings>
+        <KeyBinding Key="F1" Command="{StaticResource cmdHelp}"/>
         <KeyBinding Key="F3" Command="{StaticResource cmdSearch}"/>
+        <KeyBinding Key="F5" Command="{StaticResource cmdSave}"/>
+        <KeyBinding Key="F9" Command="{StaticResource cmdOpen}"/>
+        <KeyBinding Key="F2"  Command="{StaticResource cmdPrevious}"/>
+        <KeyBinding Key="F4" Command="{StaticResource cmdNext}"/>
     </Window.InputBindings>
     <Grid>
         <StackPanel VerticalAlignment="Top">
@@ -88,23 +103,23 @@
                         <GradientStop Color="White" Offset="1"/>
                     </LinearGradientBrush>
                 </ToolBar.Background>
-                <Button Click="ButtonOpen_Click" ToolTip="Open persistence file...">
+                <Button Command="{StaticResource cmdOpen}" ToolTip="Open persistence file... [F9]">
                     <Image Source="Images\Open48.png"/>
                 </Button>
                 <Separator/>
-                <Button Click="ButtonSave_Click" ToolTip="Save persistence file...">
+                <Button Command="{StaticResource cmdSave}" ToolTip="Save persistence file... [F5]">
                     <Image Source="Images\Save48.png"/>
                 </Button>
                 <Separator/>
-                <ToggleButton x:Name="ButtonSearch" Command="{StaticResource cmdSearch}" ToolTip="Search...">
+                <ToggleButton x:Name="ButtonSearch" Command="{StaticResource cmdSearch}" ToolTip="Search... [F3]">
                     <Image Source="Images\Search48.png"/>
                 </ToggleButton>
                 <Separator/>
-                <Button Click="ButtonPrevious_Click" ToolTip="Previous item">
+                <Button Command="{StaticResource cmdPrevious}" ToolTip="Previous item [F2]">
                     <Image Source="Images\Previous48.png"/>
                 </Button>
                 <Separator/>
-                <Button Click="ButtonNext_Click" ToolTip="Next item">
+                <Button Command="{StaticResource cmdNext}" ToolTip="Next item [F4]">
                     <Image Source="Images\Next48.png"/>
                 </Button>
                 <Separator/>
@@ -299,7 +314,7 @@
             <Separator/>
             <Hyperlink NavigateUri="https://github.com/my-th-os/KML" RequestNavigate="Hyperlink_RequestNavigate">Git Source</Hyperlink>
             <Separator/>
-            <Hyperlink NavigateUri="http://forum.kerbalspaceprogram.com/index.php?/topic/133971-win-kml-persistence-file-editor/" RequestNavigate="Hyperlink_RequestNavigate">KSP Forum</Hyperlink>
+            <Hyperlink x:Name="HelpLink" NavigateUri="http://forum.kerbalspaceprogram.com/index.php?/topic/133971-win-kml-persistence-file-editor/" RequestNavigate="Hyperlink_RequestNavigate">KSP Forum</Hyperlink>
         </StatusBar>
     </Grid>
 </Window>

@@ -31,6 +31,7 @@ namespace KML
         private static bool _checkAttribValue = true;
         private static KmlItem _selectedItem;
         private static int _searchContinued = 0;
+        private static List<KmlItem> _searchResults = new List<KmlItem>();
 
         private DispatcherTimer SearchTimer { get; set; }
         
@@ -186,6 +187,10 @@ namespace KML
             list = GuiTabsManager.GetCurrent().TreeManager.Search(TextBoxInput.Text,
                 CheckNodeTag.IsChecked == true, CheckNodeText.IsChecked == true,
                 CheckAttribName.IsChecked == true, CheckAttribValue.IsChecked == true);
+
+            _searchResults.Clear();
+            _searchResults.AddRange(list);
+
             int maxItemCount = SEARCHLIMIT;
             KmlNode parentNode = null;
             TreeViewItem parentItem = null;
@@ -249,6 +254,43 @@ namespace KML
                     node.IsSelected = Tree.SelectedItem == null;
                 }
             }
+        }
+
+        /// <summary>
+        /// Get next result from last search.
+        /// </summary>
+        /// <returns>The next KmlItem from search</returns>
+        public static KmlItem SearchNext()
+        {
+            int i = _searchResults.IndexOf(_selectedItem);
+            if (i >= 0 && i < _searchResults.Count - 1)
+            {
+                _selectedItem = _searchResults[i + 1];
+            }
+            return _selectedItem;
+        }
+
+        /// <summary>
+        /// Get previous result from last search.
+        /// </summary>
+        /// <returns>The previous KmlItem from search</returns>
+        public static KmlItem SearchPrevious()
+        {
+            int i = _searchResults.IndexOf(_selectedItem);
+            if (i > 0 && i < _searchResults.Count)
+            {
+                _selectedItem = _searchResults[i - 1];
+            }
+            return _selectedItem;
+        }
+
+        /// <summary>
+        /// Resets search results.
+        /// </summary>
+        public static void SearchReset()
+        {
+            _searchResults.Clear();
+            _selectedItem = null;
         }
 
         private void ToBeContinued_Expanded(object sender, RoutedEventArgs e)

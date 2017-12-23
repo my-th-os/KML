@@ -110,6 +110,7 @@ namespace KML
             if (dlg.ShowDialog() == true)
             {
                 Load(dlg.FileName);
+                DlgSearch.SearchReset();
             }
         }
 
@@ -173,11 +174,28 @@ namespace KML
 
         private void ButtonNext_Click(object sender, RoutedEventArgs e)
         {
-            TabsManager.Next();
+            KmlItem search = DlgSearch.SearchNext();
+            if (search != null)
+            {
+                TabsManager.TreeManager.Select(search);
+            }
+            else
+            {
+                TabsManager.Next();
+            }
         }
+
         private void ButtonPrevious_Click(object sender, RoutedEventArgs e)
         {
-            TabsManager.Previous();
+            KmlItem search = DlgSearch.SearchPrevious();
+            if (search != null)
+            {
+                TabsManager.TreeManager.Select(search);
+            }
+            else
+            {
+                TabsManager.Previous();
+            }
         }
 
         private void SetContainedImageOpacity(Visual Parent, double Opacity)
@@ -393,6 +411,11 @@ namespace KML
         {
             KmlAttrib attrib = (VisualTreeHelper.GetParent(sender as DependencyObject) as ContentPresenter).DataContext as KmlAttrib;
             KerbalsDetails.SelectedIndex = attrib.Parent.Attribs.IndexOf(attrib); // Wow this seems straight forward!
+        }
+
+        private void CommandHelp_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            HelpLink.DoClick();
         }
     }
 }

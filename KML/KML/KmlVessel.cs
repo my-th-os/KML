@@ -147,9 +147,28 @@ namespace KML
             else if (newItem is KmlPart)
             {
                 KmlPart part = (KmlPart)newItem;
-                if (beforeItem != null && beforeItem is KmlPart && Parts.Contains(beforeItem))
+                if (beforeItem != null)
                 {
-                    Parts.Insert(Parts.IndexOf((KmlPart)beforeItem), part);
+                    KmlPart beforePart = null;
+                    int allIndex = AllItems.IndexOf(beforeItem);
+                    for (int i = allIndex; i < AllItems.Count; i++ )
+                    {
+                        if (AllItems[i] is KmlPart && Parts.Contains((KmlPart)AllItems[i]))
+                        {
+                            beforePart = (KmlPart)AllItems[i];
+                            break;
+                        }
+                    }
+                    if (beforePart != null)
+                    {
+                        beforePart.InsertionPreparation();
+                        Parts.Insert(Parts.IndexOf(beforePart), part);
+                        beforePart.InsertionFinalization();
+                    }
+                    else
+                    {
+                        Parts.Add(part);
+                    }
                 }
                 else
                 {

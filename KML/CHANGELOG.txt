@@ -7,7 +7,9 @@ Version 0.7.3 - in progress
 - vessel / kerbal list filter right click (incl. un-single-select on second right click)
 - search dialog can now load further items (only 100 are loaded first)
 - bugfix in search dialog
-- still not tested with KSP 1.3 (changes don't look relevant for KML) - feedback welcome!
+- previous and next buttons navigate through search results
+- more key bindings, see tooltips
+- tested with KSP 1.3.1
 
 Version 0.7.2 - 2017-01-15
 - new vessel types plane and relay
