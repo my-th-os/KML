@@ -2,6 +2,7 @@ Version 0.7.3 - in progress
 - delete parts that aren't parent of any other part - thanks to Kobymaru
 - support KAS CPort parts as dock type (no repair abilities yet)
 - additional sanity check for symmetry attributes pointing to invalid indices
+- test for program files dir and being admin - thanks to EwingKang
 - improved highlighting of list items
 - minimal delay on part graph drawing (still freezes app on large vessels)
 - vessel / kerbal list filter right click (incl. un-single-select on second right click)

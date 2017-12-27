@@ -16,6 +16,7 @@ using System.Threading;
 using Microsoft.Win32;
 using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
+using System.Security.Principal;
 
 namespace KML
 {
@@ -90,6 +91,30 @@ namespace KML
         {
             TabsManager.Load(filename);
             Filename = filename;
+
+            DlgSearch.SearchReset();
+
+            try
+            {
+                string programFilesX64 = Environment.ExpandEnvironmentVariables("%ProgramW6432%");
+                string programFilesX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+
+                bool isProg = filename.StartsWith(programFilesX64, StringComparison.InvariantCultureIgnoreCase) ||
+                    filename.StartsWith(programFilesX86, StringComparison.InvariantCultureIgnoreCase);
+                bool isAdmin = (new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator);
+
+                if (isProg && !isAdmin)
+                {
+                    DlgMessage.Show("This file is located under 'program files' and hence protected by Windows.\n" +
+                        "So KML will not be able to overwrite it, when you choose to save your changes.\n\n" +
+                        "Please run KML as administrator or manually pick the changed file from 'program data'\n" +
+                        "and put it back to original place.", "Permission warning", (new GuiIcons16()).Warning);
+                }
+            }
+            catch
+            {
+                ; // something went wrong with reading env-var or admin flag
+            }
         }
 
         private void Save(string filename)
@@ -110,7 +135,6 @@ namespace KML
             if (dlg.ShowDialog() == true)
             {
                 Load(dlg.FileName);
-                DlgSearch.SearchReset();
             }
         }
 
