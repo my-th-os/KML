@@ -19,6 +19,11 @@ namespace KML
         public Image Add = new Image();
 
         /// <summary>
+        /// The icon for menu items to copy content.
+        /// </summary>
+        public Image Clipboard = new Image();
+
+        /// <summary>
         /// The icon for menu items to delete content.
         /// </summary>
         public Image Delete = new Image();

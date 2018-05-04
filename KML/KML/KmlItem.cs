@@ -231,12 +231,17 @@ namespace KML
             return newNode;
         }
 
-        private static List<KmlItem> ParseFile(StreamReader file)
+        /// <summary>
+        /// Parses input data into list of KmlItems.
+        /// </summary>
+        /// <param name="reader">Reader that is used as data provider.</param>
+        /// <returns>List of KmlItems that were parsed from input data.</returns>
+        public static List<KmlItem> ParseItems(TextReader reader)
         {
             List<KmlItem> list = new List<KmlItem>();
 
             string line;
-            while ((line = file.ReadLine()) != null)
+            while ((line = reader.ReadLine()) != null)
             {
                 KmlItem newItem = ParseLine(line);
                 if (newItem is KmlBegin)
@@ -254,7 +259,7 @@ namespace KML
                     }
                     KmlNode newNode = ParseNode(lastItem);
                     list.Add(newNode);
-                    newNode.AddRange(ParseFile(file));
+                    newNode.AddRange(ParseItems(reader));
                 }
                 else if (newItem is KmlEnd)
                 {
@@ -363,7 +368,7 @@ namespace KML
                 // Explicit setting UTF8 doesn't look the same, if I compare loaded and saved with MinMerge
                 // StreamReader file = new StreamReader(Filename, Encoding.UTF8);
                 StreamReader file = new StreamReader(filename);
-                list.AddRange(ParseFile(file));
+                list.AddRange(ParseItems(file));
                 file.Close();
                 CallFinalize(list);
             }
@@ -390,12 +395,18 @@ namespace KML
             return roots;
         }
 
-        private static void WriteFile (StreamWriter file, KmlItem item, int indent)
+        /// <summary>
+        /// Writes serialized KmlItem into writer
+        /// </summary>
+        /// <param name="writer">Writer used to write serialized item.</param>
+        /// <param name="item">Item for serialization.</param>
+        /// <param name="indent">Default indent.</param>
+        public static void WriteItem (TextWriter writer, KmlItem item, int indent)
         {
             bool ghost = item is KmlGhostNode;
             if (!ghost)
             {
-                file.WriteLine(item.ToLine(indent));
+                writer.WriteLine(item.ToLine(indent));
             }
             if (item is KmlNode)
             {
@@ -403,16 +414,16 @@ namespace KML
                 KmlNode node = (KmlNode)item;
                 if (!ghost)
                 {
-                    file.WriteLine(new KmlBegin().ToLine(indent));
+                    writer.WriteLine(new KmlBegin().ToLine(indent));
                     newIndent = indent + 1;
                 }
                 foreach(KmlItem child in node.AllItems)
                 {
-                    WriteFile(file, child, newIndent);
+                    WriteItem(writer, child, newIndent);
                 }
                 if (!ghost)
                 {
-                    file.WriteLine(new KmlEnd().ToLine(indent));
+                    writer.WriteLine(new KmlEnd().ToLine(indent));
                 }
             }
         }
@@ -447,7 +458,7 @@ namespace KML
                 {
                     foreach (KmlItem item in items)
                     {
-                        WriteFile(file, item, 0);
+                        WriteItem(file, item, 0);
                     }
                     file.Close();
                 }
