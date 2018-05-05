@@ -252,6 +252,20 @@ namespace KML
         }
 
         /// <summary>
+        /// Adds each KmlItem in the list before KmlItem like InsertBefore(KmlItem, KmlItem) does.
+        /// <see cref="KML.KmlNode.InsertBefore(KML.KmlItem, KML.KmlItem)"/>
+        /// </summary>
+        /// <param name="beforeItem">The KmlItem where the new item should be inserted before</param>
+        /// <param name="list">A List of KmlItem to add</param>
+        public void InsertBeforeRange(KmlItem beforeItem, List<KmlItem> list)
+        {
+            foreach (KmlItem item in list)
+            {
+                Add(beforeItem, item);
+            }
+        }
+
+        /// <summary>
         /// Deletes a KmlItem from this nodes lists.
         /// Result will be false if item was not in the lists or couldn't be deleted
         /// because of restrictions.

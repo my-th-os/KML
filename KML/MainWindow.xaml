@@ -306,9 +306,9 @@
         <StatusBar Height="23" VerticalAlignment="Bottom" Background="Gray">
             <Label Content="KML - Kerbal Markup Lister" Padding="0"/>
             <Separator/>
-            <Label Content="Version 0.7.3" Padding="0"/>
+            <Label Content="Version 0.8" Padding="0"/>
             <Separator/>
-            <Label Content="© 2017 Oliver Pola (Mythos)" Padding="0"/>
+            <Label Content="© 2018 Oliver Pola (Mythos)" Padding="0"/>
             <Separator/>
             <Hyperlink NavigateUri="http://www.gnu.org/licenses/gpl.html" RequestNavigate="Hyperlink_RequestNavigate">GPL License</Hyperlink>
             <Separator/>

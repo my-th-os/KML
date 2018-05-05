@@ -33,6 +33,7 @@ namespace KML
             KerbalScience.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Science16.png"));
             KerbalCamera.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Camera16.png"));
             Node.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Point16.png"));
+            Paste.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Paste16.png"));
             Part.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Box16.png"));
             PartDock.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Port16.png"));
             PartGrapple.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/GrapplingHook16.png"));

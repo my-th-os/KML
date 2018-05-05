@@ -82,6 +82,11 @@ namespace KML
         public Image Node = new Image();
 
         /// <summary>
+        /// The icon for menu items to paste content.
+        /// </summary>
+        public Image Paste = new Image();
+
+        /// <summary>
         /// The icon for a vessel part in the KML tree or the vessels list.
         /// </summary>
         public Image Part = new Image();

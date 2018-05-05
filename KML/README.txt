@@ -1,4 +1,4 @@
-KML - Kerbal Markup Lister v0.7.2 - 2017-01-15 (WIP) - A persistence file editor for Kerbal Space Program
+KML - Kerbal Markup Lister v0.8 - 2018-05-05 (WIP) - A persistence file editor for Kerbal Space Program
 KSP Forum: http://forum.kerbalspaceprogram.com/index.php?/topic/133971-win-kml-persistence-file-editor/
 
 Do you face a problem with broken docking ports or need just a little fuel-cheating? Do you got tired of editing save games in a text editor with long loading time and so much scrolling to compare different parts and vessels? So did I and decided to make a more helpful external editor to display the XML-like structure (the "KML" - Kerbal Markup Language) in a tree view and pick out vessels, kerbals and parts to be displayed in more eye-candy way.
@@ -8,10 +8,13 @@ The current version is not feature-complete but so far functional and already he
 Any feedback, more testing, bug reports and suggestions are very welcome.
 
 New Features
-• new vessel types plane and relay 
-• reset docking on one-sided same vessel docking errors - thanks to schneida 
-• report only crew assignment problems for kerbals from roster 
-• tested with KSP 1.2.2 
+• copy & paste nodes in the tree - thanks alot to pamidur's contribution
+• delete parts that aren't parent of any other part - thanks to Kobymaru
+• support KAS CPort parts as dock type (no repair abilities yet)
+• test for program files dir and being admin - thanks to EwingKang
+• vessel / kerbal list filter right click (incl. un-single-select on second right click)
+• search dialog can now load further items (only 100 are loaded first)
+• previous and next buttons navigate through search results
 
 Features 
 • open SFS and CRAFT files
@@ -33,14 +36,15 @@ Features
 • change vessel flag in all its parts - for Enceos
 • refill part resources
 • repair broken docking ports and grappling devices
-• tested with KSP 1.0, 1.1 and 1.2
+• tested with KSP 1.0 to 1.3
   (newest KML version should still work with at least all these KSP versions) 
 
 TODO
-• copy nodes and attributes
+• copy attributes
 • identify add-on part connections (KAS)
 • change position of nodes and attributes
 • more testing (uncommon vessel builds I didn't think of?)
+• support multiple docking ports per part
 • documentation
 • a lot of source code TODOs
 
@@ -62,3 +66,7 @@ Instructions, Hints, FAQ
 • Sometimes there appears a warnings tab, what do these warnings mean? Some KML elements are more heavily inspected than others, like vessel parts and especially docking or grappling devices. If something is not as expected there is a warning generated.
 • There is a warning but my save game works fine! If the problem is related to stock parts please send me feedback about this problem. If KML has warnings about add-on parts not connected (e.g. KAS): That's ok for now, KML does not support that add-on and can't understand what it has written to the save file. KML just expects all parts to be somehow connected and gives a warning otherwise.
 • Don't fear about saving a file with warnings, unknown add-ons, missing part-connections, etc. KML will save the file as it was read and only apply the changes you made. All unknown data will be kept as it was.
+
+Developers
+• Mythos (initiator, maintainer)
+• pamidur (contributor)
