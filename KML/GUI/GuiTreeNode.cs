@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -567,6 +568,22 @@ namespace KML
                 m.Click += NodeInsertBefore_Click;
                 m.IsEnabled = DataNode.Parent != null;
                 menu.Items.Add(m);
+
+                m = new MenuItem();
+                m.DataContext = DataNode;
+                m.Icon = Icons.CreateImage(Icons.Clipboard);
+                m.Header = "_Copy node...";
+                m.Click += CopyNode_Click;
+                m.IsEnabled = DataNode.Parent != null;
+                menu.Items.Add(m);
+
+                m = new MenuItem();
+                m.DataContext = DataNode;
+                m.Icon = Icons.CreateImage(Icons.Add);
+                m.Header = "_Paste child items(s)...";
+                m.Click += PasteNode_Click;
+                m.IsEnabled = Clipboard.ContainsText(TextDataFormat.UnicodeText);
+                menu.Items.Add(m);
             }
             if (withDeleteMenu)
             {
@@ -606,6 +623,35 @@ namespace KML
                     }
                 }
             }
+        }
+
+        private void PasteNode_Click(object sender, RoutedEventArgs e)
+        {
+            KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
+
+            var textNode = Clipboard.GetText(TextDataFormat.UnicodeText);
+
+            var items = KmlItem.ParseItems(new StringReader(textNode)).Where(i => i is KmlNode || i is KmlAttrib).ToList();
+
+            if (!items.Any())
+                DlgMessage.Show("Can not paste node from clipboard", "Paste node", Icons.Warning);
+
+            node.AddRange(items);
+        }
+
+        private void CopyNode_Click(object sender, RoutedEventArgs e)
+        {
+            KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
+
+            var sr = new StringWriter();
+
+            KmlItem.WriteItem(sr, node, 0);
+
+            sr.Flush();
+
+            var textNode = sr.GetStringBuilder().ToString();
+
+            Clipboard.SetText(textNode, TextDataFormat.UnicodeText);
         }
 
         private void AddChildNode(KmlNode toItem, KmlNode beforeItem)
