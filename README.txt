@@ -36,7 +36,7 @@ Features
 • change vessel flag in all its parts - for Enceos
 • refill part resources
 • repair broken docking ports and grappling devices
-• tested with KSP 1.0 to 1.3
+• tested with KSP 1.0 to 1.4
   (newest KML version should still work with at least all these KSP versions) 
 
 TODO

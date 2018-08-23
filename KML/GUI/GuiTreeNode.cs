@@ -561,7 +561,8 @@ namespace KML
                 m.Icon = Icons.CreateImage(Icons.Paste);
                 m.Header = "_Paste child node(s)";
                 m.Click += PasteNode_Click;
-                m.IsEnabled = Clipboard.ContainsText(TextDataFormat.UnicodeText);
+                // must be always enabled because this check is not repeated when clipboard changes
+                // m.IsEnabled = Clipboard.ContainsText(TextDataFormat.UnicodeText);
                 menu.Items.Add(m);
 
                 m = new MenuItem();
@@ -569,7 +570,8 @@ namespace KML
                 m.Icon = Icons.CreateImage(Icons.Paste);
                 m.Header = "Paste inserting node(s) before";
                 m.Click += PasteBeforeNode_Click;
-                m.IsEnabled = Clipboard.ContainsText(TextDataFormat.UnicodeText);
+                m.IsEnabled = DataNode.Parent != null; 
+                // m.IsEnabled = Clipboard.ContainsText(TextDataFormat.UnicodeText);
                 menu.Items.Add(m);
 
                 menu.Items.Add(new Separator());
