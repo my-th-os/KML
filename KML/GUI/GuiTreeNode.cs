@@ -369,6 +369,7 @@ namespace KML
             title.BorderBrush = new SolidColorBrush(Colors.Gray);
             menu.Items.Add(title);
             menu.Items.Add(new Separator());
+            menu.Opened += ContextMenu_Opened;
 
             // So far it's the default Menu, wich should not be shown if no items follow
             int defaultMenuCount = menu.Items.Count;
@@ -563,6 +564,7 @@ namespace KML
                 m.Click += PasteNode_Click;
                 // must be always enabled because this check is not repeated when clipboard changes
                 // m.IsEnabled = Clipboard.ContainsText(TextDataFormat.UnicodeText);
+                m.Tag = "Clipboard.Paste";
                 menu.Items.Add(m);
 
                 m = new MenuItem();
@@ -572,6 +574,7 @@ namespace KML
                 m.Click += PasteBeforeNode_Click;
                 m.IsEnabled = DataNode.Parent != null; 
                 // m.IsEnabled = Clipboard.ContainsText(TextDataFormat.UnicodeText);
+                m.Tag = "Clipboard.Paste";
                 menu.Items.Add(m);
 
                 menu.Items.Add(new Separator());
@@ -636,6 +639,17 @@ namespace KML
                     }
                 }
             }
+        }
+
+        private void ContextMenu_Opened(object sender, RoutedEventArgs e)
+        {
+            foreach (object o in (sender as ContextMenu).Items)
+                if (o is MenuItem)
+                {
+                    MenuItem m = (MenuItem)o;
+                    if (m.Tag == "Clipboard.Paste")
+                        m.IsEnabled = Clipboard.ContainsText(TextDataFormat.UnicodeText);
+                }
         }
 
         private void PasteNode_Click(object sender, RoutedEventArgs e)
