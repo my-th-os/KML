@@ -163,11 +163,21 @@ namespace KML
         }
 
         /// <summary>
+        /// Some key was pressed.
+        /// </summary>
+        public void CommandExec(string Command)
+        {
+            if (VesselsList.SelectedItem is GuiVesselsNode)
+                (VesselsList.SelectedItem as GuiVesselsNode).CommandExec(Command);
+        }
+
+        /// <summary>
         /// Select should be called from within other GuiManagers
         /// and wants this manager to get avtive and go to given item.
         /// </summary>
         /// <param name="item">The KmlItem to select</param>
-        public void Select(KmlItem item)
+        /// <returns>Whether item was found or not</returns>
+        public bool Select(KmlItem item)
         {
             foreach (GuiVesselsNode node in VesselsList.Items)
             {
@@ -178,9 +188,10 @@ namespace KML
                     VesselsList.SelectedItem = node;
                     VesselsList.ScrollIntoView(node);
                     Focus();
-                    return;
+                    return true;
                 }
             }
+            return false;
         }
 
         /// <summary>
@@ -300,14 +311,35 @@ namespace KML
         {
             // Vessel was added or deleted
             KmlVessel oldSelected = null;
+            KmlVessel alternateSelected = null;
             if (VesselsList.SelectedItem is GuiVesselsNode)
             {
                 oldSelected = (VesselsList.SelectedItem as GuiVesselsNode).DataVessel;
+                int i = VesselsList.SelectedIndex + 1;
+                while (i < VesselsList.Items.Count && !(VesselsList.Items[i] as GuiVesselsNode).IsVisible)
+                {
+                    i++;
+                }
+                if (i >= VesselsList.Items.Count)
+                {
+                    i = VesselsList.SelectedIndex - 1;
+                    while (i >= 0 && !(VesselsList.Items[i] as GuiVesselsNode).IsVisible)
+                    {
+                        i--;
+                    }
+                }
+                if (i >= 0)
+                {
+                    alternateSelected = (VesselsList.Items[i] as GuiVesselsNode).DataVessel;
+                }
             }
             Load(Master.TreeManager);
             if (oldSelected != null)
             {
-                Select(oldSelected);
+                if (!Select(oldSelected) && alternateSelected != null)
+                {
+                    Select(alternateSelected);
+                }
             }
         }
 

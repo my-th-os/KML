@@ -51,6 +51,11 @@ namespace KML
         private bool TemplateWithAddMenu { get; set; }
         private bool TemplateWithDeleteMenu { get; set; }
 
+        private MenuItem MenuInsert { get; set; }
+        private MenuItem MenuDelete { get; set; }
+        private MenuItem MenuCopy { get; set; }
+        private MenuItem MenuPaste { get; set; }
+
         /// <summary>
         /// Creates a GuiTreeNode containing the given dataNode.
         /// </summary>
@@ -119,6 +124,33 @@ namespace KML
             Add(node);
         }
 
+        /// <summary>
+        /// Some key was pressed.
+        /// </summary>
+        public void CommandExec(string Command)
+        {
+            ContextMenuUpdate(ContextMenu);
+            switch (Command)
+            {
+                case "Insert":
+                    if (MenuInsert != null && MenuInsert.IsEnabled)
+                        NodeInsertBefore_Click(MenuInsert, null);
+                    break;
+                case "Delete":
+                    if (MenuDelete != null && MenuDelete.IsEnabled)
+                        NodeDelete_Click(MenuDelete, null);
+                    break;
+                case "Copy":
+                    if (MenuCopy != null && MenuCopy.IsEnabled)
+                        CopyNode_Click(MenuCopy, null);
+                    break;
+                case "Paste":
+                    if (MenuPaste != null && MenuPaste.IsEnabled)
+                        PasteBeforeNode_Click(MenuPaste, null);
+                    break;
+            }
+        }
+
         private bool NeedsLoadingChildren()
         {
             return Items.Count == 1 && Items[0] is DummyTreeNode;
@@ -147,7 +179,32 @@ namespace KML
             }
             else
             {
-                // Check all KmlNodes
+                // Check for deleted items
+                for (int i = Items.Count - 1; i >= 0; i--)
+                { 
+                    if (!DataNode.Children.Contains((Items[i] as GuiTreeNode).DataNode))
+                    {
+                        // Update selection if necessary
+                        if ((Items[i] as TreeViewItem).IsSelected)
+                        {
+                            if (i < Items.Count - 1)
+                            {
+                                (Items[i + 1] as TreeViewItem).IsSelected = true;
+                            }
+                            else if (i > 0)
+                            {
+                                (Items[i - 1] as TreeViewItem).IsSelected = true;
+                            }
+                            else
+                            {
+                                // Deleting last child, select parent
+                                GuiTabsManager.GetCurrent().Select(DataNode);
+                            }
+                        }
+                        Items.RemoveAt(i);
+                    }
+                }
+                // Check for inserted or reordered items
                 for (int i = 0; i < DataNode.Children.Count; i++)
                 {
                     KmlNode child = DataNode.Children[i];
@@ -155,12 +212,12 @@ namespace KML
                     {
                         Items.Insert(i, new GuiTreeNode(child));
                     }
-                    else
-                    {
-                        Add(child);
-                    }
+                    //else
+                    //{
+                    //    Add(child);
+                    //}
                 }
-                // Check if there are Items left to delete
+                // Check if there are Items left to delete (in case of reordering)
                 for (int i = Items.Count - 1; i > DataNode.Children.Count - 1; i--)
                 {
                     Items.RemoveAt(i);
@@ -553,8 +610,10 @@ namespace KML
                 m.DataContext = DataNode;
                 m.Icon = Icons.CreateImage(Icons.Clipboard);
                 m.Header = "_Copy node";
+                m.InputGestureText = "[Ctrl+C]";
                 m.Click += CopyNode_Click;
                 m.IsEnabled = DataNode.Parent != null;
+                MenuCopy = m;
                 menu.Items.Add(m);
 
                 m = new MenuItem();
@@ -571,9 +630,11 @@ namespace KML
                 m.DataContext = DataNode;
                 m.Icon = Icons.CreateImage(Icons.Paste);
                 m.Header = "Paste inserting node(s) before";
+                m.InputGestureText = "[Ctrl+V]";
                 m.Click += PasteBeforeNode_Click;
                 m.IsEnabled = DataNode.Parent != null; 
                 // m.IsEnabled = Clipboard.ContainsText(TextDataFormat.UnicodeText);
+                MenuPaste = m;
                 m.Tag = "Clipboard.Paste";
                 menu.Items.Add(m);
 
@@ -597,8 +658,10 @@ namespace KML
                 m.DataContext = DataNode;
                 m.Icon = Icons.CreateImage(Icons.Add);
                 m.Header = "_Insert node before...";
+                m.InputGestureText = "[Ins]";
                 m.Click += NodeInsertBefore_Click;
                 m.IsEnabled = DataNode.Parent != null;
+                MenuInsert = m;
                 menu.Items.Add(m);
             }
             if (withDeleteMenu)
@@ -611,8 +674,10 @@ namespace KML
                 m.DataContext = DataNode;
                 m.Icon = Icons.CreateImage(Icons.Delete);
                 m.Header = "_Delete this " + nodeName + "...";
+                m.InputGestureText = "[Del]";
                 m.Click += NodeDelete_Click;
                 m.IsEnabled = DataNode.CanBeDeleted;
+                MenuDelete = m;
                 menu.Items.Add(m);
             }
 
@@ -641,15 +706,20 @@ namespace KML
             }
         }
 
-        private void ContextMenu_Opened(object sender, RoutedEventArgs e)
+        private void ContextMenuUpdate(ContextMenu menu)
         {
-            foreach (object o in (sender as ContextMenu).Items)
+            foreach (object o in menu.Items)
                 if (o is MenuItem)
                 {
                     MenuItem m = (MenuItem)o;
                     if (m.Tag == "Clipboard.Paste")
                         m.IsEnabled = Clipboard.ContainsText(TextDataFormat.UnicodeText);
                 }
+        }
+
+        private void ContextMenu_Opened(object sender, RoutedEventArgs e)
+        {
+            ContextMenuUpdate(sender as ContextMenu);
         }
 
         private void PasteNode_Click(object sender, RoutedEventArgs e)

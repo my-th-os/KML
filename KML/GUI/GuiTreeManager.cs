@@ -273,10 +273,20 @@ namespace KML
         }
 
         /// <summary>
+        /// Some key was pressed.
+        /// </summary>
+        public void CommandExec(string Command)
+        {
+            if (Tree.SelectedItem is GuiTreeNode)
+                (Tree.SelectedItem as GuiTreeNode).CommandExec(Command);
+        }
+
+        /// <summary>
         /// Select the given item in the tree view.
         /// </summary>
         /// <param name="item">The KmlItem to select</param>
-        public void Select(KmlItem item)
+        /// <returns>Whether item was found or not</returns>
+        public bool Select(KmlItem item)
         {
             // Stack will contain items parent nodes
             Stack<KmlNode> stack = new Stack<KmlNode>();
@@ -328,7 +338,7 @@ namespace KML
             if (masterNode == null)
             {
                 // Item found nowhere
-                return;
+                return false;
             }
 
             // Seach following nodes recursive in parent treeNode
@@ -384,6 +394,7 @@ namespace KML
                     }
                 }
             }
+            return true;
         }
 
         /// <summary>

@@ -71,6 +71,10 @@
         <RoutedUICommand x:Key="cmdPrevious"/>
         <RoutedUICommand x:Key="cmdNext"/>
         <RoutedUICommand x:Key="cmdHelp"/>
+        <RoutedUICommand x:Key="cmdInsert"/>
+        <RoutedUICommand x:Key="cmdDelete"/>
+        <RoutedUICommand x:Key="cmdCopy"/>
+        <RoutedUICommand x:Key="cmdPaste"/>
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="{StaticResource cmdOpen}" Executed="ButtonOpen_Click"/>
@@ -79,14 +83,22 @@
         <CommandBinding Command="{StaticResource cmdPrevious}" Executed="ButtonPrevious_Click"/>
         <CommandBinding Command="{StaticResource cmdNext}" Executed="ButtonNext_Click"/>
         <CommandBinding Command="{StaticResource cmdHelp}" Executed="CommandHelp_Executed"/>
+        <CommandBinding Command="{StaticResource cmdInsert}" Executed="CommandInsert_Executed"/>
+        <CommandBinding Command="{StaticResource cmdDelete}" Executed="CommandDelete_Executed"/>
+        <CommandBinding Command="{StaticResource cmdCopy}" Executed="CommandCopy_Executed"/>
+        <CommandBinding Command="{StaticResource cmdPaste}" Executed="CommandPaste_Executed"/>
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Key="F1" Command="{StaticResource cmdHelp}"/>
+        <KeyBinding Key="F2" Command="{StaticResource cmdPrevious}"/>
         <KeyBinding Key="F3" Command="{StaticResource cmdSearch}"/>
+        <KeyBinding Key="F4" Command="{StaticResource cmdNext}"/>
         <KeyBinding Key="F5" Command="{StaticResource cmdSave}"/>
         <KeyBinding Key="F9" Command="{StaticResource cmdOpen}"/>
-        <KeyBinding Key="F2"  Command="{StaticResource cmdPrevious}"/>
-        <KeyBinding Key="F4" Command="{StaticResource cmdNext}"/>
+        <KeyBinding Key="Insert"  Command="{StaticResource cmdInsert}"/>
+        <KeyBinding Key="Delete" Command="{StaticResource cmdDelete}"/>
+        <KeyBinding Key="C" Modifiers="Control" Command="{StaticResource cmdCopy}"/>
+        <KeyBinding Key="V" Modifiers="Control" Command="{StaticResource cmdPaste}"/>
     </Window.InputBindings>
     <Grid>
         <StackPanel VerticalAlignment="Top">

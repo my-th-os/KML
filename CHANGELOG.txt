@@ -1,4 +1,5 @@
 Version 0.8.1 - in progress
+- more key bindings for insert, delete, copy & paste
 - bugfix about paste command checking for clipboard content
 
 Version 0.8 - 2018-05-05

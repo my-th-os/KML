@@ -31,11 +31,18 @@ namespace KML
         void Previous();
 
         /// <summary>
+        /// Some key was pressed.
+        /// Implementing classes should react to this.
+        /// </summary>
+        void CommandExec(string Command);
+
+        /// <summary>
         /// Select should be called from within other GuiManagers
         /// and wants this manager to get avtive and go to given item.
         /// </summary>
         /// <param name="item">The KmlItem to select</param>
-        void Select(KmlItem item);
+        /// <returns>Whether item was found or not</returns>
+        bool Select(KmlItem item);
 
         /// <summary>
         /// Get the selected KmlItem. Will be needed to check if

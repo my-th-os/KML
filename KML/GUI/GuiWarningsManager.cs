@@ -102,11 +102,21 @@ namespace KML
         }
 
         /// <summary>
+        /// Some key was pressed.
+        /// </summary>
+        public void CommandExec(string Command)
+        {
+            if (WarningsList.SelectedItem is GuiWarningsNode)
+                (WarningsList.SelectedItem as GuiWarningsNode).CommandExec(Command);
+        }
+
+        /// <summary>
         /// Select should be called from within other GuiManagers
         /// and wants this manager to get avtive and go to given item.
         /// </summary>
         /// <param name="item">The KmlItem to select</param>
-        public void Select(KmlItem item)
+        /// <returns>Whether item was found or not</returns>
+        public bool Select(KmlItem item)
         {
             foreach(GuiWarningsNode node in WarningsList.Items)
             {
@@ -117,9 +127,10 @@ namespace KML
                     WarningsList.SelectedItem = node;
                     WarningsList.ScrollIntoView(node);
                     Focus();
-                    return;
+                    return true;
                 }
             }
+            return false;
         }
 
         /// <summary>

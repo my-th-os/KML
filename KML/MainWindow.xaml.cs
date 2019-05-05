@@ -441,5 +441,25 @@ namespace KML
         {
             HelpLink.DoClick();
         }
+
+        private void CommandInsert_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            TabsManager.CommandExec("Insert");
+        }
+
+        private void CommandDelete_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            TabsManager.CommandExec("Delete");
+        }
+
+        private void CommandCopy_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            TabsManager.CommandExec("Copy");
+        }
+
+        private void CommandPaste_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            TabsManager.CommandExec("Paste");
+        }
     }
 }

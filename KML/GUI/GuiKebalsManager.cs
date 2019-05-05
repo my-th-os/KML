@@ -147,11 +147,21 @@ namespace KML
         }
 
         /// <summary>
+        /// Some key was pressed.
+        /// </summary>
+        public void CommandExec(string Command)
+        {
+            if (KerbalsList.SelectedItem is GuiKerbalsNode)
+                (KerbalsList.SelectedItem as GuiKerbalsNode).CommandExec(Command);
+        }
+
+        /// <summary>
         /// Select should be called from within other GuiManagers
         /// and wants this manager to get avtive and go to given item.
         /// </summary>
         /// <param name="item">The KmlItem to select</param>
-        public void Select(KmlItem item)
+        /// <returns>Whether item was found or not</returns>
+        public bool Select(KmlItem item)
         {
             foreach (GuiKerbalsNode node in KerbalsList.Items)
             {
@@ -162,9 +172,10 @@ namespace KML
                     KerbalsList.SelectedItem = node;
                     KerbalsList.ScrollIntoView(node);
                     Focus();
-                    return;
+                    return true;
                 }
             }
+            return false;
         }
 
         /// <summary>
@@ -275,14 +286,35 @@ namespace KML
         {
             // Kerbal was added or deleted
             KmlKerbal oldSelected = null;
+            KmlKerbal alternateSelected = null;
             if (KerbalsList.SelectedItem is GuiKerbalsNode)
             {
                 oldSelected = (KerbalsList.SelectedItem as GuiKerbalsNode).DataKerbal;
+                int i = KerbalsList.SelectedIndex + 1;
+                while (i < KerbalsList.Items.Count && !(KerbalsList.Items[i] as GuiKerbalsNode).IsVisible)
+                {
+                    i++;
+                }
+                if (i >= KerbalsList.Items.Count)
+                {
+                    i = KerbalsList.SelectedIndex - 1;
+                    while (i >= 0 && !(KerbalsList.Items[i] as GuiKerbalsNode).IsVisible)
+                    {
+                        i--;
+                    }
+                }
+                if (i >= 0)
+                {
+                    alternateSelected = (KerbalsList.Items[i] as GuiKerbalsNode).DataKerbal;
+                }
             }
             Load(Master.TreeManager);
             if (oldSelected != null)
             {
-                Select(oldSelected);
+                if (!Select(oldSelected) && alternateSelected != null)
+                {
+                    Select(alternateSelected);
+                }
             }
         }
 

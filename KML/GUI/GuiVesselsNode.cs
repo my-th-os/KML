@@ -34,6 +34,7 @@ namespace KML
         }
 
         private static GuiIcons Icons = new GuiIcons48();
+        private GuiTreeNode BaseGuiNode;
 
         /// <summary>
         /// Creates a GuiVesselsNode containing the given DataVessel.
@@ -44,6 +45,7 @@ namespace KML
         public GuiVesselsNode(KmlVessel dataVessel)
         {
             DataVessel = dataVessel;
+            BaseGuiNode = new GuiTreeNode(DataVessel, true, true, true, false, true, false);
 
             AssignTemplate();
             BuildContextMenu();
@@ -62,6 +64,14 @@ namespace KML
             }
         }
 
+        /// <summary>
+        /// Some key was pressed.
+        /// </summary>
+        public void CommandExec(string Command)
+        {
+            BaseGuiNode.CommandExec(Command);
+        }
+
         private void AssignTemplate()
         {
             // Fit an Image and a TextBlock into a Stackpanel,
@@ -78,13 +88,12 @@ namespace KML
         private void BuildContextMenu()
         {
             // Copy that from a GuiTreeNode
-            GuiTreeNode dummy = new GuiTreeNode(DataVessel, true, true, true, false, true, false);
-            ContextMenu = dummy.ContextMenu;
+            ContextMenu = BaseGuiNode.ContextMenu;
             // To avoid follwing error output (uncritical), we need to have a parent for the TreeViewItem, so we also make a dummy
             // System.Windows.Data Error: 4 : Cannot find source for binding with reference 'RelativeSource FindAncestor, AncestorType='System.Windows.Controls.ItemsControl', AncestorLevel='1''. BindingExpression:Path=HorizontalContentAlignment; DataItem=null; target element is 'GuiTreeNode' (Name=''); target property is 'HorizontalContentAlignment' (type 'HorizontalAlignment')
             // System.Windows.Data Error: 4 : Cannot find source for binding with reference 'RelativeSource FindAncestor, AncestorType='System.Windows.Controls.ItemsControl', AncestorLevel='1''. BindingExpression:Path=VerticalContentAlignment; DataItem=null; target element is 'GuiTreeNode' (Name=''); target property is 'VerticalContentAlignment' (type 'VerticalAlignment')
             TreeView dummyTree = new TreeView();
-            dummyTree.Items.Add(dummy);
+            dummyTree.Items.Add(BaseGuiNode);
         }
 
         private Image GenerateImage(KmlVessel vessel)

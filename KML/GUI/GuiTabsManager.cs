@@ -226,7 +226,6 @@ namespace KML
 
         /// <summary>
         /// Toolbar navigation next was clicked.
-        /// Implementing classes should react to this.
         /// </summary>
         public void Next()
         {
@@ -239,7 +238,6 @@ namespace KML
 
         /// <summary>
         /// Toolbar navigation previous was clicked.
-        /// Implementing classes should react to this.
         /// </summary>
         public void Previous()
         {
@@ -251,12 +249,25 @@ namespace KML
         }
 
         /// <summary>
+        /// Some key was pressed.
+        /// </summary>
+        public void CommandExec(string Command)
+        {
+            IGuiManager mgr = GetActiveGuiManager();
+            if (mgr != null)
+            {
+                mgr.CommandExec(Command);
+            }
+        }
+
+        /// <summary>
         /// Selects the given item in the tree view or in the list, the item fits into.
         /// If called when tree is active it will switch to the list when possible.
         /// Otherwise when list is active it will switch to the tree view.
         /// </summary>
         /// <param name="item">The KmlItem to select</param>
-        public void Select(KmlItem item)
+        /// <returns>Whether item was found or not</returns>
+        public bool Select(KmlItem item)
         {
             if(item is KmlVessel)
             {
@@ -264,12 +275,12 @@ namespace KML
                 if (Tabs.SelectedItem == TreeTab && vessel.Origin == KmlVessel.VesselOrigin.Flightstate)
                 {
                     Tabs.SelectedItem = VesselsTab;
-                    VesselsManager.Select(vessel);
+                    return VesselsManager.Select(vessel);
                 }
                 else
                 {
                     Tabs.SelectedItem = TreeTab;
-                    TreeManager.Select(vessel);
+                    return TreeManager.Select(vessel);
                 }
             }
             else if(item is KmlKerbal)
@@ -278,18 +289,18 @@ namespace KML
                 if (Tabs.SelectedItem == TreeTab && kerbal.Origin == KmlKerbal.KerbalOrigin.Roster)
                 {
                     Tabs.SelectedItem = KerbalsTab;
-                    KerbalsManager.Select(kerbal);
+                    return KerbalsManager.Select(kerbal);
                 }
                 else
                 {
                     Tabs.SelectedItem = TreeTab;
-                    TreeManager.Select(kerbal);
+                    return TreeManager.Select(kerbal);
                 }
             }
             else
             {
                 Tabs.SelectedItem = TreeTab;
-                TreeManager.Select(item);
+                return TreeManager.Select(item);
             }
         }
 
