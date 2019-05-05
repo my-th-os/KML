@@ -167,8 +167,14 @@ namespace KML
         /// </summary>
         public void CommandExec(string Command)
         {
-            if (VesselsList.SelectedItem is GuiVesselsNode)
+            if (VesselsDetails.IsKeyboardFocusWithin)
+            {
+                // TODO GuiVesselsManager.CommandExec() for VesselsDetails
+            }
+            else if (VesselsList.IsKeyboardFocusWithin && VesselsList.SelectedItem is GuiVesselsNode)
+            {
                 (VesselsList.SelectedItem as GuiVesselsNode).CommandExec(Command);
+            }
         }
 
         /// <summary>

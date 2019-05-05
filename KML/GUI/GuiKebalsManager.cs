@@ -151,8 +151,14 @@ namespace KML
         /// </summary>
         public void CommandExec(string Command)
         {
-            if (KerbalsList.SelectedItem is GuiKerbalsNode)
+            if (KerbalsDetails.IsKeyboardFocusWithin)
+            {
+                // TODO GuiKerbalsManager.CommandExec() for KerbalsDetails
+            }
+            else if (KerbalsList.IsKeyboardFocusWithin && KerbalsList.SelectedItem is GuiKerbalsNode)
+            {
                 (KerbalsList.SelectedItem as GuiKerbalsNode).CommandExec(Command);
+            }
         }
 
         /// <summary>

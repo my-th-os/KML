@@ -277,8 +277,14 @@ namespace KML
         /// </summary>
         public void CommandExec(string Command)
         {
-            if (Tree.SelectedItem is GuiTreeNode)
+            if (TreeDetails.IsKeyboardFocusWithin)
+            {
+                // TODO GuiTreeManager.CommandExec() for TreeDetails
+            }
+            else if (Tree.IsKeyboardFocusWithin && Tree.SelectedItem is GuiTreeNode)
+            {
                 (Tree.SelectedItem as GuiTreeNode).CommandExec(Command);
+            }
         }
 
         /// <summary>

@@ -212,10 +212,10 @@ namespace KML
                     {
                         Items.Insert(i, new GuiTreeNode(child));
                     }
-                    //else
-                    //{
-                    //    Add(child);
-                    //}
+                    else if (Items.Count <= i)
+                    {
+                        Add(child);
+                    }
                 }
                 // Check if there are Items left to delete (in case of reordering)
                 for (int i = Items.Count - 1; i > DataNode.Children.Count - 1; i--)
@@ -712,7 +712,7 @@ namespace KML
                 if (o is MenuItem)
                 {
                     MenuItem m = (MenuItem)o;
-                    if (m.Tag == "Clipboard.Paste")
+                    if (m.Tag != null && (m.Tag as string).Equals("Clipboard.Paste"))
                         m.IsEnabled = Clipboard.ContainsText(TextDataFormat.UnicodeText);
                 }
         }
@@ -728,6 +728,7 @@ namespace KML
 
             var textNode = Clipboard.GetText(TextDataFormat.UnicodeText);
 
+            // Pasting top level attributes would paste them to this node, you will notice, so allow it.
             var items = KmlItem.ParseItems(new StringReader(textNode)).Where(i => i is KmlNode || i is KmlAttrib).ToList();
 
             if (!items.Any())
@@ -743,7 +744,8 @@ namespace KML
             {
                 var textNode = Clipboard.GetText(TextDataFormat.UnicodeText);
 
-                var items = KmlItem.ParseItems(new StringReader(textNode)).Where(i => i is KmlNode || i is KmlAttrib).ToList();
+                // Pasting top level attributes would paste them to parent node, you may never notice, don't allow.
+                var items = KmlItem.ParseItems(new StringReader(textNode)).Where(i => i is KmlNode).ToList();
 
                 if (!items.Any())
                     DlgMessage.Show("Can not paste node from clipboard", "Paste node", Icons.Warning);
@@ -768,7 +770,9 @@ namespace KML
 
             var textNode = sr.GetStringBuilder().ToString();
 
-            Clipboard.SetText(textNode, TextDataFormat.UnicodeText);
+            // Sometimes an error occured with SetText(), see https://stackoverflow.com/a/17678542
+            // Clipboard.SetText(textNode, TextDataFormat.UnicodeText);
+            Clipboard.SetDataObject(textNode);
         }
 
         private void AddChildNode(KmlNode toItem, KmlNode beforeItem)
@@ -1060,7 +1064,7 @@ namespace KML
         void DataNode_ChildrenChanged(object sender, RoutedEventArgs e)
         {
             // If not loaded yet, they will be loaded correctly when expanded
-            if (!NeedsLoadingChildren())
+            if (!NeedsLoadingChildren() || Items.Count == 0)
             {
                 ReLoadChildren();
             }
