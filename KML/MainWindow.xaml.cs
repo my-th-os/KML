@@ -425,16 +425,67 @@ namespace KML
             }
         }
 
-        private void TreeDetailsTextBox_GotFocus(object sender, RoutedEventArgs e)
+        private void DetailsEditBoxGotFocus(ListView Details, object sender, RoutedEventArgs e)
         {
             KmlAttrib attrib = (VisualTreeHelper.GetParent(sender as DependencyObject) as ContentPresenter).DataContext as KmlAttrib;
-            TreeDetails.SelectedIndex = attrib.Parent.Attribs.IndexOf(attrib); // Wow this seems straight forward!
+            Details.SelectedIndex = attrib.Parent.Attribs.IndexOf(attrib); // Wow this seems straight forward!
+        }
+
+        private void DetailsEditBoxKeyDown(ListView Details, object sender, KeyEventArgs e)
+        {
+            // Exit the TextBox
+            TraversalRequest next = new TraversalRequest(FocusNavigationDirection.Next);
+            TraversalRequest up = new TraversalRequest(FocusNavigationDirection.Up);
+            TraversalRequest down = new TraversalRequest(FocusNavigationDirection.Down);
+            List<TraversalRequest> request = new List<TraversalRequest>();
+            switch (e.Key)
+            {
+                case Key.Enter:
+                    // With prev the slider gets focused, keep it in the list
+                    (Details.SelectedItem as ListViewItem).Focus();
+                    e.Handled = true;
+                    break;
+                case Key.Escape:
+                    // Undo first, then leave focus
+                    (sender as TextBox).Undo();
+                    (Details.SelectedItem as ListViewItem).Focus();
+                    e.Handled = true;
+                    break;
+                case Key.Up:
+                    request.Add(up);
+                    request.Add(next);
+                    break;
+                case Key.Down:
+                    request.Add(down);
+                    request.Add(next);
+                    break;
+            }
+            if (request.Count > 0)
+            {
+                foreach (var r in request)
+                    (Details.SelectedItem as ListViewItem).MoveFocus(r);
+                e.Handled = true;
+            }
+        }
+
+        private void TreeDetailsTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            DetailsEditBoxGotFocus(TreeDetails, sender, e);
+        }
+
+        private void TreeDetailsTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            DetailsEditBoxKeyDown(TreeDetails, sender, e);
         }
 
         private void KerbalsDetailsTextBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            KmlAttrib attrib = (VisualTreeHelper.GetParent(sender as DependencyObject) as ContentPresenter).DataContext as KmlAttrib;
-            KerbalsDetails.SelectedIndex = attrib.Parent.Attribs.IndexOf(attrib); // Wow this seems straight forward!
+            DetailsEditBoxGotFocus(KerbalsDetails, sender, e);
+        }
+
+        private void KerbalsDetailsTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            DetailsEditBoxKeyDown(KerbalsDetails, sender, e);
         }
 
         private void CommandHelp_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -442,6 +493,7 @@ namespace KML
             HelpLink.DoClick();
         }
 
+        // TODO MainWindow.Command_Executed(): Couldn't find a way to have single handler and get key/name from arguments
         private void CommandInsert_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             TabsManager.CommandExec("Insert");
@@ -460,6 +512,31 @@ namespace KML
         private void CommandPaste_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             TabsManager.CommandExec("Paste");
+        }
+
+        private void CommandSwitchView_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            TabsManager.CommandExec("SwitchView");
+        }
+
+        private void CommandEnter_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            TabsManager.CommandExec("Enter");
+        }
+
+        private void CommandEscape_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            TabsManager.CommandExec("Escape");
+        }
+
+        private void CommandLeft_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            TabsManager.CommandExec("Left");
+        }
+
+        private void CommandRight_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            TabsManager.CommandExec("Right");
         }
     }
 }

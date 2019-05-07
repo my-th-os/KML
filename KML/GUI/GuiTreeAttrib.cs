@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,6 +35,11 @@ namespace KML
 
         private static GuiIcons Icons = new GuiIcons16();
 
+        private MenuItem MenuInsert { get; set; }
+        private MenuItem MenuDelete { get; set; }
+        private MenuItem MenuCopy { get; set; }
+        private MenuItem MenuPaste { get; set; }
+
         /// <summary>
         /// Creates a GuiTreeNode containing the given dataAttrib.
         /// </summary>
@@ -43,6 +49,33 @@ namespace KML
             DataAttrib = dataAttrib;
 
             BuildContextMenu();
+        }
+
+        /// <summary>
+        /// Some key was pressed.
+        /// </summary>
+        public void CommandExec(string Command)
+        {
+            ContextMenuUpdate(ContextMenu);
+            switch (Command)
+            {
+                case "Insert":
+                    if (MenuInsert != null && MenuInsert.IsEnabled)
+                        AttribInsertBefore_Click(MenuInsert, null);
+                    break;
+                case "Delete":
+                    if (MenuDelete != null && MenuDelete.IsEnabled)
+                        AttribDelete_Click(MenuDelete, null);
+                    break;
+                case "Copy":
+                    if (MenuCopy != null && MenuCopy.IsEnabled)
+                        AttribCopy_Click(MenuCopy, null);
+                    break;
+                case "Paste":
+                    if (MenuPaste != null && MenuPaste.IsEnabled)
+                        AttribPasteBefore_Click(MenuPaste, null);
+                    break;
+            }
         }
 
         private void BuildContextMenu()
@@ -62,29 +95,58 @@ namespace KML
             title.BorderBrush = new SolidColorBrush(Colors.Gray);
             menu.Items.Add(title);
             menu.Items.Add(new Separator());
+            menu.Opened += ContextMenu_Opened;
 
             // So far it's the default Menu, wich should not be shown if no items follow
             int defaultMenuCount = menu.Items.Count;
 
             MenuItem m = new MenuItem();
             m.DataContext = DataAttrib;
+            m.Icon = Icons.CreateImage(Icons.Clipboard);
+            m.Header = "_Copy attribute";
+            m.InputGestureText = "[Ctrl+C]";
+            m.Click += AttribCopy_Click;
+            MenuCopy = m;
+            menu.Items.Add(m);
+
+            m = new MenuItem();
+            m.DataContext = DataAttrib;
+            m.Icon = Icons.CreateImage(Icons.Paste);
+            m.Header = "_Paste attribute(s)";
+            m.InputGestureText = "[Ctrl+V]";
+            m.Click += AttribPasteBefore_Click;
+            // m.IsEnabled = Clipboard.ContainsText(TextDataFormat.UnicodeText);
+            MenuPaste = m;
+            m.Tag = "Clipboard.Paste";
+            menu.Items.Add(m);
+
+            menu.Items.Add(new Separator());
+
+            m = new MenuItem();
+            m.DataContext = DataAttrib;
             m.Icon = Icons.CreateImage(Icons.Add);
             m.Header = "_Insert attribute...";
+            m.InputGestureText = "[Ins]";
             m.Click += AttribInsertBefore_Click;
+            MenuInsert = m;
             menu.Items.Add(m);
+
             menu.Items.Add(new Separator());
 
             m = new MenuItem();
             m.DataContext = DataAttrib;
             m.Icon = Icons.CreateImage(Icons.Delete);
             m.Header = "_Delete this attribute...";
+            m.InputGestureText = "[Del]";
             m.Click += AttribDelete_Click;
             m.IsEnabled = DataAttrib.CanBeDeleted;
             if (!m.IsEnabled && m.Icon != null)
             {
                 (m.Icon as Image).Opacity = 0.3;
             }
+            MenuDelete = m;
             menu.Items.Add(m);
+
 
             // Need to have a seperate menu for each item, even if it is empty.
             // If ContextMenu is null, the parent's contextmenu will be used (WTF).
@@ -93,6 +155,57 @@ namespace KML
             if (menu.Items.Count <= defaultMenuCount)
             {
                 ContextMenu.Visibility = System.Windows.Visibility.Hidden;
+            }
+        }
+
+        private void ContextMenuUpdate(ContextMenu menu)
+        {
+            foreach (object o in menu.Items)
+                if (o is MenuItem)
+                {
+                    MenuItem m = (MenuItem)o;
+                    if (m.Tag != null && (m.Tag as string).Equals("Clipboard.Paste"))
+                        m.IsEnabled = Clipboard.ContainsText(TextDataFormat.UnicodeText);
+                }
+        }
+
+        private void ContextMenu_Opened(object sender, RoutedEventArgs e)
+        {
+            ContextMenuUpdate(sender as ContextMenu);
+        }
+
+        private void AttribCopy_Click(object sender, RoutedEventArgs e)
+        {
+            KmlAttrib attrib = ((sender as MenuItem).DataContext as KmlAttrib);
+
+            var sr = new StringWriter();
+
+            KmlItem.WriteItem(sr, attrib, 0);
+
+            sr.Flush();
+
+            var textNode = sr.GetStringBuilder().ToString();
+
+            Clipboard.SetDataObject(textNode);
+        }
+
+        private void AttribPasteBefore_Click(object sender, RoutedEventArgs e)
+        {
+            KmlAttrib attrib = ((sender as MenuItem).DataContext as KmlAttrib);
+            if (attrib.Parent != null)
+            {
+                var textNode = Clipboard.GetText(TextDataFormat.UnicodeText);
+
+                var items = KmlItem.ParseItems(new StringReader(textNode)).Where(i => i is KmlAttrib).ToList();
+
+                if (!items.Any())
+                    DlgMessage.Show("Can not paste attribute from clipboard", "Paste attribute", Icons.Warning);
+
+                attrib.Parent.InsertBeforeRange(attrib, items);
+            }
+            else
+            {
+                DlgMessage.Show("Can not insert, attribute has no parent", "Paste attribute", Icons.Warning);
             }
         }
 

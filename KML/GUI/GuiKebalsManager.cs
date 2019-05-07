@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace KML
 {
@@ -26,6 +27,10 @@ namespace KML
         private ListView KerbalsDetails { get; set; }
         private Label KerbalsCount { get; set; }
         private KmlNode Roster { get; set; }
+
+        private KmlKerbal _oldSelectedKerbal;
+        private KmlItem _oldSelectedAttrib;
+        private KmlItem _alternativeSelectedAttrib;
 
         /// <summary>
         /// Creates a GuiKebalsManager to link and manage the given two ListViews.
@@ -151,13 +156,46 @@ namespace KML
         /// </summary>
         public void CommandExec(string Command)
         {
-            if (KerbalsDetails.IsKeyboardFocusWithin)
+            if (KerbalsDetails.IsKeyboardFocusWithin && KerbalsDetails.SelectedItem is GuiTreeAttrib)
             {
-                // TODO GuiKerbalsManager.CommandExec() for KerbalsDetails
+                if (Command == "Enter")
+                {
+                    // Enter the TextBox for value editing
+                    TraversalRequest request = new TraversalRequest(FocusNavigationDirection.Next);
+                    (KerbalsDetails.SelectedItem as ListViewItem).MoveFocus(request);
+                }
+                else if (Command == "Escape" || Command == "Left")
+                {
+                    // Get back to TreeView
+                    KerbalsList.Focus();
+                    (KerbalsList.SelectedItem as ListViewItem).Focus();
+                }
+                else
+                {
+                    (KerbalsDetails.SelectedItem as GuiTreeAttrib).CommandExec(Command);
+                }
             }
             else if (KerbalsList.IsKeyboardFocusWithin && KerbalsList.SelectedItem is GuiKerbalsNode)
             {
-                (KerbalsList.SelectedItem as GuiKerbalsNode).CommandExec(Command);
+                if (Command == "Enter" || Command == "Right")
+                {
+                    // Switch to attributes
+                    KerbalsDetails.Focus();
+                    KmlItem item = GetSelectedItem();
+                    if (item is KmlNode)
+                    {
+                        KmlNode node = (KmlNode)item;
+                        if (node.Attribs.Count > 0)
+                        {
+                            Select(node.Attribs[0]);
+                            (KerbalsDetails.SelectedItem as ListViewItem).Focus();
+                        }
+                    }
+                }
+                else
+                {
+                    (KerbalsList.SelectedItem as GuiKerbalsNode).CommandExec(Command);
+                }
             }
         }
 
@@ -169,15 +207,27 @@ namespace KML
         /// <returns>Whether item was found or not</returns>
         public bool Select(KmlItem item)
         {
+            KmlNode masterNode = item is KmlNode ? (KmlNode)item : item.Parent;
             foreach (GuiKerbalsNode node in KerbalsList.Items)
             {
-                if (node.DataKerbal == item)
+                if (node.DataKerbal == masterNode)
                 {
                     // Force a refreh, by causing SelectionChanged to invoke
                     KerbalsList.SelectedItem = null;
                     KerbalsList.SelectedItem = node;
                     KerbalsList.ScrollIntoView(node);
                     Focus();
+                    if (item is KmlAttrib)
+                    {
+                        foreach (GuiTreeAttrib attrib in KerbalsDetails.Items)
+                        {
+                            if (attrib.DataAttrib == item)
+                            {
+                                attrib.IsSelected = true;
+                                KerbalsDetails.Focus();
+                            }
+                        }
+                    }
                     return true;
                 }
             }
@@ -326,14 +376,58 @@ namespace KML
 
         private void KerbalsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // Store currently selected attribute, in case we just unselect + select the current item to refresh
+            if (KerbalsList.SelectedItem == null)
+            {
+                // We're unselcting, this is the old data we want to restore in future call of this event
+                GuiTreeAttrib attrib = (KerbalsDetails.SelectedItem as GuiTreeAttrib);
+                if (attrib == null)
+                {
+                    _oldSelectedAttrib = null;
+                    _alternativeSelectedAttrib = null;
+                }
+                else
+                {
+                    _oldSelectedAttrib = attrib.DataAttrib;
+                    int i = KerbalsDetails.SelectedIndex;
+                    if (i < KerbalsDetails.Items.Count - 1)
+                    {
+                        _alternativeSelectedAttrib = (KerbalsDetails.Items[i + 1] as GuiTreeAttrib).DataAttrib;
+                    }
+                    else if (i > 0)
+                    {
+                        _alternativeSelectedAttrib = (KerbalsDetails.Items[i - 1] as GuiTreeAttrib).DataAttrib;
+                    }
+                    else
+                    {
+                        _alternativeSelectedAttrib = null;
+                    }
+                }
+            }
+
             KerbalsDetails.Items.Clear();
             if (KerbalsList.SelectedItem != null)
             {
                 GuiKerbalsNode Node = (GuiKerbalsNode)KerbalsList.SelectedItem;
+                KerbalsDetails.ContextMenu = Node.ContextMenu;
                 foreach (KmlAttrib attrib in Node.DataKerbal.Attribs)
                 {
-                    KerbalsDetails.Items.Add(attrib);
+                    KerbalsDetails.Items.Add(new GuiTreeAttrib(attrib));
                 }
+                _oldSelectedKerbal = Node.DataKerbal;
+
+                // Restore attrib selection
+                if (Node.DataKerbal == _oldSelectedKerbal && _oldSelectedAttrib != null)
+                {
+                    if (!Select(_oldSelectedAttrib))
+                        Select(_alternativeSelectedAttrib);
+                    if (KerbalsDetails.SelectedItem != null)
+                        (KerbalsDetails.SelectedItem as ListViewItem).Focus();
+                }
+            }
+            else
+            {
+                KerbalsDetails.ContextMenu = null;
             }
         }
 

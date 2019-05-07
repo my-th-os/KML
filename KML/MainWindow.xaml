@@ -75,6 +75,11 @@
         <RoutedUICommand x:Key="cmdDelete"/>
         <RoutedUICommand x:Key="cmdCopy"/>
         <RoutedUICommand x:Key="cmdPaste"/>
+        <RoutedUICommand x:Key="cmdSwitchView"/>
+        <RoutedUICommand x:Key="cmdEnter"/>
+        <RoutedUICommand x:Key="cmdEscape"/>
+        <RoutedUICommand x:Key="cmdLeft"/>
+        <RoutedUICommand x:Key="cmdRight"/>
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="{StaticResource cmdOpen}" Executed="ButtonOpen_Click"/>
@@ -87,6 +92,11 @@
         <CommandBinding Command="{StaticResource cmdDelete}" Executed="CommandDelete_Executed"/>
         <CommandBinding Command="{StaticResource cmdCopy}" Executed="CommandCopy_Executed"/>
         <CommandBinding Command="{StaticResource cmdPaste}" Executed="CommandPaste_Executed"/>
+        <CommandBinding Command="{StaticResource cmdSwitchView}" Executed="CommandSwitchView_Executed"/>
+        <CommandBinding Command="{StaticResource cmdEnter}" Executed="CommandEnter_Executed"/>
+        <CommandBinding Command="{StaticResource cmdEscape}" Executed="CommandEscape_Executed"/>
+        <CommandBinding Command="{StaticResource cmdLeft}" Executed="CommandLeft_Executed"/>
+        <CommandBinding Command="{StaticResource cmdRight}" Executed="CommandRight_Executed"/>
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Key="F1" Command="{StaticResource cmdHelp}"/>
@@ -99,6 +109,11 @@
         <KeyBinding Key="Delete" Command="{StaticResource cmdDelete}"/>
         <KeyBinding Key="C" Modifiers="Control" Command="{StaticResource cmdCopy}"/>
         <KeyBinding Key="V" Modifiers="Control" Command="{StaticResource cmdPaste}"/>
+        <KeyBinding Key="Enter" Modifiers="Control" Command="{StaticResource cmdSwitchView}"/>
+        <KeyBinding Key="Enter" Command="{StaticResource cmdEnter}"/>
+        <KeyBinding Key="Escape" Command="{StaticResource cmdEscape}"/>
+        <KeyBinding Key="Left" Command="{StaticResource cmdLeft}"/>
+        <KeyBinding Key="Right" Command="{StaticResource cmdRight}"/>
     </Window.InputBindings>
     <Grid>
         <StackPanel VerticalAlignment="Top">
@@ -140,7 +155,7 @@
         <TabControl x:Name="Tabs" Margin="0,59,0,23" TabStripPlacement="Left" Background="White">
             <TabItem x:Name="TreeTab">
                 <TabItem.Header>
-                    <Image Width="48" Source="Images\Tree48.png" ToolTip="KML Tree"/>
+                    <Image Width="48" Source="Images\Tree48.png" ToolTip="KML Tree [Ctrl-Tab]"/>
                 </TabItem.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -161,7 +176,7 @@
                         </TreeView.ItemContainerStyle>
                     </TreeView>
                     <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="White"/>
-                    <ListView x:Name="TreeDetails" Grid.Column="2" IsSynchronizedWithCurrentItem="True" Background="LightGray" Margin="0,1,0,-1" SelectionMode="Single">
+                    <ListView x:Name="TreeDetails" Grid.Column="2" IsSynchronizedWithCurrentItem="True" Background="LightGray" SelectionMode="Single">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -176,7 +191,7 @@
                                     <GridViewColumnHeader HorizontalContentAlignment="Left">Value</GridViewColumnHeader>
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBox Margin="-6,-10,-6,-10" Text="{Binding Value}" GotFocus="TreeDetailsTextBox_GotFocus"/>
+                                            <TextBox Margin="-6,-10,-6,-10" Text="{Binding Value}" GotFocus="TreeDetailsTextBox_GotFocus" PreviewKeyDown="TreeDetailsTextBox_KeyDown"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
@@ -187,7 +202,7 @@
             </TabItem>
             <TabItem x:Name="VesselsTab">
                 <TabItem.Header>
-                    <Image Width="48" Source="Images\ApolloCsm48.png" ToolTip="Vessels"/>
+                    <Image Width="48" Source="Images\ApolloCsm48.png" ToolTip="Vessels [Ctrl-Tab]"/>
                 </TabItem.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -248,7 +263,7 @@
             </TabItem>
             <TabItem x:Name="KerbalsTab">
                 <TabItem.Header>
-                    <Image Width="48" Source="Images\Astronaut48.png" ToolTip="Kerbals"/>
+                    <Image Width="48" Source="Images\Astronaut48.png" ToolTip="Kerbals [Ctrl-Tab]"/>
                 </TabItem.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -297,7 +312,7 @@
                                     <GridViewColumnHeader HorizontalContentAlignment="Left">Value</GridViewColumnHeader>
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBox Margin="-6,-10,-6,-10" Text="{Binding Value}" GotFocus="KerbalsDetailsTextBox_GotFocus"/>
+                                            <TextBox Margin="-6,-10,-6,-10" Text="{Binding Value}" GotFocus="KerbalsDetailsTextBox_GotFocus" PreviewKeyDown="KerbalsDetailsTextBox_KeyDown"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
@@ -308,7 +323,7 @@
             </TabItem>
             <TabItem x:Name="WarningsTab">
                 <TabItem.Header>
-                    <Image Width="48" Source="Images\Warning48.png" ToolTip="Warnings"/>
+                    <Image Width="48" Source="Images\Warning48.png" ToolTip="Warnings [Ctrl-Tab]"/>
                 </TabItem.Header>
                 <Grid>
                     <ListView x:Name="WarningsList" Background="LightGray" SelectionMode="Single" ItemContainerStyle="{StaticResource ListViewItemStyleFixed}"/>
@@ -320,7 +335,7 @@
             <Separator/>
             <Label Content="Version 0.8.1" Padding="0"/>
             <Separator/>
-            <Label Content="© 2018 Oliver Pola (Mythos)" Padding="0"/>
+            <Label Content="© 2019 Oliver Pola (Mythos)" Padding="0"/>
             <Separator/>
             <Hyperlink NavigateUri="http://www.gnu.org/licenses/gpl.html" RequestNavigate="Hyperlink_RequestNavigate">GPL License</Hyperlink>
             <Separator/>

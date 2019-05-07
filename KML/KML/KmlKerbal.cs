@@ -109,14 +109,14 @@ namespace KML
             if (newItem is KmlAttrib)
             {
                 KmlAttrib attrib = (KmlAttrib)newItem;
-                if (attrib.Name.ToLower() == "name")
+                if (attrib.Name.ToLower() == "name" && Name.Length == 0)
                 {
                     // Name property is managed by KmlNode,
                     // but we need another method to be called on name change event
                     // to rename the crew attrib in assigned vessel part also
                     attrib.AttribValueChanged += CrewName_Changed;
                 }
-                else if (attrib.Name.ToLower() == "type")
+                else if (attrib.Name.ToLower() == "type" && Type.Length == 0)
                 {
                     Type = attrib.Value;
 
@@ -124,7 +124,7 @@ namespace KML
                     attrib.AttribValueChanged += Type_Changed;
                     attrib.CanBeDeleted = false;
                 }
-                else if (attrib.Name.ToLower() == "trait")
+                else if (attrib.Name.ToLower() == "trait" && Trait.Length == 0)
                 {
                     Trait = attrib.Value;
 
@@ -132,7 +132,7 @@ namespace KML
                     attrib.AttribValueChanged += Trait_Changed;
                     attrib.CanBeDeleted = false;
                 }
-                else if (attrib.Name.ToLower() == "state")
+                else if (attrib.Name.ToLower() == "state" && State.Length == 0)
                 {
                     State = attrib.Value;
 
@@ -140,7 +140,7 @@ namespace KML
                     attrib.AttribValueChanged += State_Changed;
                     attrib.CanBeDeleted = false;
                 }
-                else if (attrib.Name.ToLower() == "brave")
+                else if (attrib.Name.ToLower() == "brave" && Brave == 0.0)
                 {
                     Brave = GetDoubleValue(attrib.Value, Brave);
 
@@ -148,7 +148,7 @@ namespace KML
                     attrib.AttribValueChanged += Brave_Changed;
                     attrib.CanBeDeleted = false;
                 }
-                else if (attrib.Name.ToLower() == "dumb")
+                else if (attrib.Name.ToLower() == "dumb" && Dumb == 0.0)
                 {
                     Dumb = GetDoubleValue(attrib.Value, Dumb);
 

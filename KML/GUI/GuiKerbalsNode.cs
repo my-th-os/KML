@@ -50,6 +50,8 @@ namespace KML
 
             // Get notified when KmlNode ToString() changes
             DataKerbal.ToStringChanged += DataKerbal_ToStringChanged;
+            // Get notified when attributes are added / deleted
+            DataKerbal.AttribChanged += DataKerbal_AttribChanged;
         }
 
         /// <summary>
@@ -181,6 +183,16 @@ namespace KML
             TextBlock text = new TextBlock(new Run(s));
             text.Margin = new Thickness(-previous.ActualWidth + 100, 0, 0, 0);
             return text;
+        }
+
+        private void DataKerbal_AttribChanged(object sender, RoutedEventArgs e)
+        {
+            // Refresh details view if selected
+            if (IsSelected)
+            {
+                IsSelected = false;
+                IsSelected = true;
+            }
         }
 
         private void DataKerbal_ToStringChanged(object sender, System.Windows.RoutedEventArgs e)

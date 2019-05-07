@@ -1,6 +1,19 @@
 Version 0.8.1 - in progress
-- more key bindings for insert, delete, copy & paste
+- copy & paste attributes
+- more keyboard controls
+  - insert [Ins], delete [Del], copy [Ctrl-C] & paste [Ctrl+V]
+  - switch view on vessels/kerbals [Ctrl+Enter]
+  - from tree to attributes [Enter]
+  - from attribute to edit value [Enter]
+  - navigate attribute remaining in edit mode [Up]/[Down]
+  - from edit value back to attributes [Enter]
+  - from edit value back to attributes with undo [Esc]
+  - from attributes back to tree [Esc]/[Left]
+  - tooltip mentions that you were always able switch tabs [Ctrl+Tab]
+- attributes in kerbals tab now with same functionality as in tree
 - bugfix about paste command checking for clipboard content
+- bugfix about duplicate attributes like name, type (testing copy & paste)
+- no recent KSP versions tested (pretty shure it'll work fine, please report)
 
 Version 0.8 - 2018-05-05
 - copy & paste nodes in the tree - thanks alot to pamidur's contribution

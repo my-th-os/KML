@@ -119,7 +119,7 @@ namespace KML
             if (newItem is KmlAttrib)
             {
                 KmlAttrib attrib = (KmlAttrib)newItem;
-                if (attrib.Name.ToLower() == "type")
+                if (attrib.Name.ToLower() == "type" && Type.Length == 0)
                 {
                     Type = attrib.Value;
 
@@ -127,7 +127,7 @@ namespace KML
                     attrib.AttribValueChanged += Type_Changed;
                     attrib.CanBeDeleted = false;
                 }
-                else if (attrib.Name.ToLower() == "sit")
+                else if (attrib.Name.ToLower() == "sit" && Situation.Length == 0)
                 {
                     Situation = attrib.Value;
 
@@ -135,7 +135,7 @@ namespace KML
                     attrib.AttribValueChanged += Situation_Changed;
                     attrib.CanBeDeleted = false;
                 }
-                else if (attrib.Name.ToLower() == "root")
+                else if (attrib.Name.ToLower() == "root" && RootPart == null)
                 {
                     SetRootPart(attrib.Value);
 

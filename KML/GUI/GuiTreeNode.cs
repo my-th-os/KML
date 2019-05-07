@@ -28,8 +28,6 @@ namespace KML
             }
         }
 
-        private static GuiIcons Icons = new GuiIcons16();
-
         /// <summary>
         /// Get the contained KmlNode from this GuiTreeNode.
         /// </summary>
@@ -55,6 +53,9 @@ namespace KML
         private MenuItem MenuDelete { get; set; }
         private MenuItem MenuCopy { get; set; }
         private MenuItem MenuPaste { get; set; }
+        private MenuItem MenuSwitchView { get; set; }
+
+        private static GuiIcons Icons = new GuiIcons16();
 
         /// <summary>
         /// Creates a GuiTreeNode containing the given dataNode.
@@ -83,10 +84,10 @@ namespace KML
 
             // Get notified when KmlNode ToString() changes
             DataNode.ToStringChanged += DataNode_ToStringChanged;
-            // Get notified when attributes / children are added / deleted
+            // Get notified when attributes are added / deleted
             DataNode.AttribChanged += DataNode_AttribChanged;
+            // Get notified when children are added / deleted
             DataNode.ChildrenChanged += DataNode_ChildrenChanged;
-
 
             // Build a context menu with tools
             if (withMenu)
@@ -142,11 +143,15 @@ namespace KML
                     break;
                 case "Copy":
                     if (MenuCopy != null && MenuCopy.IsEnabled)
-                        CopyNode_Click(MenuCopy, null);
+                        NodeCopy_Click(MenuCopy, null);
                     break;
                 case "Paste":
                     if (MenuPaste != null && MenuPaste.IsEnabled)
-                        PasteBeforeNode_Click(MenuPaste, null);
+                        NodePasteBefore_Click(MenuPaste, null);
+                    break;
+                case "SwitchView":
+                    if (MenuSwitchView != null && MenuSwitchView.IsEnabled)
+                        SwitchView_Click(MenuSwitchView, null);
                     break;
             }
         }
@@ -496,7 +501,9 @@ namespace KML
                 img.Margin = new Thickness(0);
                 m.Icon = img;
                 m.Header = "S_witch view";
+                m.InputGestureText = "[Ctrl+Enter]";
                 m.Click += SwitchView_Click;
+                MenuSwitchView = m;
                 menu.Items.Add(m);
 
                 menu.Items.Add(new Separator());
@@ -549,7 +556,9 @@ namespace KML
                 img.Margin = new Thickness(0);
                 m.Icon = img;
                 m.Header = "S_witch view";
+                m.InputGestureText = "[Ctrl+Enter]";
                 m.Click += SwitchView_Click;
+                MenuSwitchView = m;
                 menu.Items.Add(m);
 
                 if (node.AssignedVessel != null || node.AssignedPart != null)
@@ -598,29 +607,28 @@ namespace KML
                 }
             }
 
+            if (menu.Items.Count > defaultMenuCount)
+            {
+                menu.Items.Add(new Separator());
+            }
+
+            MenuCopy = new MenuItem();
+            MenuCopy.DataContext = DataNode;
+            MenuCopy.Icon = Icons.CreateImage(Icons.Clipboard);
+            MenuCopy.Header = "_Copy node";
+            MenuCopy.InputGestureText = "[Ctrl+C]";
+            MenuCopy.Click += NodeCopy_Click;
+            MenuCopy.IsEnabled = DataNode.Parent != null;
+            menu.Items.Add(MenuCopy);
+
             // Adding / deleting
             if (withAddMenu)
             {
-                if (menu.Items.Count > defaultMenuCount)
-                {
-                    menu.Items.Add(new Separator());
-                }
-
                 MenuItem m = new MenuItem();
-                m.DataContext = DataNode;
-                m.Icon = Icons.CreateImage(Icons.Clipboard);
-                m.Header = "_Copy node";
-                m.InputGestureText = "[Ctrl+C]";
-                m.Click += CopyNode_Click;
-                m.IsEnabled = DataNode.Parent != null;
-                MenuCopy = m;
-                menu.Items.Add(m);
-
-                m = new MenuItem();
                 m.DataContext = DataNode;
                 m.Icon = Icons.CreateImage(Icons.Paste);
                 m.Header = "_Paste child node(s)";
-                m.Click += PasteNode_Click;
+                m.Click += NodePaste_Click;
                 // must be always enabled because this check is not repeated when clipboard changes
                 // m.IsEnabled = Clipboard.ContainsText(TextDataFormat.UnicodeText);
                 m.Tag = "Clipboard.Paste";
@@ -631,11 +639,11 @@ namespace KML
                 m.Icon = Icons.CreateImage(Icons.Paste);
                 m.Header = "Paste inserting node(s) before";
                 m.InputGestureText = "[Ctrl+V]";
-                m.Click += PasteBeforeNode_Click;
+                m.Click += NodePasteBefore_Click;
                 m.IsEnabled = DataNode.Parent != null; 
                 // m.IsEnabled = Clipboard.ContainsText(TextDataFormat.UnicodeText);
                 MenuPaste = m;
-                m.Tag = "Clipboard.Paste";
+                m.Tag = "Clipboard.PasteBefore";
                 menu.Items.Add(m);
 
                 menu.Items.Add(new Separator());
@@ -714,65 +722,14 @@ namespace KML
                     MenuItem m = (MenuItem)o;
                     if (m.Tag != null && (m.Tag as string).Equals("Clipboard.Paste"))
                         m.IsEnabled = Clipboard.ContainsText(TextDataFormat.UnicodeText);
+                    if (m.Tag != null && (m.Tag as string).Equals("Clipboard.PasteBefore"))
+                        m.IsEnabled = DataNode.Parent != null && Clipboard.ContainsText(TextDataFormat.UnicodeText);
                 }
         }
 
         private void ContextMenu_Opened(object sender, RoutedEventArgs e)
         {
             ContextMenuUpdate(sender as ContextMenu);
-        }
-
-        private void PasteNode_Click(object sender, RoutedEventArgs e)
-        {
-            KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
-
-            var textNode = Clipboard.GetText(TextDataFormat.UnicodeText);
-
-            // Pasting top level attributes would paste them to this node, you will notice, so allow it.
-            var items = KmlItem.ParseItems(new StringReader(textNode)).Where(i => i is KmlNode || i is KmlAttrib).ToList();
-
-            if (!items.Any())
-                DlgMessage.Show("Can not paste node from clipboard", "Paste node", Icons.Warning);
-
-            node.AddRange(items);
-        }
-
-        private void PasteBeforeNode_Click(object sender, RoutedEventArgs e)
-        {
-            KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
-            if (node.Parent != null)
-            {
-                var textNode = Clipboard.GetText(TextDataFormat.UnicodeText);
-
-                // Pasting top level attributes would paste them to parent node, you may never notice, don't allow.
-                var items = KmlItem.ParseItems(new StringReader(textNode)).Where(i => i is KmlNode).ToList();
-
-                if (!items.Any())
-                    DlgMessage.Show("Can not paste node from clipboard", "Paste node", Icons.Warning);
-
-                node.Parent.InsertBeforeRange(node, items);
-            }
-            else
-            {
-                DlgMessage.Show("Can not insert, node has no parent", "Paste node", Icons.Warning);
-            }
-        }
-
-        private void CopyNode_Click(object sender, RoutedEventArgs e)
-        {
-            KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
-
-            var sr = new StringWriter();
-
-            KmlItem.WriteItem(sr, node, 0);
-
-            sr.Flush();
-
-            var textNode = sr.GetStringBuilder().ToString();
-
-            // Sometimes an error occured with SetText(), see https://stackoverflow.com/a/17678542
-            // Clipboard.SetText(textNode, TextDataFormat.UnicodeText);
-            Clipboard.SetDataObject(textNode);
         }
 
         private void AddChildNode(KmlNode toItem, KmlNode beforeItem)
@@ -984,6 +941,59 @@ namespace KML
         {
             KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
             AddChildNode(node, null);
+        }
+
+        private void NodeCopy_Click(object sender, RoutedEventArgs e)
+        {
+            KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
+
+            var sr = new StringWriter();
+
+            KmlItem.WriteItem(sr, node, 0);
+
+            sr.Flush();
+
+            var textNode = sr.GetStringBuilder().ToString();
+
+            // Sometimes an error occured with SetText(), see https://stackoverflow.com/a/17678542
+            // Clipboard.SetText(textNode, TextDataFormat.UnicodeText);
+            Clipboard.SetDataObject(textNode);
+        }
+
+        private void NodePaste_Click(object sender, RoutedEventArgs e)
+        {
+            KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
+
+            var textNode = Clipboard.GetText(TextDataFormat.UnicodeText);
+
+            // Pasting top level attributes would paste them to this node, you will notice, so allow it.
+            var items = KmlItem.ParseItems(new StringReader(textNode)).Where(i => i is KmlNode || i is KmlAttrib).ToList();
+
+            if (!items.Any())
+                DlgMessage.Show("Can not paste node from clipboard", "Paste node", Icons.Warning);
+
+            node.AddRange(items);
+        }
+
+        private void NodePasteBefore_Click(object sender, RoutedEventArgs e)
+        {
+            KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
+            if (node.Parent != null)
+            {
+                var textNode = Clipboard.GetText(TextDataFormat.UnicodeText);
+
+                // Pasting top level attributes would paste them to parent node, you may never notice, don't allow.
+                var items = KmlItem.ParseItems(new StringReader(textNode)).Where(i => i is KmlNode).ToList();
+
+                if (!items.Any())
+                    DlgMessage.Show("Can not paste node from clipboard", "Paste node", Icons.Warning);
+
+                node.Parent.InsertBeforeRange(node, items);
+            }
+            else
+            {
+                DlgMessage.Show("Can not insert, node has no parent", "Paste node", Icons.Warning);
+            }
         }
 
         private void NodeInsertBefore_Click(object sender, RoutedEventArgs e)

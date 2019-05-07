@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace KML
 {
@@ -23,6 +24,9 @@ namespace KML
 
         private static string _oldSearchText = "";
         private static List<KmlItem> _oldSearchList = new List<KmlItem>();
+        private KmlNode _oldSelectedNode = null;
+        private KmlAttrib _oldSelectedAttrib = null;
+        private KmlAttrib _alternativeSelectedAttrib = null;
 
         /// <summary>
         /// Creates a GuiTreeManager to link and manage the given TreeView and ListView.
@@ -277,13 +281,56 @@ namespace KML
         /// </summary>
         public void CommandExec(string Command)
         {
-            if (TreeDetails.IsKeyboardFocusWithin)
+            if (TreeDetails.IsKeyboardFocusWithin && TreeDetails.SelectedItem is GuiTreeAttrib)
             {
-                // TODO GuiTreeManager.CommandExec() for TreeDetails
+                if (Command == "Enter")
+                {
+                    // Enter the TextBox for value editing
+                    TraversalRequest request = new TraversalRequest(FocusNavigationDirection.Next);
+                    (TreeDetails.SelectedItem as ListViewItem).MoveFocus(request);
+                }
+                else if (Command == "Escape" || Command == "Left")
+                {
+                    // Get back to TreeView
+                    Tree.Focus();
+                    (Tree.SelectedItem as TreeViewItem).Focus();
+                }
+                else
+                {
+                    (TreeDetails.SelectedItem as GuiTreeAttrib).CommandExec(Command);
+                }
+            }
+            else if (TreeDetails.IsKeyboardFocusWithin)
+            {
+                // Empty details
+                if (Command == "Left")
+                {
+                    // Get back to TreeView
+                    Tree.Focus();
+                    (Tree.SelectedItem as TreeViewItem).Focus();
+                }
             }
             else if (Tree.IsKeyboardFocusWithin && Tree.SelectedItem is GuiTreeNode)
             {
-                (Tree.SelectedItem as GuiTreeNode).CommandExec(Command);
+                if (Command == "Enter" && TreeDetails.HasItems)
+                {
+                    // Switch to attributes
+                    TreeDetails.Focus();
+                    KmlItem item = GetSelectedItem();
+                    if (item is KmlNode)
+                    {
+                        KmlNode node = (KmlNode)item;
+                        if (node.Attribs.Count > 0)
+                        {
+                            Select(node.Attribs[0]);
+                            (TreeDetails.SelectedItem as ListViewItem).Focus();
+                        }
+                    }
+                }
+                else 
+                {
+                    (Tree.SelectedItem as GuiTreeNode).CommandExec(Command);
+                }
             }
         }
 
@@ -477,6 +524,35 @@ namespace KML
 
         private void Tree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
+            // Store currently selected attribute, in case we just unselect + select the current item to refresh
+            if (Tree.SelectedItem == null)
+            {
+                // We're unselcting, this is the old data we want to restore in future call of this event
+                GuiTreeAttrib attrib = (TreeDetails.SelectedItem as GuiTreeAttrib);
+                if (attrib == null)
+                {
+                    _oldSelectedAttrib = null;
+                    _alternativeSelectedAttrib = null;
+                }
+                else
+                {
+                    _oldSelectedAttrib = attrib.DataAttrib;
+                    int i = TreeDetails.SelectedIndex;
+                    if (i < TreeDetails.Items.Count - 1)
+                    {
+                        _alternativeSelectedAttrib = (TreeDetails.Items[i + 1] as GuiTreeAttrib).DataAttrib;
+                    }
+                    else if (i > 0)
+                    {
+                        _alternativeSelectedAttrib = (TreeDetails.Items[i - 1] as GuiTreeAttrib).DataAttrib;
+                    }
+                    else
+                    {
+                        _alternativeSelectedAttrib = null;
+                    }
+                }
+            }
+
             TreeDetails.Items.Clear();
             if (Tree.SelectedItem != null)
             {
@@ -485,6 +561,16 @@ namespace KML
                 foreach (KmlAttrib attrib in Node.DataNode.Attribs)
                 {
                     TreeDetails.Items.Add(new GuiTreeAttrib(attrib));
+                }
+                _oldSelectedNode = Node.DataNode;
+
+                // Restore attrib selection
+                if (Node.DataNode == _oldSelectedNode && _oldSelectedAttrib != null)
+                {
+                    if (!Select(_oldSelectedAttrib))
+                        Select(_alternativeSelectedAttrib);
+                    if (TreeDetails.SelectedItem != null)
+                        (TreeDetails.SelectedItem as ListViewItem).Focus();
                 }
             }
             else
