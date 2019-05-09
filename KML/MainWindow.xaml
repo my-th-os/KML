@@ -333,15 +333,17 @@
         <StatusBar Height="23" VerticalAlignment="Bottom" Background="Gray">
             <Label Content="KML - Kerbal Markup Lister" Padding="0"/>
             <Separator/>
-            <Label Content="Version 0.8.1" Padding="0"/>
+            <Label x:Name="VersionLabel" Content="Version 0.5" Padding="0"/>
             <Separator/>
-            <Label Content="© 2019 Oliver Pola (Mythos)" Padding="0"/>
+            <Label x:Name="CopyrightLabel" Content="© 2016 Oliver Pola (Mythos)" Padding="0"/>
             <Separator/>
             <Hyperlink NavigateUri="http://www.gnu.org/licenses/gpl.html" RequestNavigate="Hyperlink_RequestNavigate">GPL License</Hyperlink>
             <Separator/>
             <Hyperlink NavigateUri="https://github.com/my-th-os/KML" RequestNavigate="Hyperlink_RequestNavigate">Git Source</Hyperlink>
             <Separator/>
             <Hyperlink x:Name="HelpLink" NavigateUri="http://forum.kerbalspaceprogram.com/index.php?/topic/133971-win-kml-persistence-file-editor/" RequestNavigate="Hyperlink_RequestNavigate">KSP Forum</Hyperlink>
+            <Separator x:Name="UpdateSeparator"/>
+            <Hyperlink x:Name="UpdateLink" Style="{StaticResource OrangeStyle}" NavigateUri="https://github.com/my-th-os/KML/releases/latest" IsEnabledChanged="UpdateLink_IsEnabledChanged" RequestNavigate="Hyperlink_RequestNavigate">Version 1.0 available!</Hyperlink>
         </StatusBar>
     </Grid>
 </Window>

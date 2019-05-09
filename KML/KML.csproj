@@ -25,7 +25,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>0.8.1.%2a</ApplicationVersion>
+    <ApplicationVersion>0.8.2.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -114,6 +114,7 @@
       <DependentUpon>DlgSearch.xaml</DependentUpon>
     </Compile>
     <Compile Include="GUI\GuiTreeAttrib.cs" />
+    <Compile Include="GUI\GuiUpdateChecker.cs" />
     <Compile Include="GUI\GuiVesselsPartGraph.cs" />
     <Compile Include="GUI\GuiVesselsPartGraphNode.cs" />
     <Compile Include="GUI\GuiIcons.cs" />

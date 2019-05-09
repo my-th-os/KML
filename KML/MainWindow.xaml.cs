@@ -249,6 +249,14 @@ namespace KML
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            var assembly = System.Reflection.Assembly.GetEntryAssembly();
+            string version = assembly.GetName().Version.ToString();
+            while (version.EndsWith(".0"))
+                version = version.Substring(0, version.Length - 2);
+            string copyright = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location).LegalCopyright.Replace("Copyright ", "");
+            VersionLabel.Content = "Version " + version;
+            CopyrightLabel.Content = copyright;
+
             // Loading fromn commandline could cause exceptions, so do it here
             // and not in constructor, so the window can safely be created.
             CheckCommandLine();
@@ -257,6 +265,11 @@ namespace KML
             // For this case do it here once
             // TabsManager.Next();
             // TabsManager.Previous();
+
+            // Background check for updates, hide the download link per default
+            UpdateLink.Inlines.Clear();
+            UpdateLink.IsEnabled = false;
+            GuiUpdateChecker.CheckAsThread(UpdateLink);
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
@@ -491,6 +504,11 @@ namespace KML
         private void CommandHelp_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             HelpLink.DoClick();
+        }
+
+        private void UpdateLink_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            UpdateSeparator.Visibility = UpdateLink.IsEnabled ? Visibility.Visible : Visibility.Hidden;
         }
 
         // TODO MainWindow.Command_Executed(): Couldn't find a way to have single handler and get key/name from arguments
