@@ -903,10 +903,8 @@ namespace KML
                         // Usually you can only attach a new part by a node to the surface of parent
                         // and not attach a part by surface to parents node. But if you have vessels docked
                         // this situation may happen and this leads to this additional check
-                        else if (part.ParentPart.AttachedToSurfaceIndex != i)
+                        else if (part.ParentPart.AttachedToSurfaceIndex != i && !part.ParentPart.AttachedToNodeIndices.Contains(i))
                         {
-                            //if (part.ParentPart.AttachedToNodeIndices.Contains(i))
-                            //    Syntax.Warning(part, "gotcha");
                             Syntax.Warning(part, "Part not attached to parent part: " + part.ParentPart);
                         }
                     }
@@ -999,7 +997,7 @@ namespace KML
                                     KmlPartDock.BuildDockStructure(grapple, other);
                                 }
                             }
-                            else
+                            else if (!part.AttachedToNodeIndices.Contains(parts.IndexOf(other)))
                             {
                                 Syntax.Warning(part, "Part node attachment not responded from other part: " + other.ToString());
                             }
