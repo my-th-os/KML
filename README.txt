@@ -1,4 +1,4 @@
-KML - Kerbal Markup Lister v0.8 - 2018-05-05 (WIP) - A persistence file editor for Kerbal Space Program
+KML - Kerbal Markup Lister v0.8.1 - 2019-05-09 (WIP) - A persistence file editor for Kerbal Space Program
 KSP Forum: http://forum.kerbalspaceprogram.com/index.php?/topic/133971-win-kml-persistence-file-editor/
 
 Do you face a problem with broken docking ports or need just a little fuel-cheating? Do you got tired of editing save games in a text editor with long loading time and so much scrolling to compare different parts and vessels? So did I and decided to make a more helpful external editor to display the XML-like structure (the "KML" - Kerbal Markup Language) in a tree view and pick out vessels, kerbals and parts to be displayed in more eye-candy way.
@@ -8,13 +8,10 @@ The current version is not feature-complete but so far functional and already he
 Any feedback, more testing, bug reports and suggestions are very welcome.
 
 New Features
-• copy & paste nodes in the tree - thanks alot to pamidur's contribution
-• delete parts that aren't parent of any other part - thanks to Kobymaru
-• support KAS CPort parts as dock type (no repair abilities yet)
-• test for program files dir and being admin - thanks to EwingKang
-• vessel / kerbal list filter right click (incl. un-single-select on second right click)
-• search dialog can now load further items (only 100 are loaded first)
-• previous and next buttons navigate through search results
+• copy & paste attributes
+• more keyboard controls - thanks to Geowil
+• attributes in kerbals tab now with same functionality as in tree
+• reduced warning noise on node attachments
 
 Features 
 • open SFS and CRAFT files
@@ -27,8 +24,8 @@ Features
 • display warnings about structural problems
 • search for nodes, attributes and their content 
 • adding, inserting and deleting nodes and attributes
-• deletion excludes in current version
-  ◦ parts (need to rebuild index numbers and attachments)
+• copy & paste of nodes and attributes
+• deletion of parts will fix part indices and connections 
 • deletion of kerbals and vessels will fix crew assignment 
 • support renaming kerbals when assigned 
 • send kerbal home to astronaut complex 
@@ -36,12 +33,11 @@ Features
 • change vessel flag in all its parts - for Enceos
 • refill part resources
 • repair broken docking ports and grappling devices
-• tested with KSP 1.0 to 1.4
+• tested with KSP 1.0 to 1.7
   (newest KML version should still work with at least all these KSP versions) 
 
 TODO
-• copy attributes
-• identify add-on part connections (KAS)
+• identify add-on part connections (only a little KAS support for now)
 • change position of nodes and attributes
 • more testing (uncommon vessel builds I didn't think of?)
 • support multiple docking ports per part
