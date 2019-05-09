@@ -57,6 +57,14 @@ namespace KML
 
         private static GuiIcons Icons = new GuiIcons16();
 
+        private static Brush HighlightBrush { get; set; }
+
+        static GuiTreeNode()
+        {
+            HighlightBrush = new SolidColorBrush(SystemColors.HighlightColor);
+            HighlightBrush.Opacity = 0.3;
+        }
+
         /// <summary>
         /// Creates a GuiTreeNode containing the given dataNode.
         /// </summary>
@@ -67,7 +75,8 @@ namespace KML
         /// <param name="withAddMenu">Do you want a context menu for adding nodes?</param>
         /// <param name="withDeleteMenu">Do you want a context menu for deletion of this tree node?</param>
         /// <param name="withChildren">Do you want tree children to expand under this node?</param>
-        public GuiTreeNode(KmlNode dataNode, bool withImage, bool withText, bool withMenu, bool withAddMenu, bool withDeleteMenu, bool withChildren)
+        /// <param name="withMouseEffect">Do you want the node be highlighted on mouse over?</param>
+        public GuiTreeNode(KmlNode dataNode, bool withImage, bool withText, bool withMenu, bool withAddMenu, bool withDeleteMenu, bool withChildren, bool withMouseEffect = true)
         {
             DataNode = dataNode;
             TemplateWithImage = withImage;
@@ -88,6 +97,12 @@ namespace KML
             DataNode.AttribChanged += DataNode_AttribChanged;
             // Get notified when children are added / deleted
             DataNode.ChildrenChanged += DataNode_ChildrenChanged;
+
+            if (withMouseEffect)
+            {
+                (Header as StackPanel).MouseEnter += GuiTreeNode_MouseEnter;
+                (Header as StackPanel).MouseLeave += GuiTreeNode_MouseLeave;
+            }
 
             // Build a context menu with tools
             if (withMenu)
@@ -801,6 +816,16 @@ namespace KML
         {
             Expanded -= GuiTreeNode_Expanded;
             LoadChildren();
+        }
+
+        private void GuiTreeNode_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Background = HighlightBrush;
+        }
+
+        private void GuiTreeNode_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Background = null;
         }
 
         private void SwitchView_Click(object sender, RoutedEventArgs e)

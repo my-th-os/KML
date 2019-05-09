@@ -42,6 +42,7 @@ namespace KML
             TreeDetails = treeDetails;
 
             Tree.SelectedItemChanged += Tree_SelectedItemChanged;
+            TreeDetails.LostFocus += TreeDetails_LostFocus;
         }
 
         /// <summary>
@@ -520,6 +521,11 @@ namespace KML
             {
                 return false;
             }
+        }
+
+        private void TreeDetails_LostFocus(object sender, RoutedEventArgs e)
+        {
+            (sender as ListView).SelectedItem = null;
         }
 
         private void Tree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)

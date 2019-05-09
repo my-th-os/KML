@@ -52,6 +52,7 @@ namespace KML
             Roster = null;
 
             KerbalsList.SelectionChanged += KerbalsList_SelectionChanged;
+            KerbalsDetails.LostFocus += KerbalsDetails_LostFocus;
         }
 
         /// <summary>
@@ -372,6 +373,11 @@ namespace KML
                     Select(alternateSelected);
                 }
             }
+        }
+
+        private void KerbalsDetails_LostFocus(object sender, RoutedEventArgs e)
+        {
+            (sender as ListView).SelectedItem = null;
         }
 
         private void KerbalsList_SelectionChanged(object sender, SelectionChangedEventArgs e)

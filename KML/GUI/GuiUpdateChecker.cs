@@ -22,6 +22,10 @@ namespace KML
         private const string TAG_KEY = "tag_name";
         private const string GO_URL_KEY = "html_url";
 
+        /// <summary>
+        /// Checks for update on GitHub by newest release tag compared to version from assembly
+        /// </summary>
+        /// <param name="linkobj">A Hyperlink Control to place the GitHub link in</param>
         public static void CheckUpdate(object linkobj)
         {
             if (!(linkobj is Hyperlink))
@@ -69,6 +73,10 @@ namespace KML
             }
         }
 
+        /// <summary>
+        /// Checks for update in a separate thread
+        /// </summary>
+        /// <param name="link">A Hyperlink Control to place the GitHub link in</param>
         public static void CheckAsThread(Hyperlink link)
         {
             var thread = new Task(CheckUpdate, link);
