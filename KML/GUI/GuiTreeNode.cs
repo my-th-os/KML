@@ -549,9 +549,24 @@ namespace KML
                         menu.Items.Add(m);
                     }
                 }
+
+                menu.Items.Add(new Separator());
+                m = new MenuItem();
+                m.DataContext = DataNode;
+                m.Icon = Icons.CreateImage(Icons.Part);
+                if (Directory.Exists(GuiTabsManager.GetCurrent().FileGamedataDirectory))
+                {
+                    m.Header = "List GameData dirs of all _used parts...";
+                }
+                else
+                {
+                    m.Header = "List names of all _used parts...";
+                }
+                m.Click += VesselModList_Click;
+                menu.Items.Add(m);
+
                 if (node.Flags.Count > 0)
                 {
-                    menu.Items.Add(new Separator());
                     m = new MenuItem();
                     m.DataContext = DataNode;
                     m.Icon = Icons.CreateImage(Icons.VesselFlag);
@@ -621,6 +636,38 @@ namespace KML
                     menu.Items.Add(m);
                 }
             }
+            // Check mods on all vessels for "flightstate" and root node
+            else if (DataNode.Parent == null || (DataNode.Children.Count > 0 && (DataNode.Children[0] is KmlVessel)))
+            {
+                MenuItem m = new MenuItem();
+                m.DataContext = DataNode;
+                m.Icon = Icons.CreateImage(Icons.Part);
+                if (GuiTabsManager.GetCurrent().FileIsCraft)
+                {
+                    if (Directory.Exists(GuiTabsManager.GetCurrent().FileGamedataDirectory))
+                    {
+                        m.Header = "List GameData dirs of _used parts...";
+                    }
+                    else
+                    {
+                        m.Header = "List names of _used parts...";
+                    }
+                    m.Click += CraftAllModList_Click;
+                }
+                else
+                {
+                    if (Directory.Exists(GuiTabsManager.GetCurrent().FileGamedataDirectory))
+                    {
+                        m.Header = "List GameData dirs of all vessel's _used parts...";
+                    }
+                    else
+                    {
+                        m.Header = "List names of all vessel's _used parts...";
+                    }
+                    m.Click += VesselsAllModList_Click;
+                }
+                menu.Items.Add(m);
+            }
 
             if (menu.Items.Count > defaultMenuCount)
             {
@@ -652,7 +699,7 @@ namespace KML
                 m = new MenuItem();
                 m.DataContext = DataNode;
                 m.Icon = Icons.CreateImage(Icons.Paste);
-                m.Header = "Paste inserting node(s) before";
+                m.Header = "Paste inserting node(s) _before";
                 m.InputGestureText = "[Ctrl+V]";
                 m.Click += NodePasteBefore_Click;
                 m.IsEnabled = DataNode.Parent != null; 
@@ -673,7 +720,7 @@ namespace KML
                 m = new MenuItem();
                 m.DataContext = DataNode;
                 m.Icon = Icons.CreateImage(Icons.Add);
-                m.Header = "Add _child node...";
+                m.Header = "Add child _node...";
                 m.Click += NodeAddChild_Click;
                 menu.Items.Add(m);
 
@@ -812,6 +859,89 @@ namespace KML
             }
         }
 
+        private SortedSet<string> GetModlist(KmlVessel vessel)
+        {
+            return GetModlist(vessel.Parts);
+        }
+
+        private SortedSet<string> GetModlist(List<KmlVessel> vessels)
+        {
+            SortedSet<string> partnames = new SortedSet<string>();
+
+            foreach (KmlVessel v in vessels)
+            {
+                foreach (KmlPart p in v.Parts)
+                {
+                    partnames.Add(p.Name);
+                }
+            }
+
+            return GetModlist(partnames);
+        }
+
+        private SortedSet<string> GetModlist(List<KmlPart> parts)
+        {
+            SortedSet<string> partnames = new SortedSet<string>();
+
+            foreach (KmlPart p in parts)
+            {
+                if (GuiTabsManager.GetCurrent().FileIsCraft)
+                {
+                    partnames.Add(p.GetNameFromCraftName());
+                }
+                else
+                {
+                    partnames.Add(p.Name);
+                }
+            }
+
+            return GetModlist(partnames);
+        }
+
+        private SortedSet<string> GetModlist(SortedSet<string> partnames)
+        {
+            SortedSet<string> mods = new SortedSet<string>();
+
+            string gamedata = GuiTabsManager.GetCurrent().FileGamedataDirectory;
+            if (Directory.Exists(gamedata))
+            {
+                try
+                {
+                    foreach (string moddir in Directory.EnumerateDirectories(gamedata))
+                    {
+                        string partsdir = Path.Combine(moddir, "Parts");
+                        if (Directory.Exists(partsdir))
+                        {
+                            foreach (string cfg in Directory.EnumerateFiles(partsdir, "*.cfg", SearchOption.AllDirectories))
+                            {
+                                List<KmlItem> items = KmlItem.ParseFile(cfg);
+                                Syntax.Messages.Clear();
+
+                                if (items.Count < 1 || !(items[0] is KmlNode))
+                                    continue;
+
+                                KmlNode node = (KmlNode)items[0];
+                                if (partnames.Any(s => s.ToLower().Equals(node.Name.ToLower().Replace("_", "."))))
+                                {
+                                    DirectoryInfo mod = new DirectoryInfo(moddir);
+                                    mods.Add(mod.Name);
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    mods.Add("Error: " + ex.Message);
+                }
+                return mods;
+            }
+            else
+            {
+                return partnames;
+            }
+        }
+
         private void GuiTreeNode_Expanded(object sender, RoutedEventArgs e)
         {
             Expanded -= GuiTreeNode_Expanded;
@@ -900,6 +1030,28 @@ namespace KML
                     vessel.FlagExchange(oldFlag, newFlag);
                 }
             }
+        }
+
+        private void CraftAllModList_Click(object sender, RoutedEventArgs e)
+        {
+            List<KmlNode> children = ((sender as MenuItem).DataContext as KmlNode).Children.FindAll(n => (n is KmlPart));
+            List<KmlPart> parts = new List<KmlPart>(children.Cast<KmlPart>());
+            string title = Directory.Exists(GuiTabsManager.GetCurrent().FileGamedataDirectory) ? "GameData dirs used" : "Parts used";
+            DlgMessage.Show(String.Join("\n", GetModlist(parts)), title, Icons.Part);
+        }
+
+        private void VesselsAllModList_Click(object sender, RoutedEventArgs e)
+        {
+            List<KmlVessel> vessels = GuiTabsManager.GetCurrent().TreeManager.GetFlatList<KmlVessel>().FindAll(v => v.Origin == KmlVessel.VesselOrigin.Flightstate);
+            string title = Directory.Exists(GuiTabsManager.GetCurrent().FileGamedataDirectory) ? "GameData dirs used" : "Parts used";
+            DlgMessage.Show(String.Join("\n", GetModlist(vessels)), title, Icons.Part);
+        }
+
+        private void VesselModList_Click(object sender, RoutedEventArgs e)
+        {
+            KmlVessel vessel = ((sender as MenuItem).DataContext as KmlVessel);
+            string title = Directory.Exists(GuiTabsManager.GetCurrent().FileGamedataDirectory) ? "GameData dirs used" : "Parts used";
+            DlgMessage.Show(String.Join("\n", GetModlist(vessel)), title, Icons.Part);
         }
 
         private void PartRefill_Click(object sender, RoutedEventArgs e)

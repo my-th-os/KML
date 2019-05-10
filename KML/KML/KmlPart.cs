@@ -1122,6 +1122,23 @@ namespace KML
         }
 
         /// <summary>
+        /// Get a part's name in a craft file.
+        /// </summary>
+        /// <returns>The part's name</returns>
+        public string GetNameFromCraftName()
+        {
+            int p = CraftName.IndexOf('_');
+            if (p < 0)
+            {
+                return CraftName;
+            }
+            else
+            {
+                return CraftName.Substring(0, p);
+            }
+        }
+
+        /// <summary>
         /// Generates a nice informative string to be used in display for this part.
         /// It will contain the tag, the index in parent's part-list, a root marker and the name.
         /// </summary>

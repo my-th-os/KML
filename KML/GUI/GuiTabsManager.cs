@@ -65,7 +65,7 @@ namespace KML
                 {
                     FileKspDirectory = dir.FullName;
                 }
-                FileGamedataDirectory = Path.Combine(FileKspDirectory, "GameData");
+                FileGamedataDirectory = FileKspDirectory.Length > 0 ? Path.Combine(FileKspDirectory, "GameData") : "";
             }
         }
         private string _filename = "";

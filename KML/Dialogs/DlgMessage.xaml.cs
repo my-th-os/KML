@@ -126,6 +126,7 @@ namespace KML
                 title = "KML Warning";
                 img = Icons.Warning;
             }
+            // TODO DlgMessage.Show(List<Syntax.Message>): Supposed to use messages instead of Syntax.Messages?
             if (Syntax.Messages.Count > 0)
             {
                 str.Append(Syntax.Messages[0].ToString(true));
