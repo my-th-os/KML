@@ -13,7 +13,7 @@ namespace KML
     /// </summary>
     public class GuiUpdateChecker
     {
-        // TODO GuiUpdateChecker: Change GET_URL to ".../releases/latest" once there is a non-preview release
+        // TODO GuiUpdateChecker: Change GET_URL to ".../releases/latest" once there is a non-pre-release release
         private const string GET_URL = "https://api.github.com/repos/my-th-os/KML/releases";
         // Without giving header info, we'll get "403 forbidden"
         private const string HEADER_KEY = "User-Agent";
@@ -32,6 +32,8 @@ namespace KML
                 return;
             Hyperlink link = (Hyperlink)linkobj;
 
+            try
+            {
                 using (WebClient client = new WebClient())
                 {
                     client.Headers.Add(HEADER_KEY, HEADER_VALUE);
@@ -64,8 +66,6 @@ namespace KML
                         }));
                     }
                 }
-            try
-            {
             }
             catch (Exception)
             {
