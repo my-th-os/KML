@@ -249,7 +249,7 @@ namespace KML
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            var assembly = System.Reflection.Assembly.GetEntryAssembly();
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
             string version = assembly.GetName().Version.ToString();
             while (version.EndsWith(".0"))
                 version = version.Substring(0, version.Length - 2);

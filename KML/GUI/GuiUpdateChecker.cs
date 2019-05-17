@@ -34,37 +34,22 @@ namespace KML
 
             try
             {
-                using (WebClient client = new WebClient())
+                Tuple<Version, Uri> github = GetGitHubLatest();
+                Version remoteVersion = github.Item1;
+                Uri remoteLink = github.Item2;
+
+                Version localVersion = GetAssemblyVersion();
+
+                if (remoteVersion.CompareTo(localVersion) > 0)
                 {
-                    client.Headers.Add(HEADER_KEY, HEADER_VALUE);
-                    string json = client.DownloadString(GET_URL);
-                    // Check for newer version by comparing version to content of "tag_name"
-                    string tag = GetValue(json, TAG_KEY);
-                    // Users should go to content of "html_url"
-                    string goUrl = GetValue(json, GO_URL_KEY);
-
-                    // Tag starts with "v", version doesn't
-                    string v = tag.Substring(1);
-                    // Need to have four numbers / three dots otherwise they default to -1
-                    for (int i = v.Count(c => c == '.'); i < 3; i++)
-                        v += ".0";
-                    Version remoteVersion = Version.Parse(v);
-
-                    // Get assembly version, all four numbers
-                    var assembly = System.Reflection.Assembly.GetEntryAssembly();
-                    Version localVersion = assembly.GetName().Version;
-
-                    if (remoteVersion.CompareTo(localVersion) > 0)
+                    // Show the link
+                    link.Dispatcher.BeginInvoke((Action)(() =>
                     {
-                        // Show the link
-                        link.Dispatcher.BeginInvoke((Action)(() =>
-                        {
-                            link.Inlines.Clear();
-                            link.Inlines.Add("Version " + tag.Substring(1) + " available!");
-                            link.NavigateUri = new Uri(goUrl);
-                            link.IsEnabled = true;
-                        }));
-                    }
+                        link.Inlines.Clear();
+                        link.Inlines.Add("Version " + VersionToString(remoteVersion) + " available!");
+                        link.NavigateUri = remoteLink;
+                        link.IsEnabled = true;
+                    }));
                 }
             }
             catch (Exception)
@@ -81,6 +66,60 @@ namespace KML
         {
             var thread = new Task(CheckUpdate, link);
             thread.Start();
+        }
+
+        /// <summary>
+        /// Get local version from assembly
+        /// </summary>
+        /// <returns>Assembly version number</returns>
+        public static Version GetAssemblyVersion()
+        {
+            // Get assembly version, all four numbers
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            return assembly.GetName().Version;
+        }
+
+        /// <summary>
+        /// Check GitHub API for latest version information.
+        /// This is public to have a test that may fail if GitHub changes the API.
+        /// </summary>
+        /// <returns>Latest version number and GitHub-link to this release</returns>
+        public static Tuple<Version, Uri> GetGitHubLatest()
+        {
+            using (WebClient client = new WebClient())
+            {
+                client.Headers.Add(HEADER_KEY, HEADER_VALUE);
+                string json = client.DownloadString(GET_URL);
+                // Check for newer version by comparing version to content of "tag_name"
+                string tag = GetValue(json, TAG_KEY);
+                // Users should go to content of "html_url"
+                string goUrl = GetValue(json, GO_URL_KEY);
+
+                // Tag starts with "v", version doesn't
+                string v = tag.Substring(1);
+                // Need to have four numbers / three dots otherwise they default to -1
+                for (int i = v.Count(c => c == '.'); i < 3; i++)
+                    v += ".0";
+                Version remoteVersion = Version.Parse(v);
+
+                Uri remoteLink = new Uri(goUrl);
+
+                return new Tuple<Version, Uri>(remoteVersion, remoteLink);
+            }
+        }
+
+        /// <summary>
+        /// Format the version number to display in wanted format.
+        /// Version instance would always have four numbers, here omit the trailing ".0"
+        /// </summary>
+        /// <param name="version">The Version to format</param>
+        /// <returns>Display version string</returns>
+        public static string VersionToString(Version version)
+        {
+            string v = version.ToString();
+            while (v.EndsWith(".0"))
+                v = v.Substring(0, v.Length - 2);
+            return v;
         }
 
         private static string GetValue(string json, string key)
