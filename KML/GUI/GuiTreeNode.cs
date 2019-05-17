@@ -901,6 +901,7 @@ namespace KML
         private SortedSet<string> GetModlist(SortedSet<string> partnames)
         {
             SortedSet<string> mods = new SortedSet<string>();
+            SortedSet<string> partsUnknown = new SortedSet<string>(partnames);
 
             string gamedata = GuiTabsManager.GetCurrent().FileGamedataDirectory;
             if (Directory.Exists(gamedata))
@@ -921,18 +922,28 @@ namespace KML
                                     continue;
 
                                 KmlNode node = (KmlNode)items[0];
-                                if (partnames.Any(s => s.ToLower().Equals(node.Name.ToLower().Replace("_", "."))))
+                                string nodename = node.Name.ToLower().Replace("_", ".");
+                                if (partnames.Any(s => s.ToLower().Equals(nodename)))
                                 {
                                     DirectoryInfo mod = new DirectoryInfo(moddir);
                                     mods.Add(mod.Name);
+                                    partsUnknown.RemoveWhere(s => s.ToLower().Equals(nodename));
                                 }
                             }
                         }
                     }
+                    // some partnames left, that are not found in configs?
+                    foreach (string pu in partsUnknown)
+                    {
+                        mods.Add("[Unknown part: " + pu + "]");
+                    }
+                    // TODO GuiTreeNode.GetModlist(): Implement unknown parts check as syntax check after file load
+                    // Not so nice at the moment, because all checks right now are based on Kml* classes 
+                    // but the modlist would rather be accessible from GuiTabsManager where the GameData dir is stored
                 }
                 catch (Exception ex)
                 {
-                    mods.Add("Error: " + ex.Message);
+                    mods.Add("[Error: " + ex.Message + "]");
                 }
                 return mods;
             }
