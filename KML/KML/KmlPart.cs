@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -86,6 +86,12 @@ namespace KML
         /// This data is read from KML attributes within this part.
         /// </summary>
         public int AttachedToSurfaceIndex { get; private set; }
+
+        /// <summary>
+        /// Get the surface attachment collider string if present.
+        /// This data is read from KML attributes within this part.
+        /// </summary>
+        public string AttachedToSurfaceCollider { get; private set; }
 
         /// <summary>
         /// Get a list of KmlParts this part is node attached to in top direction.
@@ -349,7 +355,7 @@ namespace KML
                     // Value looks like "srfAttach, 12"
                     string[] items = attrib.Value.Split(new char[] { ',' });
                     int index = -1;
-                    if (items.Count() == 2 && int.TryParse(items[1], out index))
+                    if ((items.Count() == 2 || items.Count() == 3) && int.TryParse(items[1], out index))
                     {
                         if (index >= 0)
                         {
@@ -357,6 +363,10 @@ namespace KML
                             {
                                 AttachedToSurfaceIndex = index;
                                 attrib.CanBeDeleted = false;
+								if (items.Count() == 3)
+								{
+									AttachedToSurfaceCollider = items[2];
+								}
                             }
                             else
                             {
@@ -626,6 +636,10 @@ namespace KML
                             {
                                 attrib.Value = s[0] + ", " + ReIndexedValueForPartDeletion(delIndex, s[1].Trim());
                             }
+                            if (s.Length == 3)
+                            {
+                                attrib.Value = s[0] + ", " + ReIndexedValueForPartDeletion(delIndex, s[1].Trim()) + "," + s[2];
+                            }
                             break;
                     }
                     switch (attrib.Name.ToLower())
@@ -718,6 +732,10 @@ namespace KML
                             if (s.Length == 2)
                             {
                                 attrib.Value = s[0] + ", " + ReIndexedValueForPartInsertion(insIndex, s[1].Trim());
+                            }
+                            if (s.Length == 3)
+                            {
+                                attrib.Value = s[0] + ", " + ReIndexedValueForPartInsertion(insIndex, s[1].Trim()) + "," + s[2];
                             }
                             break;
                     }

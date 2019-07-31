@@ -2,6 +2,8 @@ Version 0.8.2 - in progress
 - list all GameData dirs used by a vessel's / all vessels' parts - thanks to TheCardinal
 - online check for updates (orange link may appear bottom right)
 - small visual enhancements
+- bugfix when having a collider as third parameter to srfN attribs - thanks to Bruce the Loon
+- tested with KSP 1.7.3 - thanks to Bruce the Loon
 
 Version 0.8.1 - 2019-05-09
 - copy & paste attributes
