@@ -1,4 +1,4 @@
-KML - Kerbal Markup Lister v0.8.1 - 2019-05-09 (WIP) - A persistence file editor for Kerbal Space Program
+KML - Kerbal Markup Lister v0.8.2 - 2019-08-04 (WIP) - A persistence file editor for Kerbal Space Program
 KSP Forum: http://forum.kerbalspaceprogram.com/index.php?/topic/133971-win-kml-persistence-file-editor/
 
 Do you face a problem with broken docking ports or need just a little fuel-cheating? Do you got tired of editing save games in a text editor with long loading time and so much scrolling to compare different parts and vessels? So did I and decided to make a more helpful external editor to display the XML-like structure (the "KML" - Kerbal Markup Language) in a tree view and pick out vessels, kerbals and parts to be displayed in more eye-candy way.
@@ -8,10 +8,10 @@ The current version is not feature-complete but so far functional and already he
 Any feedback, more testing, bug reports and suggestions are very welcome.
 
 New Features
-• copy & paste attributes
-• more keyboard controls - thanks to Geowil
-• attributes in kerbals tab now with same functionality as in tree
-• reduced warning noise on node attachments
+• list all GameData dirs used by a vessel's / all vessels' parts - thanks to TheCardinal
+• online check for updates (orange link may appear bottom right)
+• bugfix when having a collider as third parameter to srfN attribs - thanks to Bruce the Loon
+• tested with KSP 1.7.3 - thanks to Bruce the Loon
 
 Features 
 • open SFS and CRAFT files

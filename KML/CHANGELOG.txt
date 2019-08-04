@@ -1,4 +1,4 @@
-Version 0.8.2 - in progress
+Version 0.8.2 - 2019-08-04
 - list all GameData dirs used by a vessel's / all vessels' parts - thanks to TheCardinal
 - online check for updates (orange link may appear bottom right)
 - small visual enhancements
