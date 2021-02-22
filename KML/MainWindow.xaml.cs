@@ -75,9 +75,11 @@ namespace KML
         private void CheckCommandLine()
         {
             string[] args = Environment.GetCommandLineArgs();
-            foreach (string arg in args)
+            for (int i = 1; i < args.Length; i++ )
             {
-                if ((System.IO.Path.GetExtension(arg) == ".sfs" || 
+                var arg = args[i];
+                if ((arg[0] != '-') &&
+                    (System.IO.Path.GetExtension(arg) == ".sfs" ||
                     System.IO.Path.GetExtension(arg) == ".craft") &&
                     System.IO.File.Exists(arg))
                 {

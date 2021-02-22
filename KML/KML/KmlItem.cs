@@ -436,19 +436,20 @@ namespace KML
         /// </summary>
         /// <param name="filename">The full path and filename of the data file to write</param>
         /// <param name="items">A list of root / top level KmlItems</param>
-        public static void WriteFile (string filename, List<KmlItem> items)
+        /// <returns>Filename of backup</returns>
+        public static string WriteFile (string filename, List<KmlItem> items)
         {
+            string backupname = "";
             try
             {
-                string Backupname = "";
                 if (File.Exists(filename))
                 {
                     string dir = Path.GetDirectoryName(filename) + @"\";
                     string name = Path.GetFileNameWithoutExtension(filename);
                     string ext = Path.GetExtension(filename);
                     string timestamp = string.Format("{0:yyyyMMddHHmmss}", DateTime.Now);
-                    Backupname = dir + "zKMLBACKUP" + timestamp + "-" + name + ext;
-                    File.Move(filename, Backupname);
+                    backupname = dir + "zKMLBACKUP" + timestamp + "-" + name + ext;
+                    File.Move(filename, backupname);
                 }
 
                 // Explicit setting UTF8 doesn't look the same, if I compare loaded and saved with WinMerge
@@ -465,10 +466,11 @@ namespace KML
                 catch (Exception e)
                 {
                     file.Close();
-                    if (Backupname.Length > 0)
+                    if (backupname.Length > 0)
                     {
                         File.Delete(filename);
-                        File.Move(Backupname, filename);
+                        File.Move(backupname, filename);
+                        backupname = "";
                     }
                     throw e;
                 }
@@ -476,7 +478,9 @@ namespace KML
             catch (Exception e)
             {
                 DlgMessage.Show("Error saving to " + filename + "\n\n" + e.Message);
+                backupname = "";
             }
+            return backupname;
         }
     }
 }
