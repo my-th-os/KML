@@ -91,7 +91,14 @@ namespace KML
             Tree.Items.Clear();
             TreeDetails.Items.Clear();
 
-            KmlRoots = KmlItem.ParseFile(filename);
+            try
+            {
+                KmlRoots = KmlItem.ParseFile(filename);
+            }
+            catch (Exception e)
+            {
+                DlgMessage.Show("Error loading from " + filename + "\n\n" + e.Message);
+            }
 
             // Check if any of these roots is not a node
             // If so, pack all roots into a new ghost root
@@ -132,7 +139,14 @@ namespace KML
         /// <param name="filename">The full path and filename of the data file to write</param>
         public void Save(string filename)
         {
-            KmlItem.WriteFile(filename, KmlRoots);
+            try
+            {
+                KmlItem.WriteFile(filename, KmlRoots);
+            }
+            catch (Exception e)
+            {
+                DlgMessage.Show("Error saving to " + filename + "\n\n" + e.Message);
+            }
         }
 
         /// <summary>

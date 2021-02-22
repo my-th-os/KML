@@ -105,44 +105,51 @@ namespace KML
 
             if (!isFileFound)
             {
-                WriteLineColor("File not found: " + filename, ConsoleColor.Red);
+                WriteLineColor("File not found \"" + filename + "\"", ConsoleColor.Red);
             }
             else if (isFileCraft)
             {
-                WriteLineColor("No craft files in CLI: " + filename, ConsoleColor.Red);
+                WriteLineColor("No CLI support for craft file \"" + filename + "\"", ConsoleColor.Red);
             }
             else if (!isFileSave)
             {
-                WriteLineColor("Unknown file type: " + filename, ConsoleColor.Red);
+                WriteLineColor("Unknown type of file \"" + filename + "\"", ConsoleColor.Red);
             }
             else
             {
-                WriteLineColor(mode.ToString() + " in " + filename, ConsoleColor.DarkCyan);
-
                 Syntax.Messages.Clear();
-                var KmlRoots = KmlItem.ParseFile(filename);
 
-                switch (mode)
+                try
                 {
-                    case Mode.Vessels:
-                        ListVessels(KmlRoots);
-                        break;
-                    case Mode.Kerbals:
-                        ListKerbals(KmlRoots);
-                        break;
-                    case Mode.Warnings:
-                        if(ProcessWarnings(KmlRoots))
-                        {
-                            Console.WriteLine();
-                            // data was changed due to repair, save now (backup is built-in)
-                            string backupname = KmlItem.WriteFile(filename, KmlRoots);
-                            if (backupname.Length > 0 && System.IO.File.Exists(backupname))
+                    var KmlRoots = KmlItem.ParseFile(filename);
+                    WriteLineColor(mode.ToString() + " in \"" + filename + "\"", ConsoleColor.DarkCyan);
+
+                    switch (mode)
+                    {
+                        case Mode.Vessels:
+                            ListVessels(KmlRoots);
+                            break;
+                        case Mode.Kerbals:
+                            ListKerbals(KmlRoots);
+                            break;
+                        case Mode.Warnings:
+                            if (ProcessWarnings(KmlRoots))
                             {
-                                WriteLineColor("(backup) " + backupname, ConsoleColor.Green);
+                                Console.WriteLine();
+                                // data was changed due to repair, save now (backup is built-in)
+                                string backupname = KmlItem.WriteFile(filename, KmlRoots);
+                                if (backupname.Length > 0 && System.IO.File.Exists(backupname))
+                                {
+                                    WriteLineColor("(backup) " + backupname, ConsoleColor.Green);
+                                }
+                                WriteLineColor("(saving) " + filename, ConsoleColor.Green);
                             }
-                            WriteLineColor("(saving) " + filename, ConsoleColor.Green);
-                        }
-                        break;
+                            break;
+                    }
+                }
+                catch(System.IO.IOException e)
+                {
+                    WriteLineColor("File Error: " + e.Message, ConsoleColor.Red);
                 }
             }
         }

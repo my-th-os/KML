@@ -1,8 +1,9 @@
 ﻿<Application x:Class="KML.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             DispatcherUnhandledException="Application_DispatcherUnhandledException">
              <!-- https://stackoverflow.com/questions/32204195/wpf-and-commandline-app-in-the-same-executable
-             StartupUri="MainWindow.xaml" DispatcherUnhandledException="Application_DispatcherUnhandledException">
+             StartupUri="MainWindow.xaml" 
              -->
     <Application.Resources>
         <!-- http://www.kennethham.com/wp/2010/11/force-wpf-to-use-windows-7aero-theming-in-classic-mode/

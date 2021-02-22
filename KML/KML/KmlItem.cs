@@ -363,19 +363,12 @@ namespace KML
         {
             List<KmlItem> list = new List<KmlItem>();
 
-            try
-            {
-                // Explicit setting UTF8 doesn't look the same, if I compare loaded and saved with MinMerge
-                // StreamReader file = new StreamReader(Filename, Encoding.UTF8);
-                StreamReader file = new StreamReader(filename);
-                list.AddRange(ParseItems(file));
-                file.Close();
-                CallFinalize(list);
-            }
-            catch (Exception e)
-            {
-                DlgMessage.Show("Error loading from " + filename + "\n\n" + e.Message);
-            }
+            // Explicit setting UTF8 doesn't look the same, if I compare loaded and saved with MinMerge
+            // StreamReader file = new StreamReader(Filename, Encoding.UTF8);
+            StreamReader file = new StreamReader(filename);
+            list.AddRange(ParseItems(file));
+            file.Close();
+            CallFinalize(list);
 
             return list;
         }
@@ -440,45 +433,38 @@ namespace KML
         public static string WriteFile (string filename, List<KmlItem> items)
         {
             string backupname = "";
+
+            if (File.Exists(filename))
+            {
+                string dir = Path.GetDirectoryName(filename) + @"\";
+                string name = Path.GetFileNameWithoutExtension(filename);
+                string ext = Path.GetExtension(filename);
+                string timestamp = string.Format("{0:yyyyMMddHHmmss}", DateTime.Now);
+                backupname = dir + "zKMLBACKUP" + timestamp + "-" + name + ext;
+                File.Move(filename, backupname);
+            }
+
+            // Explicit setting UTF8 doesn't look the same, if I compare loaded and saved with WinMerge
+            // StreamWriter file = new StreamWriter(Filename, false, Encoding.UTF8);
+            StreamWriter file = new StreamWriter(filename);
             try
             {
-                if (File.Exists(filename))
+                foreach (KmlItem item in items)
                 {
-                    string dir = Path.GetDirectoryName(filename) + @"\";
-                    string name = Path.GetFileNameWithoutExtension(filename);
-                    string ext = Path.GetExtension(filename);
-                    string timestamp = string.Format("{0:yyyyMMddHHmmss}", DateTime.Now);
-                    backupname = dir + "zKMLBACKUP" + timestamp + "-" + name + ext;
-                    File.Move(filename, backupname);
+                    WriteItem(file, item, 0);
                 }
-
-                // Explicit setting UTF8 doesn't look the same, if I compare loaded and saved with WinMerge
-                // StreamWriter file = new StreamWriter(Filename, false, Encoding.UTF8);
-                StreamWriter file = new StreamWriter(filename);
-                try
-                {
-                    foreach (KmlItem item in items)
-                    {
-                        WriteItem(file, item, 0);
-                    }
-                    file.Close();
-                }
-                catch (Exception e)
-                {
-                    file.Close();
-                    if (backupname.Length > 0)
-                    {
-                        File.Delete(filename);
-                        File.Move(backupname, filename);
-                        backupname = "";
-                    }
-                    throw e;
-                }
+                file.Close();
             }
             catch (Exception e)
             {
-                DlgMessage.Show("Error saving to " + filename + "\n\n" + e.Message);
-                backupname = "";
+                file.Close();
+                if (backupname.Length > 0)
+                {
+                    File.Delete(filename);
+                    File.Move(backupname, filename);
+                    backupname = "";
+                }
+                throw e;
             }
             return backupname;
         }

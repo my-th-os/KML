@@ -46,6 +46,7 @@ namespace KML
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(e.Exception.ToString());
                 Console.ForegroundColor = old;
+                Environment.Exit(0);
             }
             else
             {
