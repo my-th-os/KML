@@ -436,11 +436,11 @@ namespace KML
 
             if (File.Exists(filename))
             {
-                string dir = Path.GetDirectoryName(filename) + Path.DirectorySeparatorChar;
+                string dir = Path.GetDirectoryName(filename);
                 string name = Path.GetFileNameWithoutExtension(filename);
                 string ext = Path.GetExtension(filename);
                 string timestamp = string.Format("{0:yyyyMMddHHmmss}", DateTime.Now);
-                backupname = dir + "zKMLBACKUP" + timestamp + "-" + name + ext;
+                backupname = Path.Combine(dir, "zKMLBACKUP" + timestamp + "-" + name + ext);
                 File.Move(filename, backupname);
             }
 

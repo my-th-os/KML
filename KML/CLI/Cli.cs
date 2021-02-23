@@ -28,6 +28,7 @@ namespace KML
         public Cli(string[] args, int startarg)
         {
             Requested = false;
+            mode = Mode.Warnings;
             filenames.Clear();
 
             for (int i = startarg; i < args.Length; i++)
