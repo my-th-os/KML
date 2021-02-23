@@ -9,7 +9,7 @@ namespace KML
     /// <summary>
     /// Command Line Interface, checks request for CLI on construction
     /// </summary>
-    class Cli
+    public class Cli
     {
         /// <summary>
         /// Determines if a CLI session was requested by known CLI arguments
@@ -25,12 +25,12 @@ namespace KML
         /// <summary>
         /// Creates a CLI instance
         /// </summary>
-        public Cli(string[] args)
+        public Cli(string[] args, int startarg)
         {
             Requested = false;
             filenames.Clear();
 
-            for (int i = 1; i < args.Length; i++ )
+            for (int i = startarg; i < args.Length; i++)
             {
                 var arg = args[i];
                 if (arg[0] == '-')
@@ -94,6 +94,24 @@ namespace KML
                     ExecuteFile(filename);
                     Console.WriteLine();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Execute wrapped by try/catch in case there is no outer exception handler 
+        /// see App.Application_DispatcherUnhandledException
+        /// </summary>
+        public int ExecuteCatch()
+        {
+            try
+            {
+                Execute();
+                return 0;
+            }
+            catch (Exception e)
+            {
+                WriteLineColor(e.ToString(), ConsoleColor.Red);
+                return 1;
             }
         }
 

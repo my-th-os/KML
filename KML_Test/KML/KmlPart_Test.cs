@@ -49,7 +49,7 @@ namespace KML_Test.KML
             Assert.AreEqual("", part.Flag);
             Assert.IsFalse(part.HasResources);
             Assert.AreEqual(-1, part.ParentPartIndex);
-            Assert.AreEqual(new System.Windows.Media.Media3D.Point3D(0.0, 0.0, 0.0), 
+            Assert.AreEqual(new Point3D(0.0, 0.0, 0.0), 
                 part.Position);
             Assert.AreEqual(0, part.Resources.Count);
             Assert.AreEqual(0, part.ResourceTypes.Count);
@@ -63,7 +63,7 @@ namespace KML_Test.KML
             Assert.AreEqual("Vessel1Flag1", data.Vessel1Part1.Flag);
             Assert.IsTrue(data.Vessel1Part1.HasResources);
             Assert.AreEqual(0, data.Vessel1Part1.ParentPartIndex);
-            Assert.AreEqual(new System.Windows.Media.Media3D.Point3D(0.0, 0.0, 0.0), 
+            Assert.AreEqual(new Point3D(0.0, 0.0, 0.0), 
                 data.Vessel1Part1.Position);
             Assert.AreEqual(2, data.Vessel1Part1.Resources.Count);
             Assert.AreEqual(data.Vessel1Part1Resource1, data.Vessel1Part1.Resources[0]);
@@ -78,7 +78,7 @@ namespace KML_Test.KML
             Assert.AreEqual("Vessel1Flag2", data.Vessel1Part2.Flag);
             Assert.IsFalse(data.Vessel1Part2.HasResources);
             Assert.AreEqual(0, data.Vessel1Part2.ParentPartIndex);
-            Assert.AreEqual(new System.Windows.Media.Media3D.Point3D(0.0, -1.0, 0.0), 
+            Assert.AreEqual(new Point3D(0.0, -1.0, 0.0), 
                 data.Vessel1Part2.Position);
             Assert.AreEqual(0, data.Vessel1Part2.Resources.Count);
             Assert.AreEqual(0, data.Vessel1Part2.ResourceTypes.Count);
@@ -86,7 +86,7 @@ namespace KML_Test.KML
 
             Assert.AreEqual("Vessel1Part8", data.Vessel1Part8.Name);
             Assert.AreEqual(1, data.Vessel1Part8.ParentPartIndex);
-            Assert.AreEqual(new System.Windows.Media.Media3D.Point3D(0.0, -2.0, 0.0),
+            Assert.AreEqual(new Point3D(0.0, -2.0, 0.0),
                 data.Vessel1Part8.Position);
         }
 
@@ -228,7 +228,7 @@ namespace KML_Test.KML
             Assert.AreEqual("", data.Vessel1Part1.Flag);
             Assert.IsFalse(data.Vessel1Part1.HasResources);
             Assert.AreEqual(-1, data.Vessel1Part1.ParentPartIndex);
-            Assert.AreEqual(new System.Windows.Media.Media3D.Point3D(0.0, 0.0, 0.0), data.Vessel1Part1.Position);
+            Assert.AreEqual(new Point3D(0.0, 0.0, 0.0), data.Vessel1Part1.Position);
             Assert.AreEqual(0, data.Vessel1Part1.Resources.Count);
             Assert.AreEqual(0, data.Vessel1Part1.ResourceTypes.Count);
             Assert.AreEqual("", data.Vessel1Part1.Uid);
