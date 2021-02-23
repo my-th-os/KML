@@ -163,7 +163,7 @@ namespace KML
             if (vessel.RootPart != null && vessel.RootPart.Flag.Length > 0)
             {
                 string flag = vessel.RootPart.Flag;
-                flag = flag.Replace('/', '\\');
+                flag = flag.Replace('/', Path.DirectorySeparatorChar);
                 flag = Path.Combine(GuiTabsManager.GetCurrent().FileGamedataDirectory, flag);
 
                 flag = Path.ChangeExtension(flag, ".png");

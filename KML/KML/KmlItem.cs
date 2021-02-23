@@ -436,7 +436,7 @@ namespace KML
 
             if (File.Exists(filename))
             {
-                string dir = Path.GetDirectoryName(filename) + @"\";
+                string dir = Path.GetDirectoryName(filename) + Path.DirectorySeparatorChar;
                 string name = Path.GetFileNameWithoutExtension(filename);
                 string ext = Path.GetExtension(filename);
                 string timestamp = string.Format("{0:yyyyMMddHHmmss}", DateTime.Now);
