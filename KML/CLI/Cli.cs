@@ -66,7 +66,7 @@ namespace KML
                 }
             }
 
-            if (Requested && filenames.Count == 0)
+            if (filenames.Count == 0)
             {
                 mode = Mode.Info;
             }
