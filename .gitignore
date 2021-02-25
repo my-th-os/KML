@@ -187,5 +187,8 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+
+# Custom
+.vs/
 /KML/Doc/Thumbs.db
 /KML/Images/Thumbs.db

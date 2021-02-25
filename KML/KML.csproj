@@ -317,7 +317,7 @@
     <None Include="CHANGELOG.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="README.txt" />
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\DummyFlag.png" />
@@ -342,7 +342,7 @@
   <PropertyGroup>
     <PostBuildEvent>if $(ConfigurationName) == Release "C:\Program Files\7-Zip\7z.exe" a "$(SolutionDir)$(ProjectName).zip" "$(TargetPath)"
 copy /Y "$(ProjectDir)CHANGELOG.txt" "$(SolutionDir)"
-copy /Y "$(ProjectDir)README.txt" "$(SolutionDir)"</PostBuildEvent>
+copy /Y "$(ProjectDir)README.md" "$(SolutionDir)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
