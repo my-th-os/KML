@@ -340,7 +340,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if $(ConfigurationName) == Release "C:\Program Files\7-Zip\7z.exe" a "$(SolutionDir)$(SolutionName).zip" "$(TargetPath)"
+    <PostBuildEvent>if $(ConfigurationName) == Release "C:\Program Files\7-Zip\7z.exe" a "$(SolutionDir)$(ProjectName).zip" "$(TargetPath)"
 copy /Y "$(ProjectDir)CHANGELOG.txt" "$(SolutionDir)"
 copy /Y "$(ProjectDir)README.txt" "$(SolutionDir)"</PostBuildEvent>
   </PropertyGroup>

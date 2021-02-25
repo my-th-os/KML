@@ -16,10 +16,12 @@ namespace KML
         /// </summary>
         public bool Requested { get; private set; }
 
-        private enum Mode { Info, Vessels, Kerbals, Warnings };
+        private enum Mode { Info, Tree, Vessels, Kerbals, Warnings };
 
         private Mode mode = Mode.Info;
         private bool repair = false;
+        private bool select = false;
+        private List<string> selectors = new List<string>();
         private List<string> filenames = new List<string>();
 
         /// <summary>
@@ -30,33 +32,92 @@ namespace KML
             Requested = false;
             mode = Mode.Warnings;
             filenames.Clear();
+            bool error = false;
+            string selectorstr = "";
 
             for (int i = startarg; i < args.Length; i++)
             {
                 var arg = args[i];
-                if (arg[0] == '-')
+                bool isOpts = arg.Length > 0 && arg[0] == '-';
+                bool isWord = isOpts && arg.Length > 1 && arg[1] == '-';
+
+                string clean = "";
+                if (isWord)
                 {
-                    string a = arg.ToLower();
-                    if ((a == "-v") || (a == "-vessels") || (a == "--vessels"))
+                    clean = arg.Substring(2, arg.Length - 2);
+                }
+                else if (isOpts)
+                {
+                    clean = arg.Substring(1, arg.Length - 1);
+                }
+
+                char[] sep = {'='};
+                var split = clean.Split(sep, 2);
+                clean = split[0];
+
+                if (isOpts)
+                {
+                    if (isWord)
                     {
-                        mode = Mode.Vessels;
+                        switch (clean)
+                        {
+                            case "tree":
+                                mode = Mode.Tree;
+                                break;
+                            case "vessels":
+                                mode = Mode.Vessels;
+                                break;
+                            case "kerbals":
+                                mode = Mode.Kerbals;
+                                break;
+                            case "warnings":
+                                mode = Mode.Warnings;
+                                break;
+                            case "repair":
+                                mode = Mode.Warnings;
+                                repair = true;
+                                break;
+                            case "select":
+                                if (split.Length > 1) selectorstr = split[1];
+                                select = true;
+                                break;
+                            default:
+                                error = true;
+                                break;
+                        }
                     }
-                    else if ((a == "-k") || (a == "-kerbals") || (a == "--kerbals"))
+                    else foreach(char c in clean)
                     {
-                        mode = Mode.Kerbals;
+                        switch (c)
+                        {
+                            case 't':
+                                mode = Mode.Tree;
+                                break;
+                            case 'v':
+                                mode = Mode.Vessels;
+                                break;
+                            case 'k':
+                                mode = Mode.Kerbals;
+                                break;
+                            case 'w':
+                                mode = Mode.Warnings;
+                                break;
+                            case 'r':
+                                mode = Mode.Warnings;
+                                repair = true;
+                                break;
+                            case 's':
+                                if (split.Length > 1) selectorstr = split[1];
+                                select = true;
+                                break;
+                            default:
+                                error = true;
+                                break;
+                        }
                     }
-                    else if ((a == "-w") || (a == "-warnings") || (a == "--warnings"))
+                    if (!select && split.Length > 1)
                     {
-                        mode = Mode.Warnings;
-                    }
-                    else if ((a == "-r") || (a == "-repair") || (a == "--repair"))
-                    {
-                        mode = Mode.Warnings;
-                        repair = true;
-                    }
-                    else
-                    {
-                        mode = Mode.Info;
+                        error = true;
                     }
                     Requested = true;
                 }
@@ -66,7 +127,12 @@ namespace KML
                 }
             }
 
-            if (filenames.Count == 0)
+            if (select && selectorstr.Length > 0)
+            {
+                selectors = new List<string>(selectorstr.Split('/'));
+            }
+
+            if (error || filenames.Count == 0)
             {
                 mode = Mode.Info;
             }
@@ -85,8 +151,18 @@ namespace KML
                     version = version.Substring(0, version.Length - 2);
                 string copyright = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location).LegalCopyright.Replace("Copyright ", "");
 
-                Console.WriteLine("KML - Kerbal Markup Lister - Version " + version + " - " + copyright);
-                Console.WriteLine("Usage: KML [ --vessels | -v | --kerbals | -k | --warnings | -w | --repair | -r ] <save-file>");
+                Console.WriteLine("KML: Kerbal Markup Lister " + version + " " + copyright);
+                // Console.WriteLine("Use: KML [ --vessels | -v | --kerbals | -k | --warnings | -w | --repair | -r ] <save-file>");
+                Console.WriteLine("Use: KML [Opt] <save-file>");
+                Console.WriteLine("Opt: --tree     | -t : List tree");
+                Console.WriteLine("     --vessels  | -v : List vessels");
+                Console.WriteLine("     --kerbals  | -k : List kerbals");
+                Console.WriteLine("     --warnings | -w : Show warnings");
+                Console.WriteLine("     --select   | -s : Show numbers, select one by -s=<Sel>");
+                Console.WriteLine("     --repair   | -r : Repair docking problems, includes -w");
+                Console.WriteLine("Sel: < number | tag-start | name-start >[/Sel]");
+                Console.WriteLine("     Only in tree you can select by tag or go deep into hierarchy");
+                Console.WriteLine();
             }
             else
             {
@@ -145,6 +221,9 @@ namespace KML
 
                     switch (mode)
                     {
+                        case Mode.Tree:
+                            ListTree(KmlRoots);
+                            break;
                         case Mode.Vessels:
                             ListVessels(KmlRoots);
                             break;
@@ -181,8 +260,78 @@ namespace KML
             Console.ForegroundColor = old;
         }
 
+        private void ListTree(List<KmlItem> roots)
+        {
+            List<KmlNode> nodes = new List<KmlNode>();
+
+            // Check if any of these roots is not a node
+            // If so, pack all roots into a new ghost root
+            if (roots.Any(x => !(x is KmlNode)))
+            {
+                KmlGhostNode root = new KmlGhostNode("[root]");
+                root.AddRange(roots);
+                nodes.Add(root);
+            }
+            else foreach (KmlItem item in roots)
+            {
+                nodes.Add((KmlNode)item);
+            }
+
+            ListTree(nodes, "");
+        }
+
+        private void ListTree(List<KmlNode> nodes, string selectorprefix)
+        {
+            bool foundselection = false;
+
+            Console.WriteLine();
+            string selector = "";
+            if (selectors.Count > 0)
+            {
+                selector = selectors[0];
+                selectors.RemoveAt(0);
+            }
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (selector.Length > 0)
+                {
+                    if (selector != i.ToString() && !nodes[i].Tag.StartsWith(selector) && !nodes[i].Name.StartsWith(selector))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        Console.WriteLine((select ? selectorprefix + i.ToString() + ": " : "") + nodes[i].ToString());
+                        foundselection = true;
+                        // only list attribs on the finally selected node
+                        if (selectors.Count == 0)
+                        {
+                            Console.WriteLine();
+                            ListAttributes(nodes[i]);
+                        }
+                        ListTree(nodes[i].Children, selectorprefix + i.ToString() + "/");
+                        break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine((select ? selectorprefix + i.ToString() + ": " : "") + nodes[i].ToString());
+                }
+            }
+            if (nodes.Count == 0)
+            {
+                Console.WriteLine("(no child nodes)");
+            }
+            else if (selector.Length > 0 && !foundselection)
+            {
+                Console.WriteLine("(no match)");
+            }
+        }
+
         private void ListVessels(List<KmlItem> KmlRoots)
         {
+            bool foundselection = false;
+
             List<KmlVessel> vessels = new List<KmlVessel>();
             foreach (KmlVessel vessel in GetFlatList<KmlVessel>(KmlRoots))
             {
@@ -195,18 +344,48 @@ namespace KML
             vessels = vessels.OrderBy(x => x.Name).ToList();
 
             Console.WriteLine();
-            foreach (KmlVessel vessel in vessels)
+            string selector = "";
+            if (selectors.Count > 0)
             {
-                Console.WriteLine(vessel.ToString());
+                selector = selectors[0];
+                selectors.RemoveAt(0);
+            }
+            for (int i = 0; i < vessels.Count; i++)
+            {
+                if (selector.Length > 0)
+                {
+                    if (selector != i.ToString() && !vessels[i].Name.StartsWith(selector))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        Console.WriteLine((select ? i.ToString() + ": " : "") + vessels[i].ToString());
+                        foundselection = true;
+                        Console.WriteLine();
+                        ListParts(vessels[i]);
+                        break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine((select ? i.ToString() + ": " : "") + vessels[i].ToString());
+                }
             }
             if (vessels.Count == 0)
             {
                 Console.WriteLine("(none)");
             }
+            else if (selector.Length > 0 && !foundselection)
+            {
+                Console.WriteLine("(no match)");
+            }
         }
 
         private void ListKerbals(List<KmlItem> KmlRoots)
         {
+            bool foundselection = false;
+
             List<KmlKerbal> kerbals = new List<KmlKerbal>();
             foreach (KmlKerbal kerbal in GetFlatList<KmlKerbal>(KmlRoots))
             {
@@ -219,13 +398,89 @@ namespace KML
             kerbals = kerbals.OrderBy(x => x.Name).ToList();
 
             Console.WriteLine();
-            foreach (KmlKerbal kerbal in kerbals)
+            for (int i = 0; i < kerbals.Count; i++)
             {
-                Console.WriteLine(kerbal.ToString());
+                if (selectors.Count > 0)
+                {
+                    if (selectors[0] != i.ToString() && !kerbals[i].Name.StartsWith(selectors[0]))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        Console.WriteLine((select ? i.ToString() + ": " : "") + kerbals[i].ToString());
+                        foundselection = true;
+                        Console.WriteLine();
+                        ListAttributes(kerbals[i]);
+                        break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine((select ? i.ToString() + ": " : "") + kerbals[i].ToString());
+                }
             }
             if (kerbals.Count == 0)
             {
                 Console.WriteLine("(none)");
+            }
+            else if (selectors.Count > 0 && !foundselection)
+            {
+                Console.WriteLine("(no match)");
+            }
+        }
+
+        private void ListParts(KmlVessel vessel)
+        {
+            bool foundselection = false;
+
+            string selector = "";
+            if (selectors.Count > 0)
+            {
+                selector = selectors[0];
+                selectors.RemoveAt(0);
+            }
+            foreach (var part in vessel.Parts)
+            {
+                if (selector.Length > 0)
+                {
+                    if (!part.ToString().Replace(", root", "").StartsWith("PART [" + selector + "]") && !part.Name.StartsWith(selector))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        Console.WriteLine(part.ToString());
+                        foundselection = true;
+                        Console.WriteLine();
+                        ListAttributes(part);
+                        break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine(part.ToString());
+                }
+            }
+            if (vessel.Parts.Count == 0)
+            {
+                Console.WriteLine("(no parts)");
+            }
+            else if (selector.Length > 0 && !foundselection)
+            {
+                Console.WriteLine("(no match)");
+            }
+        }
+
+        private void ListAttributes(KmlNode node)
+        {
+            foreach (var attrib in node.Attribs)
+            {
+                Console.WriteLine(attrib.ToString());
+            }
+            if (node.Attribs.Count == 0)
+            {
+                Console.WriteLine("(no attributes)");
             }
         }
 
@@ -236,6 +491,8 @@ namespace KML
 
             // need to save file?
             bool repaired = false;
+
+            bool foundselection = false;
 
             foreach (Syntax.Message msg in new List<Syntax.Message>(Syntax.Messages))
             {
@@ -252,10 +509,23 @@ namespace KML
                 }
                 warnings.Add(new Tuple<string, KmlItem>(msg.ToString(), source));
             }
-            foreach (var warning in warnings)
+            for (int i = 0; i < warnings.Count; i++)
             {
+                if (selectors.Count > 0)
+                {
+                    if (selectors[0] != i.ToString())
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        foundselection = true;
+                    }
+                }
+
+                var warning = warnings[i];
                 Console.WriteLine();
-                WriteLineColor(warning.Item1, ConsoleColor.Yellow);
+                WriteLineColor((select ? i.ToString() + ": " : "") + warning.Item1, ConsoleColor.Yellow);
                 if (repair && warning.Item2 is KmlPartDock)
                 {
                     // this is now a dock source that needed repair in the first iteration
@@ -275,6 +545,11 @@ namespace KML
             {
                 Console.WriteLine();
                 Console.WriteLine("(none)");
+            }
+            else if(selectors.Count > 0 && !foundselection)
+            {
+                Console.WriteLine();
+                Console.WriteLine("(no match)");
             }
             return repaired;
         }

@@ -1,5 +1,6 @@
 Version 0.9 - in progress
-- CLI mode
+- CLI mode, very basic but can repair docking problems
+- separate executable with only CLI but Mono compatible (Linux, Mac)
 - tested with KSP 1.11.1
 
 Version 0.8.2 - 2019-08-04
