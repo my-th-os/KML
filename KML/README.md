@@ -62,6 +62,7 @@ Any feedback, more testing, bug reports and suggestions are very welcome.
   - Dark green line is a node attachment in top/down direction
   - Light green is a node attachment in front/back or left/right direction
   - Yellow line is a surface attachment
+  - Blue line is a docking connection
 - If parts are arranged in a way you can't see where the connections go, mouse over the part and they are drawn thicker.
 - After you found your vessel, kerbal or part in the list you want to see it in the tree? Just make a double click.
 - Sometimes there appears a warnings tab, what do these warnings mean? Some KML elements are more heavily inspected than others, like vessel parts and especially docking or grappling devices. If something is not as expected there is a warning generated.

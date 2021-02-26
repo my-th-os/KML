@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace KML
+﻿namespace KML
 {
     /// <summary>
     /// This items represents a data line wich reads "{".

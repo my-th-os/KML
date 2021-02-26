@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KML
 {
@@ -216,26 +214,26 @@ namespace KML
 
                 try
                 {
-                    var KmlRoots = KmlItem.ParseFile(filename);
+                    var roots = KmlItem.ParseFile(filename);
                     WriteLineColor(mode.ToString() + " in \"" + filename + "\"", ConsoleColor.DarkCyan);
 
                     switch (mode)
                     {
                         case Mode.Tree:
-                            ListTree(KmlRoots);
+                            ListTree(roots);
                             break;
                         case Mode.Vessels:
-                            ListVessels(KmlRoots);
+                            ListVessels(roots);
                             break;
                         case Mode.Kerbals:
-                            ListKerbals(KmlRoots);
+                            ListKerbals(roots);
                             break;
                         case Mode.Warnings:
-                            if (ProcessWarnings(KmlRoots))
+                            if (ProcessWarnings())
                             {
                                 Console.WriteLine();
                                 // data was changed due to repair, save now (backup is built-in)
-                                string backupname = KmlItem.WriteFile(filename, KmlRoots);
+                                string backupname = KmlItem.WriteFile(filename, roots);
                                 if (backupname.Length > 0 && System.IO.File.Exists(backupname))
                                 {
                                     WriteLineColor("(backup) " + backupname, ConsoleColor.Green);
@@ -274,6 +272,7 @@ namespace KML
             }
             else foreach (KmlItem item in roots)
             {
+                item.CanBeDeleted = false;
                 nodes.Add((KmlNode)item);
             }
 
@@ -328,12 +327,12 @@ namespace KML
             }
         }
 
-        private void ListVessels(List<KmlItem> KmlRoots)
+        private void ListVessels(List<KmlItem> roots)
         {
             bool foundselection = false;
 
             List<KmlVessel> vessels = new List<KmlVessel>();
-            foreach (KmlVessel vessel in GetFlatList<KmlVessel>(KmlRoots))
+            foreach (KmlVessel vessel in GetFlatList<KmlVessel>(roots))
             {
                 if (vessel.Origin == KmlVessel.VesselOrigin.Flightstate)
                 {
@@ -382,12 +381,12 @@ namespace KML
             }
         }
 
-        private void ListKerbals(List<KmlItem> KmlRoots)
+        private void ListKerbals(List<KmlItem> roots)
         {
             bool foundselection = false;
 
             List<KmlKerbal> kerbals = new List<KmlKerbal>();
-            foreach (KmlKerbal kerbal in GetFlatList<KmlKerbal>(KmlRoots))
+            foreach (KmlKerbal kerbal in GetFlatList<KmlKerbal>(roots))
             {
                 if (kerbal.Origin == KmlKerbal.KerbalOrigin.Roster)
                 {
@@ -484,7 +483,7 @@ namespace KML
             }
         }
 
-        private bool ProcessWarnings(List<KmlItem> KmlRoots)
+        private bool ProcessWarnings()
         {
             // make a copy, in case of repairs the original list changes
             List<Tuple<string, KmlItem>> warnings = new List<Tuple<string, KmlItem>>();

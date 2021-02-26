@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace KML
+﻿namespace KML
 {
     /// <summary>
     /// A GuiVesselsFilter is used to filter for different vessel types.

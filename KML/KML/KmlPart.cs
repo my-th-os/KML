@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-// using System.Windows.Media.Media3D; // seems to be not supported by Mono
+// using System.Windows.Media.Media3D; // seems to be not supported by Mono, using local Point3D now
 
 namespace KML
 {

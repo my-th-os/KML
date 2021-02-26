@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace KML
+﻿namespace KML
 {
     /// <summary>
     /// A KmlGhostNode ist a node that is just for visual or structural capsulation.
