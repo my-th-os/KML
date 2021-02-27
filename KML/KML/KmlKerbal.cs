@@ -250,6 +250,10 @@ namespace KML
                     s += ", ";
                 }
                 s += State;
+                if (State == "Assigned" && AssignedVessel != null)
+                {
+                    s += ": " + AssignedVessel.Name;
+                }
             }
             if (s.Length > 0)
             {

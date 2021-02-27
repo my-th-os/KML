@@ -1221,10 +1221,10 @@ namespace KML
             else if (node is KmlPart)
             {
                 nodeName = "part";
-                specialText = "\n\n- Part will be removed from vessel structure\n" +
-                    "- Attachment indices will be updated";
                 if (node.Parent is KmlVessel)
                 {
+                    specialText = "\n\n- Part will be removed from vessel structure\n" +
+                        "- Attachment indices will be updated";
                     foreach (KmlKerbal kerbal in (node.Parent as KmlVessel).AssignedCrew)
                     {
                         if (kerbal.AssignedPart == node)
