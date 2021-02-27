@@ -915,7 +915,23 @@ namespace KML
                                 grapple.NeedsRepair = true;
                             }
                         }
-
+                        // It may be a kerbalEVA/kerbalEVAfemale in external command seat
+                        else if (part.Name.StartsWith("kerbalEVA"))
+                        {
+                            var seat = part.ParentPart.GetChildNode("MODULE", "KerbalSeat");
+                            if (seat != null)
+                            {
+                                var occupantId = seat.GetAttrib("occupantID");
+                                if (occupantId == null || occupantId.Value != part.Uid)
+                                {
+                                    Syntax.Warning(part, "Kerbal EVA not assigned to parent seat: " + part.ParentPart);
+                                }
+                            }
+                            else
+                            {
+                                Syntax.Warning(part, "Kerbal EVA not assigned to parent part: " + part.ParentPart);
+                            }
+                        }
                         // Usually you can only attach a new part by a node to the surface of parent
                         // and not attach a part by surface to parents node. But if you have vessels docked
                         // this situation may happen and this leads to this additional check
