@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace KML
@@ -20,6 +21,8 @@ namespace KML
         private bool repair = false;
         private bool select = false;
         private bool multiselect = false;
+        private bool quiet = false;
+        private bool export = false;
         private bool delete = false;
         private bool filechanged = false;
         private List<string> selectors = new List<string>();
@@ -87,6 +90,10 @@ namespace KML
                                 select = true;
                                 multiselect = true;
                                 break;
+                            case "export":
+                                quiet = true;
+                                export = true;
+                                break;
                             case "delete":
                                 delete = true;
                                 break;
@@ -124,6 +131,10 @@ namespace KML
                                 select = true;
                                 multiselect = true;
                                 break;
+                            case 'e':
+                                quiet = true;
+                                export = true;
+                                break;
                             default:
                                 error = true;
                                 break;
@@ -141,10 +152,15 @@ namespace KML
                 }
             }
 
-            if (delete && (!select || selectorstr.Length == 0 || mode == Mode.Warnings))
+            if (export && (!select || delete || multiselect || selectorstr.Length == 0 || mode == Mode.Warnings))
             {
                 error = true;
             }
+            if (delete && (!select || export || selectorstr.Length == 0 || mode == Mode.Warnings))
+            {
+                error = true;
+            }
+
             if (select && selectorstr.Length > 0)
             {
                 selectors = new List<string>(selectorstr.Split('/'));
@@ -178,6 +194,7 @@ namespace KML
                 Console.WriteLine("     --repair      | -r : Repair docking problems, includes -w");
                 Console.WriteLine("     --select      | -s : Show numbers, select one by -s=<Sel>");
                 Console.WriteLine("     --multiselect | -m : Select all occurences by tag/name, includes -s");
+                Console.WriteLine("     --export      | -e : Export selection to stdout, needs -s=<Sel>, no -m");
                 Console.WriteLine("     --delete           : Delete selection, needs -s=<Sel> or -m=<Sel>");
                 Console.WriteLine("Sel: < number | tag-start | name-start >[/Sel]");
                 Console.WriteLine("     Only in tree you can select by tag or go deep into hierarchy");
@@ -188,7 +205,7 @@ namespace KML
                 foreach (var filename in filenames)
                 {
                     ExecuteFile(filename);
-                    Console.WriteLine();
+                    WriteLine();
                 }
             }
         }
@@ -206,7 +223,7 @@ namespace KML
             }
             catch (Exception e)
             {
-                WriteLineColor(e.ToString(), ConsoleColor.Red);
+                WriteLineColor(e.ToString(), ConsoleColor.Red, true);
                 return 1;
             }
         }
@@ -221,15 +238,15 @@ namespace KML
 
             if (!isFileFound)
             {
-                WriteLineColor("File not found \"" + filename + "\"", ConsoleColor.Red);
+                WriteLineColor("File not found \"" + filename + "\"", ConsoleColor.Red, true);
             }
             else if (isFileCraft)
             {
-                WriteLineColor("No CLI support for craft file \"" + filename + "\"", ConsoleColor.Red);
+                WriteLineColor("No CLI support for craft file \"" + filename + "\"", ConsoleColor.Red, true);
             }
             else if (!isFileSave)
             {
-                WriteLineColor("Unknown type of file \"" + filename + "\"", ConsoleColor.Red);
+                WriteLineColor("Unknown type of file \"" + filename + "\"", ConsoleColor.Red, true);
             }
             else
             {
@@ -259,14 +276,14 @@ namespace KML
                 }
                 catch (System.IO.IOException e)
                 {
-                    WriteLineColor("File Error: " + e.Message, ConsoleColor.Red);
+                    WriteLineColor("File Error: " + e.Message, ConsoleColor.Red, true);
                 }
             }
         }
 
         private void SaveFile(string filename, List<KmlItem> roots)
         {
-            Console.WriteLine();
+            WriteLine();
             // data was changed due to repair, save now (backup is built-in)
             string backupname = KmlItem.WriteFile(filename, roots);
             if (backupname.Length > 0 && System.IO.File.Exists(backupname))
@@ -276,8 +293,15 @@ namespace KML
             WriteLineColor("(saving) " + filename, ConsoleColor.Green);
         }
 
-        private void WriteLineColor(string line, ConsoleColor color)
+        private void WriteLine(string line = "", bool force = false)
         {
+            if (quiet && !force) return;
+            Console.WriteLine(line);
+        }
+
+        private void WriteLineColor(string line, ConsoleColor color, bool force = false)
+        {
+            if (quiet && ! force) return;
             ConsoleColor old = Console.ForegroundColor;
             Console.ForegroundColor = color;
             Console.WriteLine(line);
@@ -317,7 +341,7 @@ namespace KML
             }
             else if (nodes.Count > 0)
             {
-                Console.WriteLine();
+                WriteLine();
             }
             for (int i = 0; i < nodes.Count; i++)
             {
@@ -329,19 +353,24 @@ namespace KML
                     }
                     else
                     {
-                        Console.WriteLine();
-                        Console.WriteLine((select ? selectorprefix + i.ToString() + ": " : "") + nodes[i].ToString());
+                        WriteLine();
+                        WriteLine((select ? selectorprefix + i.ToString() + ": " : "") + nodes[i].ToString());
                         foundselection = true;
                         // only delete or list attribs on the finally selected node
                         if (selectors.Count == 0)
                         {
-                            if (delete)
+                            if (export)
+                            {
+                                ExportNode(nodes[i]);
+                                break;
+                            }
+                            else if (delete)
                             {
                                 DeleteNode(nodes[i]);
                                 // stop going deeper
                                 if (multiselect) continue; else break;
                             }
-                            Console.WriteLine();
+                            WriteLine();
                             ListAttributes(nodes[i]);
                         }
                         ListTree(nodes[i].Children, selectorprefix + i.ToString() + "/");
@@ -350,18 +379,18 @@ namespace KML
                 }
                 else
                 {
-                    Console.WriteLine((select ? selectorprefix + i.ToString() + ": " : "") + nodes[i].ToString());
+                    WriteLine((select ? selectorprefix + i.ToString() + ": " : "") + nodes[i].ToString());
                 }
             }
             if (nodes.Count == 0)
             {
-                Console.WriteLine();
-                Console.WriteLine("(no child nodes)");
+                WriteLine();
+                WriteLine("(no child nodes)");
             }
             else if (selector.Length > 0 && !foundselection)
             {
-                Console.WriteLine();
-                Console.WriteLine("(no match)");
+                WriteLine();
+                WriteLine("(no match)");
             }
             // push back the selector, to be used recursively
             if (selector.Length > 0)
@@ -393,7 +422,7 @@ namespace KML
             }
             else if (vessels.Count > 0)
             { 
-                Console.WriteLine();
+                WriteLine();
             }
             for (int i = 0; i < vessels.Count; i++)
             {
@@ -405,11 +434,16 @@ namespace KML
                     }
                     else
                     {
-                        Console.WriteLine();
-                        Console.WriteLine((select ? i.ToString() + ": " : "") + vessels[i].ToString());
+                        WriteLine();
+                        WriteLine((select ? i.ToString() + ": " : "") + vessels[i].ToString());
                         foundselection = true;
                         // only delete on the finally selected node
-                        if (selectors.Count == 0 && delete)
+                        if (selectors.Count == 0 && export)
+                        {
+                            ExportNode(vessels[i]);
+                            break;
+                        }
+                        else if (selectors.Count == 0 && delete)
                         {
                             DeleteNode(vessels[i]);
                             // stop going deeper
@@ -421,18 +455,18 @@ namespace KML
                 }
                 else
                 {
-                    Console.WriteLine((select ? i.ToString() + ": " : "") + vessels[i].ToString());
+                    WriteLine((select ? i.ToString() + ": " : "") + vessels[i].ToString());
                 }
             }
             if (vessels.Count == 0)
             {
-                Console.WriteLine();
-                Console.WriteLine("(none)");
+                WriteLine();
+                WriteLine("(none)");
             }
             else if (selector.Length > 0 && !foundselection)
             {
-                Console.WriteLine();
-                Console.WriteLine("(no match)");
+                WriteLine();
+                WriteLine("(no match)");
             }
             // push back the selector, to be used recursively
             if (selector.Length > 0)
@@ -464,7 +498,7 @@ namespace KML
             }
             else if (kerbals.Count > 0)
             {
-                Console.WriteLine();
+                WriteLine();
             }
             for (int i = 0; i < kerbals.Count; i++)
             {
@@ -476,35 +510,40 @@ namespace KML
                     }
                     else
                     {
-                        Console.WriteLine();
-                        Console.WriteLine((select ? i.ToString() + ": " : "") + kerbals[i].ToString());
+                        WriteLine();
+                        WriteLine((select ? i.ToString() + ": " : "") + kerbals[i].ToString());
                         foundselection = true;
                         // only delete on the finally selected node
-                        if (selectors.Count == 0 && delete)
+                        if (selectors.Count == 0 && export)
+                        {
+                            ExportNode(kerbals[i]);
+                            break;
+                        }
+                        else if (selectors.Count == 0 && delete)
                         {
                             DeleteNode(kerbals[i]);
                             // stop going deeper
                             if (multiselect) continue; else break;
                         }
-                        Console.WriteLine();
+                        WriteLine();
                         ListAttributes(kerbals[i]);
                         if (!multiselect) break;
                     }
                 }
                 else
                 {
-                    Console.WriteLine((select ? i.ToString() + ": " : "") + kerbals[i].ToString());
+                    WriteLine((select ? i.ToString() + ": " : "") + kerbals[i].ToString());
                 }
             }
             if (kerbals.Count == 0)
             {
-                Console.WriteLine();
-                Console.WriteLine("(none)");
+                WriteLine();
+                WriteLine("(none)");
             }
             else if (selector.Length > 0 && !foundselection)
             {
-                Console.WriteLine();
-                Console.WriteLine("(no match)");
+                WriteLine();
+                WriteLine("(no match)");
             }
             // push back the selector, to be used recursively
             if (selector.Length > 0)
@@ -525,7 +564,7 @@ namespace KML
             }
             else if (vessel.Parts.Count > 0)
             {
-                Console.WriteLine();
+                WriteLine();
             }
             foreach (var part in vessel.Parts)
             {
@@ -537,35 +576,40 @@ namespace KML
                     }
                     else
                     {
-                        Console.WriteLine();
-                        Console.WriteLine(part.ToString());
+                        WriteLine();
+                        WriteLine(part.ToString());
                         foundselection = true;
                         // only delete on the finally selected node
-                        if (selectors.Count == 0 && delete)
+                        if (selectors.Count == 0 && export)
+                        {
+                            ExportNode(part);
+                            break;
+                        }
+                        else if (selectors.Count == 0 && delete)
                         {
                             DeleteNode(part);
                             // stop going deeper
                             if (multiselect) continue; else break;
                         }
-                        Console.WriteLine();
+                        WriteLine();
                         ListAttributes(part);
                         if (!multiselect) break;
                     }
                 }
                 else
                 {
-                    Console.WriteLine(part.ToString());
+                    WriteLine(part.ToString());
                 }
             }
             if (vessel.Parts.Count == 0)
             {
-                Console.WriteLine();
-                Console.WriteLine("(no parts)");
+                WriteLine();
+                WriteLine("(no parts)");
             }
             else if (selector.Length > 0 && !foundselection)
             {
-                Console.WriteLine();
-                Console.WriteLine("(no match)");
+                WriteLine();
+                WriteLine("(no match)");
             }
             // push back the selector, to be used recursively
             if (selector.Length > 0)
@@ -578,11 +622,11 @@ namespace KML
         {
             foreach (var attrib in node.Attribs)
             {
-                Console.WriteLine(attrib.ToString());
+                WriteLine(attrib.ToString());
             }
             if (node.Attribs.Count == 0)
             {
-                Console.WriteLine("(no attributes)");
+                WriteLine("(no attributes)");
             }
         }
 
@@ -623,7 +667,7 @@ namespace KML
                 }
 
                 var warning = warnings[i];
-                Console.WriteLine();
+                WriteLine();
                 WriteLineColor((select ? i.ToString() + ": " : "") + warning.Item1, ConsoleColor.Yellow);
                 if (repair && warning.Item2 is KmlPartDock)
                 {
@@ -642,13 +686,13 @@ namespace KML
 
             if (warnings.Count == 0)
             {
-                Console.WriteLine();
-                Console.WriteLine("(none)");
+                WriteLine();
+                WriteLine("(none)");
             }
             else if(selectors.Count > 0 && !foundselection)
             {
-                Console.WriteLine();
-                Console.WriteLine("(no match)");
+                WriteLine();
+                WriteLine("(no match)");
             }
         }
 
@@ -667,6 +711,14 @@ namespace KML
                 }
             }
             return target;
+        }
+
+        private void ExportNode(KmlNode node)
+        {
+            var sr = new StringWriter();
+            KmlItem.WriteItem(sr, node, 0);
+            sr.Flush();
+            Console.Write(sr.GetStringBuilder().ToString());
         }
 
         private void DeleteNode(KmlNode node)
