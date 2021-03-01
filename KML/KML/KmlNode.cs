@@ -277,9 +277,15 @@ namespace KML
             // Call itme's Delete to call it's BeforeDelete()
             // But there would usually be called this method,
             // to avoid loop we set parent to null.
-            // We also ignore result, will be false in that case
-            RemapParent(item, null);
-            item.Delete();
+            // We also ignore result, will be false in that case.
+            // Item can prevent this by setting Parent == null
+            // (after memorizing the real parent, otherwise we woul not get here).
+            // TODO KmlNode.Delete(): This cycle is a mess, especially with item.DeleteRaw() joining the dance
+            if (item.Parent != null)
+            {
+                RemapParent(item, null);
+                item.Delete();
+            }
             if (!AllItems.Remove(item))
             {
                 // It wasn't in the list, nothing to do

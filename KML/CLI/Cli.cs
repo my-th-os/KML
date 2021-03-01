@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace KML
 {
@@ -16,17 +17,18 @@ namespace KML
         public bool Requested { get; private set; }
 
         private enum Mode { Info, Tree, Vessels, Kerbals, Warnings };
+        private enum Action { None, Export, ImportReplace, ImportBefore, ImportAfter, Delete };
 
         private Mode mode = Mode.Info;
         private bool repair = false;
         private bool select = false;
         private bool multiselect = false;
-        private bool quiet = false;
-        private bool export = false;
-        private bool delete = false;
-        private bool filechanged = false;
         private List<string> selectors = new List<string>();
         private List<string> filenames = new List<string>();
+        private bool quiet = false;
+        private Action action = Action.None;
+        private string actionfilename = "";
+        private bool filechanged = false;
 
         /// <summary>
         /// Creates a CLI instance
@@ -91,11 +93,37 @@ namespace KML
                                 multiselect = true;
                                 break;
                             case "export":
-                                quiet = true;
-                                export = true;
+                                if (action != Action.None) error = true;
+                                if (split.Length > 1)
+                                    actionfilename = split[1];
+                                else
+                                    quiet = true;
+                                action = Action.Export;
+                                break;
+                            case "import-replace":
+                                if (action != Action.None || split.Length <= 1) 
+                                    error = true;
+                                else
+                                    actionfilename = split[1];
+                                action = Action.ImportReplace;
+                                break;
+                            case "import-before":
+                                if (action != Action.None || split.Length <= 1)
+                                    error = true;
+                                else
+                                    actionfilename = split[1];
+                                action = Action.ImportBefore;
+                                break;
+                            case "import-after":
+                                if (action != Action.None || split.Length <= 1)
+                                    error = true;
+                                else
+                                    actionfilename = split[1];
+                                action = Action.ImportAfter;
                                 break;
                             case "delete":
-                                delete = true;
+                                if (action != Action.None) error = true;
+                                action = Action.Delete;
                                 break;
                             default:
                                 error = true;
@@ -131,10 +159,6 @@ namespace KML
                                 select = true;
                                 multiselect = true;
                                 break;
-                            case 'e':
-                                quiet = true;
-                                export = true;
-                                break;
                             default:
                                 error = true;
                                 break;
@@ -152,11 +176,13 @@ namespace KML
                 }
             }
 
-            if (export && (!select || delete || multiselect || selectorstr.Length == 0 || mode == Mode.Warnings))
+            if ((action == Action.Export || ActionIsImport(action)) && 
+                (!select || multiselect || selectorstr.Length == 0 || mode == Mode.Warnings))
             {
                 error = true;
             }
-            if (delete && (!select || export || selectorstr.Length == 0 || mode == Mode.Warnings))
+            if (action == Action.Delete && 
+                (!select || selectorstr.Length == 0 || mode == Mode.Warnings))
             {
                 error = true;
             }
@@ -187,15 +213,19 @@ namespace KML
 
                 Console.WriteLine("KML: Kerbal Markup Lister " + version + " " + copyright);
                 Console.WriteLine("Use: KML [Opt] <save-file>");
-                Console.WriteLine("Opt: --tree        | -t : List tree");
-                Console.WriteLine("     --vessels     | -v : List vessels");
-                Console.WriteLine("     --kerbals     | -k : List kerbals");
-                Console.WriteLine("     --warnings    | -w : Show warnings");
-                Console.WriteLine("     --repair      | -r : Repair docking problems, includes -w");
-                Console.WriteLine("     --select      | -s : Show numbers, select one by -s=<Sel>");
-                Console.WriteLine("     --multiselect | -m : Select all occurences by tag/name, includes -s");
-                Console.WriteLine("     --export      | -e : Export selection to stdout, needs -s=<Sel>, no -m");
-                Console.WriteLine("     --delete           : Delete selection, needs -s=<Sel> or -m=<Sel>");
+                Console.WriteLine("Opt: --tree             | -t : List tree");
+                Console.WriteLine("     --vessels          | -v : List vessels");
+                Console.WriteLine("     --kerbals          | -k : List kerbals");
+                Console.WriteLine("     --warnings         | -w : Show warnings");
+                Console.WriteLine("     --repair           | -r : Repair docking problems, includes -w");
+                Console.WriteLine("     --select           | -s : Show numbers, select one by -s=<Sel>");
+                Console.WriteLine("     --multiselect      | -m : Select all occurences by tag/name, includes -s");
+                Console.WriteLine("     Actions on selection, need -s=<Sel> or -m=<Sel>, only one of:");
+                Console.WriteLine("     --export=<file>         : Export selection, no -m, defaults <file> to stdout");
+                Console.WriteLine("     --import-replace=<file> : Import file to replace selection, no -m");
+                Console.WriteLine("     --import-before=<file>  : Import file as new before selection, no -m");
+                Console.WriteLine("     --import-after=<file>   : Import file as new after selection, no -m");
+                Console.WriteLine("     --delete                : Delete selection, -m is allowed");
                 Console.WriteLine("Sel: < number | tag-start | name-start >[/Sel]");
                 Console.WriteLine("     Only in tree you can select by tag or go deep into hierarchy");
                 Console.WriteLine();
@@ -359,12 +389,17 @@ namespace KML
                         // only delete or list attribs on the finally selected node
                         if (selectors.Count == 0)
                         {
-                            if (export)
+                            if (action == Action.Export)
                             {
                                 ExportNode(nodes[i]);
                                 break;
                             }
-                            else if (delete)
+                            else if (ActionIsImport(action))
+                            {
+                                ImportNode(nodes[i]);
+                                break;
+                            }
+                            else if (action == Action.Delete)
                             {
                                 DeleteNode(nodes[i]);
                                 // stop going deeper
@@ -438,12 +473,17 @@ namespace KML
                         WriteLine((select ? i.ToString() + ": " : "") + vessels[i].ToString());
                         foundselection = true;
                         // only delete on the finally selected node
-                        if (selectors.Count == 0 && export)
+                        if (selectors.Count == 0 && action == Action.Export)
                         {
                             ExportNode(vessels[i]);
                             break;
                         }
-                        else if (selectors.Count == 0 && delete)
+                        else if (selectors.Count == 0 && ActionIsImport(action))
+                        {
+                            ImportNode(vessels[i]);
+                            break;
+                        }
+                        else if (selectors.Count == 0 && action == Action.Delete)
                         {
                             DeleteNode(vessels[i]);
                             // stop going deeper
@@ -514,12 +554,17 @@ namespace KML
                         WriteLine((select ? i.ToString() + ": " : "") + kerbals[i].ToString());
                         foundselection = true;
                         // only delete on the finally selected node
-                        if (selectors.Count == 0 && export)
+                        if (selectors.Count == 0 && action == Action.Export)
                         {
                             ExportNode(kerbals[i]);
                             break;
                         }
-                        else if (selectors.Count == 0 && delete)
+                        else if (selectors.Count == 0 && ActionIsImport(action))
+                        {
+                            ImportNode(kerbals[i]);
+                            break;
+                        }
+                        else if (selectors.Count == 0 && action == Action.Delete)
                         {
                             DeleteNode(kerbals[i]);
                             // stop going deeper
@@ -580,12 +625,17 @@ namespace KML
                         WriteLine(part.ToString());
                         foundselection = true;
                         // only delete on the finally selected node
-                        if (selectors.Count == 0 && export)
+                        if (selectors.Count == 0 && action == Action.Export)
                         {
                             ExportNode(part);
                             break;
                         }
-                        else if (selectors.Count == 0 && delete)
+                        else if (selectors.Count == 0 && ActionIsImport(action))
+                        {
+                            ImportNode(part);
+                            break;
+                        }
+                        else if (selectors.Count == 0 && action == Action.Delete)
                         {
                             DeleteNode(part);
                             // stop going deeper
@@ -718,14 +768,116 @@ namespace KML
             var sr = new StringWriter();
             KmlItem.WriteItem(sr, node, 0);
             sr.Flush();
-            Console.Write(sr.GetStringBuilder().ToString());
+            if (actionfilename.Length > 0)
+            {
+                try
+                {
+                    File.WriteAllText(actionfilename, sr.GetStringBuilder().ToString());
+                    WriteLineColor("(export) " + actionfilename, ConsoleColor.Green);
+                }
+                catch (Exception e)
+                {
+                    WriteLineColor("(export failed) " + e.Message, ConsoleColor.Red);
+                }
+            }
+            else
+            {
+                Console.Write(sr.GetStringBuilder().ToString());
+            }
+        }
+
+        private bool ActionIsImport(Action action)
+        {
+            return action == Action.ImportReplace || action == Action.ImportBefore || action == Action.ImportAfter;
+        }
+
+        private void ImportNode(KmlNode node)
+        {
+            if (actionfilename.Length == 0 || !File.Exists(actionfilename))
+            {
+                WriteLineColor("(import file not found) " + actionfilename, ConsoleColor.Red);
+            }
+            else if (node.Parent == null)
+            {
+                // that would make no sense anyway, the import file would be a full save
+                WriteLineColor("(import on root node denied)", ConsoleColor.Red);
+            }
+            else
+            {
+                List<KmlItem> input = KmlItem.ParseFile(actionfilename);
+                if (input.Count == 0)
+                {
+                    WriteLineColor("(import data empty)", ConsoleColor.Red);
+                }
+                else if (action == Action.ImportReplace && input.Count > 1)
+                {
+                    WriteLineColor("(import contains more than one node)", ConsoleColor.Red);
+                }
+                else if (!input.All(x => x is KmlNode))
+                {
+                    WriteLineColor("(import data format error)", ConsoleColor.Red);
+                }
+                else if (action == Action.ImportBefore)
+                {
+                    foreach (var item in input)
+                    {
+                        node.Parent.InsertBefore(node, item);
+                        WriteLineColor("(import) " + item.ToString(), ConsoleColor.Green);
+                    }
+                    filechanged = true;
+                }
+                else if (action == Action.ImportAfter)
+                {
+                    // insert after node each time would reverse order
+                    KmlItem last = node;
+                    foreach (var item in input)
+                    {
+                        node.Parent.InsertAfter(last, item);
+                        last = item;
+                        WriteLineColor("(import) " + item.ToString(), ConsoleColor.Green);
+                    }
+                    filechanged = true;
+                }
+                else if (action == Action.ImportReplace)
+                {
+                    // Only special case to react on changed attribs is renaming assigned kerbals,
+                    // because that can be easily done in GUI and CLI should be able to do this as well.
+                    // Other problems caused by uninformed usage falls back on the user and is not handled in the GUI as well.
+
+                    // already checked that input.Count == 1
+                    if (node is KmlKerbal && input[0] is KmlKerbal)
+                    {
+                        KmlKerbal oldKerbal = (KmlKerbal)node;
+                        KmlKerbal newKerbal = (KmlKerbal)input[0];
+
+                        // rename the old one, so it will invoke Name_Changed event
+                        KmlAttrib name = oldKerbal.GetAttrib("name");
+                        if (name != null)
+                        {
+                            name.Value = newKerbal.Name;
+                        }
+                    }
+                    node.Parent.InsertBefore(node, input[0]);
+                    // raw deletion does not changes internals (assigned kerbals etc.)
+                    node.CanBeDeleted = true;
+                    if (node.DeleteRaw())
+                    {
+                        WriteLineColor("(import) " + input[0].ToString(), ConsoleColor.Green);
+                        filechanged = true;
+                    }
+                    else
+                    {
+                        WriteLineColor("(import failed)", ConsoleColor.Red);
+                    }
+                }
+            }
         }
 
         private void DeleteNode(KmlNode node)
         {
             if (!node.CanBeDeleted || node.Parent == null)
             {
-                WriteLineColor("(deletion restricted)", ConsoleColor.Red);
+                WriteLineColor("(deletion denied)", ConsoleColor.Red);
                 return;
             }
             else if (node is KmlKerbal)
@@ -760,9 +912,15 @@ namespace KML
             }
             // we are currently iterating over some list, keep the contained items constant
             node.Parent.InsertBefore(node, new KmlGhostNode("(deleted)"));
-            node.Delete();
-            filechanged = true;
-            WriteLineColor("(deleted)", ConsoleColor.Green);
+            if (node.Delete())
+            {
+                filechanged = true;
+                WriteLineColor("(deleted)", ConsoleColor.Green);
+            }
+            else
+            {
+                WriteLineColor("(deletion failed)", ConsoleColor.Red);
+            }
         }
     }
 }

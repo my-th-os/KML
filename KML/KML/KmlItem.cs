@@ -69,6 +69,26 @@ namespace KML
         }
 
         /// <summary>
+        /// Delete this node from its parent, no checks.
+        /// Result will be false if item was not in parent's lists or couldn't be deleted.
+        /// </summary>
+        /// <returns>True if item was deleted, false otherwise</returns>
+        public bool DeleteRaw()
+        {
+            if (Parent != null)
+            {
+                // parent will call the standard this.Delete() when parent != null
+                KmlNode parent = Parent;
+                RemapParent(this, null);
+                return parent.Delete(this);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Gets called before item is deleted.
         /// Deriving classes can perform needed actions here.
         /// </summary>
