@@ -17,7 +17,7 @@ namespace KML
         public bool Requested { get; private set; }
 
         private enum Mode { Info, Tree, Vessels, Kerbals, Warnings };
-        private enum Action { None, Export, ImportReplace, ImportBefore, ImportAfter, Delete };
+        private enum Action { None, Version, Export, ImportReplace, ImportBefore, ImportAfter, Delete };
 
         private Mode mode = Mode.Info;
         private bool repair = false;
@@ -67,6 +67,11 @@ namespace KML
                     {
                         switch (clean)
                         {
+                            case "version":
+                                // this is not an error but it forces the info page
+                                error = true;
+                                action = Action.Version;
+                                break;
                             case "tree":
                                 mode = Mode.Tree;
                                 break;
@@ -212,6 +217,12 @@ namespace KML
                 string copyright = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location).LegalCopyright.Replace("Copyright ", "");
 
                 Console.WriteLine("KML: Kerbal Markup Lister " + version + " " + copyright);
+                if (action == Action.Version)
+                {
+                    UpdateChecker.CheckUpdateCli();
+                    Console.WriteLine();
+                    return;
+                }
                 Console.WriteLine("Use: KML [Opt] <save-file>");
                 Console.WriteLine("Opt: --tree             | -t : List tree");
                 Console.WriteLine("     --vessels          | -v : List vessels");
@@ -220,6 +231,7 @@ namespace KML
                 Console.WriteLine("     --repair           | -r : Repair docking problems, includes -w");
                 Console.WriteLine("     --select           | -s : Show numbers, select one by -s=<Sel>");
                 Console.WriteLine("     --multiselect      | -m : Select all occurences by tag/name, includes -s");
+                Console.WriteLine("     --version               : Show version and check online for updates");
                 Console.WriteLine("     Actions on selection, need -s=<Sel> or -m=<Sel>, only one of:");
                 Console.WriteLine("     --export=<file>         : Export selection, no -m, defaults <file> to stdout");
                 Console.WriteLine("     --import-replace=<file> : Import file to replace selection, no -m");

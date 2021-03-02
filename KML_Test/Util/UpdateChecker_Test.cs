@@ -2,10 +2,10 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using KML;
 
-namespace KML_Test.GUI
+namespace KML_Test.Util
 {
     [TestClass]
-    public class GuiUpdateChecker_Test
+    public class UpdateChecker_Test
     {
         // This was the first version, any version should be greater
         private Version minVersion = Version.Parse("0.5");
@@ -13,7 +13,7 @@ namespace KML_Test.GUI
         [TestMethod]
         public void VersionFromAssembly()
         {
-            Version version = GuiUpdateChecker.GetAssemblyVersion();
+            Version version = UpdateChecker.GetAssemblyVersion();
 
             Assert.IsTrue(version.CompareTo(minVersion) > 0);
         }
@@ -21,14 +21,14 @@ namespace KML_Test.GUI
         [TestMethod]
         public void VersionFromGitHub()
         {
-            Tuple<Version, Uri> result = GuiUpdateChecker.GetGitHubLatest();
+            Tuple<Version, Uri> result = UpdateChecker.GetGitHubLatest();
             Version version = result.Item1;
             Uri uri = result.Item2;
 
             Assert.IsTrue(version.CompareTo(minVersion) > 0);
 
             // Typically the current code has newest or even newer version
-            Assert.IsTrue(version.CompareTo(GuiUpdateChecker.GetAssemblyVersion()) <= 0);
+            Assert.IsTrue(version.CompareTo(UpdateChecker.GetAssemblyVersion()) <= 0);
 
             Assert.AreNotEqual("", uri.ToString());
         }
