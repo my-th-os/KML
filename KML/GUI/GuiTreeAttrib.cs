@@ -34,6 +34,8 @@ namespace KML
         private MenuItem MenuDelete { get; set; }
         private MenuItem MenuCopy { get; set; }
         private MenuItem MenuPaste { get; set; }
+        private MenuItem MenuMoveUp { get; set; }
+        private MenuItem MenuMoveDown { get; set; }
 
         /// <summary>
         /// Creates a GuiTreeNode containing the given dataAttrib.
@@ -70,6 +72,14 @@ namespace KML
                     if (MenuPaste != null && MenuPaste.IsEnabled)
                         AttribPasteBefore_Click(MenuPaste, null);
                     break;
+                case "MoveUp":
+                    if (MenuMoveUp != null && MenuMoveUp.IsEnabled)
+                        AttribMoveUp_Click(MenuMoveUp, null);
+                    break;
+                case "MoveDown":
+                    if (MenuMoveDown != null && MenuMoveDown.IsEnabled)
+                        AttribMoveDown_Click(MenuMoveDown, null);
+                    break;
             }
         }
 
@@ -94,6 +104,28 @@ namespace KML
 
             // So far it's the default Menu, wich should not be shown if no items follow
             int defaultMenuCount = menu.Items.Count;
+
+            MenuMoveUp = new MenuItem();
+            MenuMoveUp.DataContext = DataAttrib;
+            MenuMoveUp.Icon = Icons.CreateImage(Icons.Up);
+            MenuMoveUp.Header = "Move up";
+            MenuMoveUp.InputGestureText = "[Alt+Up]";
+            MenuMoveUp.Click += AttribMoveUp_Click;
+            MenuMoveUp.IsEnabled = DataAttrib.Parent != null;
+            MenuMoveUp.Tag = "Attrib.MoveUp";
+            menu.Items.Add(MenuMoveUp);
+
+            MenuMoveDown = new MenuItem();
+            MenuMoveDown.Icon = Icons.CreateImage(Icons.Down);
+            MenuMoveDown.DataContext = DataAttrib;
+            MenuMoveDown.Header = "Move down";
+            MenuMoveDown.InputGestureText = "[Alt+Down]";
+            MenuMoveDown.Click += AttribMoveDown_Click;
+            MenuMoveDown.IsEnabled = DataAttrib.Parent != null;
+            MenuMoveDown.Tag = "Attrib.MoveDown";
+            menu.Items.Add(MenuMoveDown);
+
+            menu.Items.Add(new Separator());
 
             MenuItem m = new MenuItem();
             m.DataContext = DataAttrib;
@@ -161,7 +193,25 @@ namespace KML
                     MenuItem m = (MenuItem)o;
                     if (m.Tag != null && (m.Tag as string).Equals("Clipboard.Paste"))
                         m.IsEnabled = Clipboard.ContainsText(TextDataFormat.UnicodeText);
+                    else if (m.Tag != null && (m.Tag as string).Equals("Attrib.MoveUp"))
+                        m.IsEnabled = AttribCanMoveUp(DataAttrib);
+                    else if (m.Tag != null && (m.Tag as string).Equals("Attrib.MoveDown"))
+                        m.IsEnabled = AttribCanMoveDown(DataAttrib);
+                    if (m.Icon != null && menu.Items[0] != m)
+                    {
+                        (m.Icon as Image).Opacity = m.IsEnabled ? 1.0 : 0.3;
+                    }
                 }
+        }
+
+        private bool AttribCanMoveUp(KmlAttrib attrib)
+        {
+            return attrib.Parent != null && attrib.Parent.Attribs.IndexOf(attrib) > 0;
+        }
+
+        private bool AttribCanMoveDown(KmlAttrib attrib)
+        {
+            return attrib.Parent != null && attrib.Parent.Attribs.IndexOf(attrib) < attrib.Parent.Attribs.Count - 1;
         }
 
         private void ContextMenu_Opened(object sender, RoutedEventArgs e)
@@ -259,5 +309,34 @@ namespace KML
             }
         }
 
+        private void AttribMoveUp_Click(object sender, RoutedEventArgs e)
+        {
+            KmlAttrib attrib = ((sender as MenuItem).DataContext as KmlAttrib);
+            if (AttribCanMoveUp(attrib))
+            {
+                int i = attrib.Parent.Attribs.IndexOf(attrib);
+                KmlAttrib other = attrib.Parent.Attribs[i - 1];
+                if (attrib.Parent.SwapAttribs(attrib, other))
+                {
+                    // focus changed when list is redrawn, select attrib again
+                    GuiTabsManager.GetCurrent().TreeManager.Select(attrib);
+                }
+            }
+        }
+
+        private void AttribMoveDown_Click(object sender, RoutedEventArgs e)
+        {
+            KmlAttrib attrib = ((sender as MenuItem).DataContext as KmlAttrib);
+            if (AttribCanMoveDown(attrib))
+            {
+                int i = attrib.Parent.Attribs.IndexOf(attrib);
+                KmlAttrib other = attrib.Parent.Attribs[i + 1];
+                if (attrib.Parent.SwapAttribs(attrib, other))
+                {
+                    // focus changed when list is redrawn, select attrib again
+                    GuiTabsManager.GetCurrent().TreeManager.Select(attrib);
+                }
+            }
+        }
     }
 }

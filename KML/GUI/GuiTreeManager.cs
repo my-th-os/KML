@@ -454,8 +454,11 @@ namespace KML
                     {
                         if (attrib.DataAttrib == item)
                         {
+                            TreeDetails.ScrollIntoView(attrib);
                             attrib.IsSelected = true;
-                            TreeDetails.Focus();
+                            // when only focusing TreeDetails, moving with arrow keys resets to first item
+                            // TreeDetails.Focus();
+                            attrib.Focus();
                         }
                     }
                 }

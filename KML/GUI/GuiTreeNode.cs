@@ -44,6 +44,7 @@ namespace KML
         private bool TemplateWithImage { get; set; }
         private bool TemplateWithText { get; set; }
         private bool TemplateWithMenu { get; set; }
+        private bool TemplateWithMoveMenu { get; set; }
         private bool TemplateWithAddMenu { get; set; }
         private bool TemplateWithDeleteMenu { get; set; }
 
@@ -52,6 +53,8 @@ namespace KML
         private MenuItem MenuCopy { get; set; }
         private MenuItem MenuPaste { get; set; }
         private MenuItem MenuSwitchView { get; set; }
+        private MenuItem MenuMoveUp { get; set; }
+        private MenuItem MenuMoveDown { get; set; }
 
         private static GuiIcons Icons = new GuiIcons16();
 
@@ -70,16 +73,18 @@ namespace KML
         /// <param name="withImage">Do you want an Image in your tree node?</param>
         /// <param name="withText">Do you want text in your tree node?</param>
         /// <param name="withMenu">Do you want a context menu for your tree node?</param>
+        /// <param name="withMoveMenu">Do you want a context menu for moving nodes up/down?</param>
         /// <param name="withAddMenu">Do you want a context menu for adding nodes?</param>
         /// <param name="withDeleteMenu">Do you want a context menu for deletion of this tree node?</param>
         /// <param name="withChildren">Do you want tree children to expand under this node?</param>
         /// <param name="withMouseEffect">Do you want the node be highlighted on mouse over?</param>
-        public GuiTreeNode(KmlNode dataNode, bool withImage, bool withText, bool withMenu, bool withAddMenu, bool withDeleteMenu, bool withChildren, bool withMouseEffect = true)
+        public GuiTreeNode(KmlNode dataNode, bool withImage, bool withText, bool withMenu, bool withMoveMenu, bool withAddMenu, bool withDeleteMenu, bool withChildren, bool withMouseEffect = true)
         {
             DataNode = dataNode;
             TemplateWithImage = withImage;
             TemplateWithText = withText;
             TemplateWithMenu = withMenu;
+            TemplateWithMoveMenu = withMoveMenu;
             TemplateWithAddMenu = withAddMenu;
             TemplateWithDeleteMenu = withDeleteMenu;
 
@@ -105,7 +110,7 @@ namespace KML
             // Build a context menu with tools
             if (withMenu)
             {
-                BuildContextMenu(withAddMenu, withDeleteMenu);
+                BuildContextMenu(withMoveMenu, withAddMenu, withDeleteMenu);
             }
         }
 
@@ -114,7 +119,7 @@ namespace KML
         /// </summary>
         /// <param name="dataNode">The KmlNode to contain</param>
         public GuiTreeNode(KmlNode dataNode)
-            : this (dataNode, true, true, true, true, true, true)
+            : this (dataNode, true, true, true, true, true, true, true, true)
         {
         }
 
@@ -165,6 +170,14 @@ namespace KML
                 case "SwitchView":
                     if (MenuSwitchView != null && MenuSwitchView.IsEnabled)
                         SwitchView_Click(MenuSwitchView, null);
+                    break;
+                case "MoveUp":
+                    if (MenuMoveUp != null && MenuMoveUp.IsEnabled)
+                        NodeMoveUp_Click(MenuMoveUp, null);
+                    break;
+                case "MoveDown":
+                    if (MenuMoveDown != null && MenuMoveDown.IsEnabled)
+                        NodeMoveDown_Click(MenuMoveDown, null);
                     break;
             }
         }
@@ -430,14 +443,20 @@ namespace KML
             return prog;
         }
 
-        private void BuildContextMenu(bool withAddMenu, bool withDeleteMenu)
+        private void BuildContextMenu(bool withMoveMenu, bool withAddMenu, bool withDeleteMenu)
         {
+            string shortHeader = DataNode.ToString();
+            if (shortHeader.Length > 40)
+            {
+                shortHeader = shortHeader.Substring(0, 37) + "...";
+            }
+
             ContextMenu menu = new ContextMenu();
             MenuItem title = new MenuItem();
             Image img = GenerateImage(DataNode);
             img.Margin = new Thickness(0);
             title.Icon = img;
-            title.Header = DataNode.ToString();
+            title.Header = shortHeader; // DataNode.ToString();
             title.IsEnabled = false;
             title.Background = new SolidColorBrush(Colors.Black);
             title.BorderThickness = new Thickness(1);
@@ -523,7 +542,7 @@ namespace KML
                 m = new MenuItem();
                 m.DataContext = DataNode;
                 m.Icon = Icons.CreateImage(Icons.VesselSpaceObject);
-                m.Header = "Send to _low kerbin orbit";
+                m.Header = "Send to _low kerbin orbit...";
                 m.Click += VesselToLKO_Click;
                 menu.Items.Add(m);
 
@@ -629,7 +648,7 @@ namespace KML
                     m.DataContext = DataNode;
                     img = Icons.CreateImage(Icons.VesselSpaceObject);
                     m.Icon = img;
-                    m.Header = "Send _home to astronaut complex";
+                    m.Header = "Send _home to astronaut complex...";
                     m.Click += KerbalSendHome_Click;
                     menu.Items.Add(m);
                 }
@@ -669,6 +688,31 @@ namespace KML
 
             if (menu.Items.Count > defaultMenuCount)
             {
+                menu.Items.Add(new Separator());
+            }
+
+            if (withMoveMenu)
+            {
+                MenuMoveUp = new MenuItem();
+                MenuMoveUp.DataContext = DataNode;
+                MenuMoveUp.Icon = Icons.CreateImage(Icons.Up);
+                MenuMoveUp.Header = "Move up";
+                MenuMoveUp.InputGestureText = "[Alt+Up]";
+                MenuMoveUp.Click += NodeMoveUp_Click;
+                MenuMoveUp.IsEnabled = DataNode.Parent != null;
+                MenuMoveUp.Tag = "Node.MoveUp";
+                menu.Items.Add(MenuMoveUp);
+
+                MenuMoveDown = new MenuItem();
+                MenuMoveDown.Icon = Icons.CreateImage(Icons.Down);
+                MenuMoveDown.DataContext = DataNode;
+                MenuMoveDown.Header = "Move down";
+                MenuMoveDown.InputGestureText = "[Alt+Down]";
+                MenuMoveDown.Click += NodeMoveDown_Click;
+                MenuMoveDown.IsEnabled = DataNode.Parent != null;
+                MenuMoveDown.Tag = "Node.MoveDown";
+                menu.Items.Add(MenuMoveDown);
+
                 menu.Items.Add(new Separator());
             }
 
@@ -765,7 +809,7 @@ namespace KML
                     if (o is MenuItem)
                     {
                         MenuItem m = (MenuItem)o;
-                        if (!m.IsEnabled && m.Icon != null)
+                        if (!m.IsEnabled && m.Icon != null && menu.Items[0] != m)
                         {
                             (m.Icon as Image).Opacity = 0.3;
                         }
@@ -782,8 +826,16 @@ namespace KML
                     MenuItem m = (MenuItem)o;
                     if (m.Tag != null && (m.Tag as string).Equals("Clipboard.Paste"))
                         m.IsEnabled = Clipboard.ContainsText(TextDataFormat.UnicodeText);
-                    if (m.Tag != null && (m.Tag as string).Equals("Clipboard.PasteBefore"))
+                    else if (m.Tag != null && (m.Tag as string).Equals("Clipboard.PasteBefore"))
                         m.IsEnabled = DataNode.Parent != null && Clipboard.ContainsText(TextDataFormat.UnicodeText);
+                    else if (m.Tag != null && (m.Tag as string).Equals("Node.MoveUp"))
+                        m.IsEnabled = NodeCanMoveUp(DataNode);
+                    else if (m.Tag != null && (m.Tag as string).Equals("Node.MoveDown"))
+                        m.IsEnabled = NodeCanMoveDown(DataNode);
+                    if (m.Icon != null && menu.Items[0] != m)
+                    {
+                        (m.Icon as Image).Opacity = m.IsEnabled ? 1.0 : 0.3;
+                    }
                 }
         }
 
@@ -949,6 +1001,20 @@ namespace KML
             {
                 return partnames;
             }
+        }
+
+        private bool NodeCanMoveUp(KmlNode node)
+        {
+            int i;
+            return node.Parent != null && !(node is KmlPart) && (i = node.Parent.Children.IndexOf(node)) > 0 &&
+                !(node.Parent.Children[i - 1] is KmlPart);
+        }
+
+        private bool NodeCanMoveDown(KmlNode node)
+        {
+            int i;
+            return node.Parent != null && !(node is KmlPart) && (i = node.Parent.Children.IndexOf(node)) < node.Parent.Children.Count - 1 &&
+                !(node.Parent.Children[i + 1] is KmlPart);
         }
 
         private void GuiTreeNode_Expanded(object sender, RoutedEventArgs e)
@@ -1257,6 +1323,36 @@ namespace KML
             }
         }
 
+        private void NodeMoveUp_Click(object sender, RoutedEventArgs e)
+        {
+            KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
+            if (NodeCanMoveUp(node))
+            {
+                int i = node.Parent.Children.IndexOf(node);
+                KmlNode other = node.Parent.Children[i - 1];
+                if (node.Parent.SwapChildren(node, other))
+                {
+                    // focus changed when list is redrawn, select node again
+                    GuiTabsManager.GetCurrent().TreeManager.Select(node);
+                }
+            }
+        }
+
+        private void NodeMoveDown_Click(object sender, RoutedEventArgs e)
+        {
+            KmlNode node = ((sender as MenuItem).DataContext as KmlNode);
+            if (NodeCanMoveDown(node))
+            {
+                int i = node.Parent.Children.IndexOf(node);
+                KmlNode other = node.Parent.Children[i + 1];
+                if (node.Parent.SwapChildren(node, other))
+                {
+                    // focus changed when list is redrawn, select node again
+                    GuiTabsManager.GetCurrent().TreeManager.Select(node);
+                }
+            }
+        }
+
         void DataNode_ChildrenChanged(object sender, RoutedEventArgs e)
         {
             // If not loaded yet, they will be loaded correctly when expanded
@@ -1280,7 +1376,7 @@ namespace KML
         private void DataNode_ToStringChanged(object sender, RoutedEventArgs e)
         {
             AssignTemplate(TemplateWithImage, TemplateWithText);
-            BuildContextMenu(TemplateWithAddMenu, TemplateWithDeleteMenu);
+            BuildContextMenu(TemplateWithMoveMenu, TemplateWithAddMenu, TemplateWithDeleteMenu);
             if (Parent is GuiVesselsPartGraphNode)
             {
                 GuiVesselsPartGraphNode pgn = (GuiVesselsPartGraphNode)Parent;

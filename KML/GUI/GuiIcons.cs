@@ -24,6 +24,11 @@ namespace KML
         public Image Delete = new Image();
 
         /// <summary>
+        /// The icon for menu items to move things down.
+        /// </summary>
+        public Image Down = new Image();
+
+        /// <summary>
         /// The icon for items in the warnings list with type error.
         /// </summary>
         public Image Error = new Image();
@@ -107,6 +112,11 @@ namespace KML
         /// by a progress bar to display the current amount.
         /// </summary>
         public Image Resource = new Image();
+
+        /// <summary>
+        /// The icon for menu items to move things up.
+        /// </summary>
+        public Image Up = new Image();
 
         /// <summary>
         /// The icon for vessels in the vessels list or the KML tree.

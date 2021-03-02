@@ -18,6 +18,7 @@ namespace KML
             Add.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Add16.png"));
             Clipboard.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Clipboard16.png"));
             Delete.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Delete16.png"));
+            Down.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Down16.png"));
             Error.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Error16.png"));
             Ghost.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Document16.png"));
             Kerbal.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Astronaut16.png"));
@@ -34,6 +35,7 @@ namespace KML
             PartGrapple.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/GrapplingHook16.png"));
             PartKasCPort.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/KasCPort16.png"));
             Resource.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Battery16.png"));
+            Up.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Up16.png"));
             Vessel.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/ApolloCsm16.png"));
             VesselBase.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Base16.png"));
             VesselDebris.Source = new BitmapImage(new Uri("pack://application:,,,/KML;component/Images/Trash16.png"));

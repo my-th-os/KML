@@ -549,5 +549,15 @@ namespace KML
         {
             TabsManager.CommandExec("Right");
         }
+
+        private void CommandMoveUp_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            TabsManager.CommandExec("MoveUp");
+        }
+
+        private void CommandMoveDown_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            TabsManager.CommandExec("MoveDown");
+        }
     }
 }

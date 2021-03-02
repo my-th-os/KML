@@ -41,7 +41,7 @@ namespace KML
         public GuiVesselsNode(KmlVessel dataVessel)
         {
             DataVessel = dataVessel;
-            BaseGuiNode = new GuiTreeNode(DataVessel, true, true, true, false, true, false);
+            BaseGuiNode = new GuiTreeNode(DataVessel, true, true, true, false, false, true, false);
 
             AssignTemplate();
             BuildContextMenu();

@@ -71,7 +71,7 @@ namespace KML
             {
                 Orientation = System.Windows.Controls.Orientation.Horizontal;
 
-                Icon = new GuiTreeNode(part, true, false, true, false, true, false, false);
+                Icon = new GuiTreeNode(part, true, false, true, false, false, true, false, false);
                 Icon.ToolTip = part.ToString();
                 Icon.Margin = new System.Windows.Thickness(-16, 0, 0, 0);
                 // GuiTreeNode gets selected and drawn highlighted after using its context menu

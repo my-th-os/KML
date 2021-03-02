@@ -25,7 +25,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>0.8.2.%2a</ApplicationVersion>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -338,9 +338,15 @@
     <Resource Include="Images\Paste16.png" />
     <Resource Include="Images\Paste48.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Down16.png" />
+    <Resource Include="Images\Down48.png" />
+    <Resource Include="Images\Up16.png" />
+    <Resource Include="Images\Up48.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if $(ConfigurationName) == Release "C:\Program Files\7-Zip\7z.exe" a "$(SolutionDir)$(ProjectName).zip" "$(TargetPath)"
+    <PostBuildEvent>if $(ConfigurationName) == Release "C:\Program Files\7-Zip\7z.exe" a "$(SolutionDir)$(ProjectName)_Windows.zip" "$(TargetPath)"
 copy /Y "$(ProjectDir)CHANGELOG.txt" "$(SolutionDir)"
 copy /Y "$(ProjectDir)README.md" "$(SolutionDir)"</PostBuildEvent>
   </PropertyGroup>

@@ -227,7 +227,7 @@ namespace KML
                     TreeViewItem node;
                     if (item is KmlNode)
                     {
-                        node = new GuiTreeNode((KmlNode)item, true, true, true, false, true, false);
+                        node = new GuiTreeNode((KmlNode)item, true, true, true, false, false, true, false);
                     }
                     else
                     {

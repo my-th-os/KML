@@ -95,6 +95,8 @@
         <RoutedUICommand x:Key="cmdEscape"/>
         <RoutedUICommand x:Key="cmdLeft"/>
         <RoutedUICommand x:Key="cmdRight"/>
+        <RoutedUICommand x:Key="cmdMoveUp"/>
+        <RoutedUICommand x:Key="cmdMoveDown"/>
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="{StaticResource cmdOpen}" Executed="ButtonOpen_Click"/>
@@ -112,6 +114,8 @@
         <CommandBinding Command="{StaticResource cmdEscape}" Executed="CommandEscape_Executed"/>
         <CommandBinding Command="{StaticResource cmdLeft}" Executed="CommandLeft_Executed"/>
         <CommandBinding Command="{StaticResource cmdRight}" Executed="CommandRight_Executed"/>
+        <CommandBinding Command="{StaticResource cmdMoveUp}" Executed="CommandMoveUp_Executed"/>
+        <CommandBinding Command="{StaticResource cmdMoveDown}" Executed="CommandMoveDown_Executed"/>
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Key="F1" Command="{StaticResource cmdHelp}"/>
@@ -129,6 +133,8 @@
         <KeyBinding Key="Escape" Command="{StaticResource cmdEscape}"/>
         <KeyBinding Key="Left" Command="{StaticResource cmdLeft}"/>
         <KeyBinding Key="Right" Command="{StaticResource cmdRight}"/>
+        <KeyBinding Key="Up" Modifiers="Alt" Command="{StaticResource cmdMoveUp}"/>
+        <KeyBinding Key="Down" Modifiers="Alt" Command="{StaticResource cmdMoveDown}"/>
     </Window.InputBindings>
     <Grid>
         <StackPanel VerticalAlignment="Top">

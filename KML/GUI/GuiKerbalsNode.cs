@@ -40,7 +40,7 @@ namespace KML
         public GuiKerbalsNode(KmlKerbal dataKerbal)
         {
             DataKerbal = dataKerbal;
-            BaseGuiNode = new GuiTreeNode(DataKerbal, true, true, true, false, true, false);
+            BaseGuiNode = new GuiTreeNode(DataKerbal, true, true, true, false, false, true, false);
 
             AssignTemplate();
             BuildContextMenu();

@@ -323,6 +323,54 @@ namespace KML
             Name = "";
         }
 
+        /// <summary>
+        /// Swaps appearance in lists of two attributes.
+        /// </summary>
+        /// <param name="attrib1">One attribute to swap</param>
+        /// <param name="attrib2">The other attribute to swap</param>
+        public bool SwapAttribs(KmlAttrib attrib1, KmlAttrib attrib2)
+        {
+            int i = Attribs.IndexOf(attrib1);
+            int j = Attribs.IndexOf(attrib2);
+            // there would be more work to do for parts, restricted for now
+            if (i >= 0 && j >= 0)
+            {
+                Attribs[i] = attrib2;
+                Attribs[j] = attrib1;
+                i = AllItems.IndexOf(attrib1);
+                j = AllItems.IndexOf(attrib2);
+                AllItems[i] = attrib2;
+                AllItems[j] = attrib1;
+                InvokeAttribChanged();
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Swaps appearance in lists of two child nodes.
+        /// </summary>
+        /// <param name="child1">One child node to swap</param>
+        /// <param name="child2">The other child node to swap</param>
+        public bool SwapChildren(KmlNode child1, KmlNode child2)
+        {
+            int i = Children.IndexOf(child1);
+            int j = Children.IndexOf(child2);
+            // there would be more work to do for parts, restricted for now
+            if (i >= 0 && j >= 0 && !(child1 is KmlPart) && !(child2 is KmlPart))
+            {
+                Children[i] = child2;
+                Children[j] = child1;
+                i = AllItems.IndexOf(child1);
+                j = AllItems.IndexOf(child2);
+                AllItems[i] = child2;
+                AllItems[j] = child1;
+                InvokeChildrenChanged();
+                return true;
+            }
+            return false;
+        }
+
         private KmlAttrib GetNextSibling(KmlAttrib attrib)
         {
             int index = Attribs.IndexOf(attrib);

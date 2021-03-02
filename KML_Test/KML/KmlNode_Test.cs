@@ -249,6 +249,22 @@ namespace KML_Test.KML
         }
 
         [TestMethod]
+        public void AttribSwap()
+        {
+            int att1 = data.Node1.Attribs.IndexOf(data.Node1Attrib1);
+            int all1 = data.Node1.AllItems.IndexOf(data.Node1Attrib1);
+            int att2 = data.Node1.Attribs.IndexOf(data.Node1Attrib2);
+            int all2 = data.Node1.AllItems.IndexOf(data.Node1Attrib2);
+
+            Assert.IsTrue(data.Node1.SwapAttribs(data.Node1Attrib1, data.Node1Attrib2));
+
+            Assert.AreEqual(data.Node1Attrib1, data.Node1.Attribs[att2]);
+            Assert.AreEqual(data.Node1Attrib1, data.Node1.AllItems[all2]);
+            Assert.AreEqual(data.Node1Attrib2, data.Node1.Attribs[att1]);
+            Assert.AreEqual(data.Node1Attrib2, data.Node1.AllItems[all1]);
+        }
+
+        [TestMethod]
         public void ChildAdd()
         {
             Assert.AreEqual(data.Node1, data.Node1Child1.Parent);
@@ -493,6 +509,22 @@ namespace KML_Test.KML
             Assert.AreEqual("non", nonsense.Tag);
             Assert.AreEqual("sense", nonsense.Name);
             Assert.AreEqual(6, root.Children.Count);
+        }
+
+        [TestMethod]
+        public void ChildSwap()
+        {
+            int chi1 = data.Root1.Children.IndexOf(data.Node1);
+            int all1 = data.Root1.AllItems.IndexOf(data.Node1);
+            int chi2 = data.Root1.Children.IndexOf(data.Node2);
+            int all2 = data.Root1.AllItems.IndexOf(data.Node2);
+
+            Assert.IsTrue(data.Root1.SwapChildren(data.Node1, data.Node2));
+
+            Assert.AreEqual(data.Node1, data.Root1.Children[chi2]);
+            Assert.AreEqual(data.Node1, data.Root1.AllItems[all2]);
+            Assert.AreEqual(data.Node2, data.Root1.Children[chi1]);
+            Assert.AreEqual(data.Node2, data.Root1.AllItems[all1]);
         }
 
         [TestMethod]

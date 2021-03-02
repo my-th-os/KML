@@ -46,7 +46,7 @@ namespace KML
             }
             if (node != null)
             {
-                BaseGuiNode = new GuiTreeNode(node, true, true, true, false, false, false);
+                BaseGuiNode = new GuiTreeNode(node, true, true, true, false, false, false, false);
             }
 
             AssignTemplate();
