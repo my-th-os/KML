@@ -4,6 +4,7 @@ Version 0.9 - in progress
 - separate executable with only CLI but Mono compatible (Linux, Mac)
 - no warning when kerbal EVA uses external command seat - thanks to Krazy1
 - change position of nodes (except parts) and attributes
+- fixed scrolling in filtered lists and other minor GUI issues
 - tested with KSP 1.11.1
 
 Version 0.8.2 - 2019-08-04

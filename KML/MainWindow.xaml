@@ -273,7 +273,7 @@
                         </ToggleButton>
                         <Label x:Name="VesselsCount" Height="16" Padding="0, 0" Margin="3, 0, 3, 0">(0 Vessels)</Label>
                     </StackPanel>
-                    <ListView x:Name="VesselsList" Margin="0,20,0,0" Background="LightGray" SelectionMode="Single" ItemContainerStyle="{StaticResource ListViewItemStyleFixed}"/>
+                    <ListView x:Name="VesselsList" Margin="0,20,0,0" Background="LightGray" SelectionMode="Single" ScrollViewer.CanContentScroll="False" ItemContainerStyle="{StaticResource ListViewItemStyleFixed}"/>
                     <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="White"/>
                     <Border Grid.Column="2" BorderThickness="1" BorderBrush="Gray" Background="LightGray">
                         <ScrollViewer HorizontalScrollBarVisibility="Visible">
@@ -316,7 +316,7 @@
                         </ToggleButton>
                         <Label x:Name="KerbalsCount" Height="16" Padding="0, 0" Margin="3, 0, 3, 0">(0 Kerbals)</Label>
                     </StackPanel>
-                    <ListView x:Name="KerbalsList" Background="LightGray" Margin="0,20,0,0" SelectionMode="Single" ItemContainerStyle="{StaticResource ListViewItemStyleFixed}"/>
+                    <ListView x:Name="KerbalsList" Background="LightGray" Margin="0,20,0,0" SelectionMode="Single" ScrollViewer.CanContentScroll="False" ItemContainerStyle="{StaticResource ListViewItemStyleFixed}"/>
                     <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="White"/>
                     <ListView x:Name="KerbalsDetails" Grid.Column="2" IsSynchronizedWithCurrentItem="True" Background="LightGray" SelectionMode="Single">
                         <ListView.ItemContainerStyle>

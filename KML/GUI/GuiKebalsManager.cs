@@ -213,6 +213,8 @@ namespace KML
                     // Force a refreh, by causing SelectionChanged to invoke
                     KerbalsList.SelectedItem = null;
                     KerbalsList.SelectedItem = node;
+                    // We definitely want to see that one, even if filter settings hide it
+                    node.Visibility = Visibility.Visible;
                     KerbalsList.ScrollIntoView(node);
                     Focus();
                     if (item is KmlAttrib)
@@ -252,7 +254,9 @@ namespace KML
         /// </summary>
         public void UpdateVisibility()
         {
-            // TODO GuiKebalsManager.UpdateVisibility(): Strange behaviour with scrolling and focus, maybe I should not mess with visibility but rebuild the complete list
+            // Default ListView settings show strange behaviour with scrolling and focus when visibility=collapsed.
+            // Didn't want to rebuild the complete list.
+            // Fixed by: https://marlongrech.wordpress.com/2008/11/18/fix-scrollbars-for-a-dynamic-layout-in-a-listviewlistbox/
 
             int oldSelectedIndex = KerbalsList.SelectedIndex;
             int count = 0;
