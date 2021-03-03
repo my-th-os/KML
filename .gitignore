@@ -190,5 +190,5 @@ ModelManifest.xml
 
 # Custom
 .vs/
-/KML/Doc/Thumbs.db
-/KML/Images/Thumbs.db
+Thumbs.db
+*.zip
