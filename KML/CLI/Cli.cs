@@ -704,12 +704,28 @@ namespace KML
                 // dock may need repair only once, but may appear multiple times in warnings
                 // here we only keep sources if we do plan to repair and show a repaired message in any case
                 KmlItem source = null;
-                if (msg.Source is KmlPartDock)
+
+                // maybe the message refers to an attrib, then we want to repair the parent node
+                KmlItem testsource = msg.Source;
+                if (!(testsource is KmlNode))
                 {
-                    KmlPartDock dock = (KmlPartDock)msg.Source;
+                    testsource = testsource.Parent;
+                }
+
+                if (testsource is KmlPartDock)
+                {
+                    KmlPartDock dock = (KmlPartDock)testsource;
                     if (dock.NeedsRepair)
                     {
-                        source = msg.Source;
+                        source = testsource;
+                    }
+                }
+                else if (testsource is KmlContract)
+                {
+                    KmlContract contract = (KmlContract)testsource;
+                    if (contract.NeedsRepair)
+                    {
+                        source = testsource;
                     }
                 }
                 warnings.Add(new Tuple<string, KmlItem>(msg.ToString(), source));
@@ -743,6 +759,19 @@ namespace KML
                     }
                     // show repaired info in any case
                     WriteLineColor("(repaired) " + dock.ToString(), ConsoleColor.Green);
+                }
+                else if (repair && warning.Item2 is KmlContract)
+                {
+                    // this is now a contract source that needed repair in the first iteration
+                    KmlContract contract = (KmlContract)warning.Item2;
+                    // repair only once
+                    if (contract.NeedsRepair)
+                    {
+                        contract.Repair();
+                        filechanged = true;
+                    }
+                    // show repaired info in any case
+                    WriteLineColor("(repaired) " + contract.ToString(), ConsoleColor.Green);
                 }
             }
 

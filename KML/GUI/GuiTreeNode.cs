@@ -384,6 +384,10 @@ namespace KML
             {
                 image.Source = Icons.Resource.Source;
             }
+            else if (node is KmlContract)
+            {
+                image.Source = Icons.Clipboard.Source;
+            }
             else if (node is KmlKerbal)
             {
                 KmlKerbal kerbal = (KmlKerbal)node;
@@ -445,7 +449,7 @@ namespace KML
 
         private void BuildContextMenu(bool withMoveMenu, bool withAddMenu, bool withDeleteMenu)
         {
-            string shortHeader = DataNode.ToString();
+            string shortHeader = DataNode.ToString().Replace("_", "__");
             if (shortHeader.Length > 40)
             {
                 shortHeader = shortHeader.Substring(0, 37) + "...";
@@ -521,6 +525,25 @@ namespace KML
                         menu.Items.Add(m);
                     }
                 }
+            }
+            else if (DataNode is KmlContract)
+            {
+                nodeName = "contract";
+                KmlContract contract = (KmlContract)DataNode;
+                if (contract.NeedsRepair)
+                {
+                    if (menu.Items.Count > defaultMenuCount)
+                    {
+                        menu.Items.Add(new Separator());
+                    }
+                    MenuItem m = new MenuItem();
+                    m.DataContext = DataNode;
+                    m.Icon = Icons.CreateImage(Icons.Clipboard);
+                    m.Header = "Re_pair contract parameters";
+                    m.Click += ContractRepair_Click;
+                    menu.Items.Add(m);
+                }
+
             }
             else if (DataNode is KmlVessel)
             {
@@ -1051,6 +1074,17 @@ namespace KML
             {
                 manager.Select(dock.Parent);
             }
+        }
+
+        private void ContractRepair_Click(object sender, RoutedEventArgs e)
+        {
+            KmlContract contract = (sender as MenuItem).DataContext as KmlContract;
+            contract.Repair();
+            DlgMessage.ShowAndClear(Syntax.Messages);
+
+            // Possibly need to update the details ListView, so force Selected event to be fired
+            IsSelected = false;
+            IsSelected = true;
         }
 
         private void VesselToLKO_Click(object sender, RoutedEventArgs e)

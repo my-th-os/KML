@@ -42,6 +42,10 @@ namespace KML_Test.Data
         public KmlPart Vessel2Part1 { get; private set; }
         public KmlKerbal Kerbal1 { get; private set; }
         public KmlKerbal Kerbal2 { get; private set; }
+        public KmlNode Contracts { get; private set; }
+        public KmlContract Contract1 { get; private set; }
+        public KmlContract Contract2 { get; private set; }
+        public KmlContract Contract3 { get; private set; }
 
         public TestData()
         {
@@ -88,6 +92,10 @@ namespace KML_Test.Data
             Add(game, Flightstate);
             Roster = NewNode("ROSTER");
             Add(game, Roster);
+            KmlNode contractSystem = NewNode("SCENARIO", "ContractSystem");
+            Add(game, contractSystem);
+            Contracts = NewNode("CONTRACTS");
+            Add(contractSystem, Contracts);
 
             Kerbal1 = NewNode("KERBAL", "Kerbal1") as KmlKerbal;
             Roster.Add(Kerbal1);
@@ -180,6 +188,24 @@ namespace KML_Test.Data
             Add(Vessel1Part8, NewAttrib("srfN", "srfAttach, 1"));
             Add(Vessel1, Vessel1Part8);
             Add(Flightstate, Vessel1);
+
+            Contract1 = NewNode("CONTRACT") as KmlContract;
+            Contracts.Add(Contract1);
+            Add(Contract1, NewAttrib("state", "Active"));
+            Add(Contract1, NewAttrib("type", "ExplorationContract"));
+            Add(Contract1, NewAttrib("agent", "Ultimate Testing Inc."));
+
+            Contract2 = NewNode("CONTRACT") as KmlContract;
+            Contracts.Add(Contract2);
+            Add(Contract2, NewAttrib("state", "Offered"));
+            Add(Contract2, NewAttrib("type", "SurveyContract"));
+            Add(Contract2, NewAttrib("agent", "Bug Hunters"));
+
+            Contract3 = NewNode("CONTRACT_FINISHED") as KmlContract;
+            Contracts.Add(Contract3);
+            Add(Contract3, NewAttrib("state", "Completed"));
+            Add(Contract3, NewAttrib("type", "TourismContract"));
+            Add(Contract3, NewAttrib("agent", "Persistence World Exploration Group"));
 
             // TODO TestData.Generate(): Maybe one item is replaced within Identify
             // and needs to be reassigned to a property.

@@ -613,14 +613,7 @@ namespace KML
         /// <returns>A string to display this node</returns>
         public override string ToString()
         {
-            if (Name.Length > 0)
-            {
-                return base.ToString() + " (" + Name + ")";
-            }
-            else
-            {
-                return base.ToString();
-            }
+            return base.ToString() + BracketString(Name);
         }
 
         /// <summary>

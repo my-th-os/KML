@@ -68,6 +68,9 @@
     <Compile Include="..\KML\KML\KmlBegin.cs">
       <Link>KML\KmlBegin.cs</Link>
     </Compile>
+    <Compile Include="..\KML\KML\KmlContract.cs">
+      <Link>KML\KmlContract.cs</Link>
+    </Compile>
     <Compile Include="..\KML\KML\KmlEnd.cs">
       <Link>KML\KmlEnd.cs</Link>
     </Compile>

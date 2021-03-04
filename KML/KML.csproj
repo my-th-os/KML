@@ -79,6 +79,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="KML\KmlContract.cs" />
     <Compile Include="Util\UpdateChecker.cs" />
     <Page Include="Dialogs\DlgMessage.xaml">
       <SubType>Designer</SubType>

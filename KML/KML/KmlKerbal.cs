@@ -226,40 +226,9 @@ namespace KML
         /// <returns>A string to display this node</returns>
         public override string ToString()
         {
-            string s = Name;
-            if (Type.Length > 0)
-            {
-                if (s.Length > 0)
-                {
-                    s += ", ";
-                }
-                s += Type;
-            }
-            if (Trait.Length > 0 && Trait != Type)
-            {
-                if (s.Length > 0)
-                {
-                    s += ", ";
-                }
-                s += Trait;
-            }
-            if (State.Length > 0)
-            {
-                if (s.Length > 0)
-                {
-                    s += ", ";
-                }
-                s += State;
-                if (State == "Assigned" && AssignedVessel != null)
-                {
-                    s += ": " + AssignedVessel.Name;
-                }
-            }
-            if (s.Length > 0)
-            {
-                s = " (" + s + ")"; ;
-            }
-            return Tag + s;
+            return Tag + BracketString(Name, Type,
+                (Trait != Type ? Trait : ""),
+                (State == "Assigned" && AssignedVessel != null ? State + ": " + AssignedVessel.Name : State));
         }
 
         /// <summary>

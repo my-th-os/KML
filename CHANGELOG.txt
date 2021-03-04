@@ -2,8 +2,9 @@ Version 0.9 - in progress
 - CLI mode, basic editing, repair docking problems
 - regular executable with GUI and CLI on demand (Windows)
 - separate executable with only CLI but Mono compatible (Linux, Mac)
-- no warning when kerbal EVA uses external command seat - thanks to Krazy1
+- check and repair contracts
 - change position of nodes (except parts) and attributes
+- no warning when kerbal EVA uses external command seat - thanks to Krazy1
 - fixed scrolling in filtered lists and other minor GUI issues
 - tested with KSP 1.11.1
 

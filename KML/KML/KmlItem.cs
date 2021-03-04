@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 
 namespace KML
@@ -133,6 +134,22 @@ namespace KML
         }
 
         /// <summary>
+        /// Join the strings, insert comma separator only between non-empty ones
+        /// If the whole result is not empty put " (...)" around, otherwise return empty
+        /// </summary>
+        /// <param name="strings">Array of strings to join</param>
+        /// <returns>The joined string</returns>
+        protected static string BracketString(params string[] strings)
+        {
+            string s = String.Join(", ", strings.Where(x => x != null && x.Length > 0));
+            if (s.Length > 0)
+            {
+                s = " (" + s + ")";
+            }
+            return s;
+        }
+
+        /// <summary>
         /// Generates a string to represent to path from root to here, incl. this item.
         /// </summary>
         /// <param name="separator">The separator to combine parent and child with</param>
@@ -244,6 +261,10 @@ namespace KML
             else if (newNode.Tag.ToLower() == "resource")
             {
                 newNode = new KmlResource(newNode);
+            }
+            else if (newNode.Tag.ToLower() == "contract" || newNode.Tag.ToLower() == "contract_finished")
+            {
+                newNode = new KmlContract(newNode);
             }
             return newNode;
         }

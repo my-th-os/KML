@@ -54,6 +54,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Data\TestData.cs" />
+    <Compile Include="KML\KmlContract_Test.cs" />
     <Compile Include="Util\UpdateChecker_Test.cs" />
     <Compile Include="KML\KmlNode_Test.cs" />
     <Compile Include="KML\KmlItem_Test.cs" />

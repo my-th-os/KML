@@ -322,28 +322,7 @@ namespace KML
         /// <returns>A string to display this node</returns>
         public override string ToString()
         {
-            string s = Name;
-            if (Type.Length > 0)
-            {
-                if (s.Length > 0)
-                {
-                    s += ", ";
-                }
-                s += Type;
-            }
-            if (Situation.Length > 0)
-            {
-                if (s.Length > 0)
-                {
-                    s += ", ";
-                }
-                s += Situation;
-            }
-            if (s.Length > 0)
-            {
-                s = " (" + s + ")";
-            }
-            return Tag + s;
+            return Tag + BracketString(Name, Type, Situation);
         }
 
         /// <summary>
