@@ -228,7 +228,7 @@ namespace KML
                 Console.WriteLine("     --vessels          | -v : List vessels");
                 Console.WriteLine("     --kerbals          | -k : List kerbals");
                 Console.WriteLine("     --warnings         | -w : Show warnings");
-                Console.WriteLine("     --repair           | -r : Repair docking problems, includes -w");
+                Console.WriteLine("     --repair           | -r : Repair docking and contract problems, includes -w");
                 Console.WriteLine("     --select           | -s : Show numbers, select one by -s=<Sel>");
                 Console.WriteLine("     --multiselect      | -m : Select all occurences by tag/name, includes -s");
                 Console.WriteLine("     --version               : Show version and check online for updates");

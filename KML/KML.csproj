@@ -176,6 +176,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Doc\COMMANDLINE.md" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -313,13 +314,13 @@
     <Resource Include="Images\GrapplingHook48.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="LICENSE.txt" />
+    <None Include="Doc\LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="CHANGELOG.txt" />
+    <None Include="Doc\CHANGELOG.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="README.md" />
+    <None Include="Doc\README.md" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\DummyFlag.png" />
@@ -349,8 +350,8 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if $(ConfigurationName) == Release "C:\Program Files\7-Zip\7z.exe" a "$(SolutionDir)$(ProjectName)_Windows.zip" "$(TargetPath)"
-copy /Y "$(ProjectDir)CHANGELOG.txt" "$(SolutionDir)"
-copy /Y "$(ProjectDir)README.md" "$(SolutionDir)"</PostBuildEvent>
+copy /Y "$(ProjectDir)Doc\CHANGELOG.txt" "$(SolutionDir)"
+copy /Y "$(ProjectDir)Doc\README.md" "$(SolutionDir)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
