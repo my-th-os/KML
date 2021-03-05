@@ -128,6 +128,8 @@
         <KeyBinding Key="Delete" Command="{StaticResource cmdDelete}"/>
         <KeyBinding Key="C" Modifiers="Control" Command="{StaticResource cmdCopy}"/>
         <KeyBinding Key="V" Modifiers="Control" Command="{StaticResource cmdPaste}"/>
+        <KeyBinding Key="O" Modifiers="Control" Command="{StaticResource cmdOpen}"/>
+        <KeyBinding Key="S" Modifiers="Control" Command="{StaticResource cmdSave}"/>
         <KeyBinding Key="Enter" Modifiers="Control" Command="{StaticResource cmdSwitchView}"/>
         <KeyBinding Key="Enter" Command="{StaticResource cmdEnter}"/>
         <KeyBinding Key="Escape" Command="{StaticResource cmdEscape}"/>
