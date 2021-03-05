@@ -1,25 +1,28 @@
-### KML - Kerbal Markup Lister v0.8.2 - 2019-08-04 (WIP)
-#### A persistence file editor for Kerbal Space Program
+## KML - Kerbal Markup Lister v0.9 - 2021-03-05 (WIP)
+### A persistence file editor for Kerbal Space Program
 KSP Forum: http://forum.kerbalspaceprogram.com/index.php?/topic/133971-win-kml-persistence-file-editor/
 
 Do you face a problem with broken docking ports or need just a little fuel-cheating? Do you got tired of editing save games in a text editor with long loading time and so much scrolling to compare different parts and vessels? So did I and decided to make a more helpful external editor to display the XML-like structure (the "KML" - Kerbal Markup Language) in a tree view and pick out vessels, kerbals and parts to be displayed in more eye-candy way.
 
-The current version is not feature-complete but so far functional and already helps with some problems (or some cheating if you choose to do so).
+The current version is almost feature-complete and functional, and already helps with quite a few problems (or some cheating if you choose to do so).
 
 Any feedback, more testing, bug reports and suggestions are very welcome.
 
-#### Sceenshots
+### Sceenshots
 ![](https://github.com/my-th-os/KML/blob/master/KML/Doc/KML-Tree.png?raw=true)
 ![](https://github.com/my-th-os/KML/blob/master/KML/Doc/KML-Vessels.png?raw=true)
 ![](https://github.com/my-th-os/KML/blob/master/KML/Doc/KML-Kerbals.png?raw=true)
 
-#### New Features
-- list all GameData dirs used by a vessel's / all vessels' parts - thanks to TheCardinal
-- online check for updates (orange link may appear bottom right)
-- bugfix when having a collider as third parameter to srfN attribs - thanks to Bruce the Loon
-- tested with KSP 1.7.3 - thanks to Bruce the Loon
+### New Features
+- CLI mode for basic editing and repairs
+- [KML_Windows.zip](https://github.com/my-th-os/KML/releases) with GUI and CLI on demand (Windows)
+- [KML_Mono.zip](https://github.com/my-th-os/KML/releases) with only CLI but Mono compatible (Linux, Mac)
+- repair broken ID references in contracts
+- change position of nodes (except parts) and attributes
+- no warning when kerbal EVA uses external command seat - thanks to Krazy1
+- tested with KSP 1.11.1
 
-#### Features 
+### Features 
 - open SFS and CRAFT files
 - save files edited or exactly as loaded
 - backup of overwritten files
@@ -36,25 +39,31 @@ Any feedback, more testing, bug reports and suggestions are very welcome.
 - support renaming kerbals when assigned 
 - send kerbal home to astronaut complex 
 - send vessel to low kerbin orbit 
-- change vessel flag in all its parts - for Enceos
-- refill part resources
 - repair broken docking ports and grappling devices
-- tested with KSP 1.0 to 1.7 (newest KML version should still work with at least all these KSP versions) 
+- refill part resources
+- change vessel flag in all its parts - for Enceos
+- list all GameData dirs used by vessel parts - for TheCardinal
+- tested with KSP 1.0 to 1.11 (newest KML version should still work with at least all these KSP versions) 
 
-#### TODO
+### TODO
 - identify add-on part connections (only a little KAS support for now)
-- change position of nodes and attributes
 - more testing (uncommon vessel builds I didn't think of?)
 - support multiple docking ports per part
 - documentation
 - a lot of source code TODOs
 
-#### Install
-- download ZIP file and extract anywhere you want
+### Install
+##### Windows
+- download [KML_Windows.zip](https://github.com/my-th-os/KML/releases) and extract anywhere you want
 - run the KML.exe and open your save file
 - or choose "open with" on your save file and select KML.exe (command-line arguments supported)
 
-#### Instructions, Hints, FAQ
+##### Linux, Mac
+- need to have [Mono](https://www.mono-project.com/) installed
+- download [KML_Mono.zip](https://github.com/my-th-os/KML/releases) and extract anywhere you want
+- run the KML.exe command-line from the terminal of your choice
+
+### Instructions, Hints, FAQ
 - Don't find your vessel in the tree (ordered by in-game creation)? Switch to the "vessels" tab to have a sorted list and the possibility to filter by type (debris, ship, etc.).
 - Don't find your kerbal in the tree? There's also a sorted and filtered list in the "kerbals" tab.
 - Want to see how the parts of your vessel are connected? Have a look on the graph displayed in the "vessels" tab.
@@ -69,6 +78,51 @@ Any feedback, more testing, bug reports and suggestions are very welcome.
 - There is a warning but my save game works fine! If the problem is related to stock parts please send me feedback about this problem. If KML has warnings about add-on parts not connected (e.g. KAS): That's ok for now, KML does not support that add-on and can't understand what it has written to the save file. KML just expects all parts to be somehow connected and gives a warning otherwise.
 - Don't fear about saving a file with warnings, unknown add-ons, missing part-connections, etc. KML will save the file as it was read and only apply the changes you made. All unknown data will be kept as it was.
 
-#### Developers
+### Command Line Interface
+When you download the [KML_Mono.zip](https://github.com/my-th-os/KML/releases),
+you will get no graphical user interface (GUI), but only a command line interface (CLI).
+The benefit of this version is that it runs on Windows, Linux and Mac. The latter need to have
+[Mono](https://www.mono-project.com/) installed.
+
+The full Windows version [KML_Windows.zip](https://github.com/my-th-os/KML/releases)
+includes the GUI and a CLI. To access the CLI, you just call it with any dashed argument.
+
+```
+> ./KML.exe --help
+KML: Kerbal Markup Lister 0.9 © 2021 Oliver Pola (Mythos)
+Use: KML [Opt] <save-file>
+Opt: --tree             | -t : List tree
+     --vessels          | -v : List vessels
+     --kerbals          | -k : List kerbals
+     --warnings         | -w : Show warnings
+     --repair           | -r : Repair docking and contract problems, includes -w
+     --select           | -s : Show numbers, select one by -s=<Sel>
+     --multiselect      | -m : Select all occurences by tag/name, includes -s
+     --version               : Show version and check online for updates
+     Actions on selection, need -s=<Sel> or -m=<Sel>, only one of:
+     --export=<file>         : Export selection, no -m, defaults <file> to stdout
+     --import-replace=<file> : Import file to replace selection, no -m
+     --import-before=<file>  : Import file as new before selection, no -m
+     --import-after=<file>   : Import file as new after selection, no -m
+     --delete                : Delete selection, -m is allowed
+Sel: < number | tag-start | name-start >[/Sel]
+     Only in tree you can select by tag or go deep into hierarchy
+```
+
+What most users need, is to check for warnings (change path to KML.exe and *.sfs to your situation)
+
+```
+> ./KML.exe saves/persistent.sfs --warnings
+```
+
+and then repair docking and contract problems automatically.
+
+```
+> ./KML.exe saves/persistent.sfs --repair
+```
+
+To learn more, check the [COMMANDLINE.md](https://github.com/my-th-os/KML/blob/master/KML/Doc/COMMANDLINE.md) introduction.
+
+### Developers
 - Mythos (initiator, maintainer)
 - pamidur (contributor)

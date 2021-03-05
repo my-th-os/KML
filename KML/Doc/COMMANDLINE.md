@@ -1,4 +1,4 @@
-### Command Line Interface
+## Command Line Interface
 When you download the [KML_Mono.zip](https://github.com/my-th-os/KML/releases),
 you will get no graphical user interface (GUI), but only a command line interface (CLI).
 The benefit of this version is that it runs on Windows, Linux and Mac. The latter need to have
@@ -29,7 +29,7 @@ Sel: < number | tag-start | name-start >[/Sel]
      Only in tree you can select by tag or go deep into hierarchy
 ```
 
-#### Basics
+### Basics
 What most users need, is to check for warnings (change path to KML.exe and *.sfs to your situation)
 
 ```
@@ -53,7 +53,7 @@ KERBAL (Jebediah Kerman, Crew, Pilot, Available)
 ```
 
 
-#### Navigating the KML tree
+### Navigating the KML tree
 KML's main pupropse is to deal with the semi-structured text in the save file, that can be best represented in a tree.
 This is similar to dealing with files and folders on your hard disk.
 
@@ -129,7 +129,7 @@ Even a search for 'Jeb' might bring up a 'Jebeny Kerman' next time.
 So don't memorize and don't use them in batch scripts of any sorts.
 Always explore the current state anew.
 
-#### Editing
+### Editing
 Well, probably you do not only want to explore the content, but you have some changes to do
 (fix a bug caused by KSP, restore only a single vessel from an older save, do some cheating, ...). 
 This is very easy to do in the GUI, but in the CLI you need to be a bit more specific.
