@@ -77,7 +77,9 @@ namespace KML
             pan.Orientation = Orientation.Horizontal;
             pan.Children.Add(GenerateImage(DataVessel));
             pan.Children.Add(GenerateFlag(DataVessel));
-            pan.Children.Add(GenerateText(DataVessel));
+            TextBlock text = GenerateText(DataVessel);
+            pan.Children.Add(text);
+            pan.Children.Add(GenerateStateText(DataVessel, text));
             Content = pan;
         }
 
@@ -198,6 +200,16 @@ namespace KML
             text.Inlines.Add(new Bold(new Run(vessel.Name)));
             text.Inlines.Add(new Run("\n" + vessel.Type + "\n" + vessel.Situation));
             text.Margin = new Thickness(3, 0, 0, 0);
+            return text;
+        }
+
+        private TextBlock GenerateStateText(KmlVessel vessel, TextBlock previous)
+        {
+            previous.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
+            previous.Arrange(new Rect(previous.DesiredSize));
+            string s = "\n" + vessel.DiscoveryStatePretty();
+            TextBlock text = new TextBlock(new Run(s));
+            text.Margin = new Thickness(-previous.ActualWidth + 100, 0, 0, 0);
             return text;
         }
 

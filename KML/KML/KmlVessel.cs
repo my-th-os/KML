@@ -41,6 +41,11 @@ namespace KML
         /// </summary>
         public string Situation { get; private set; }
 
+        /// <summary>
+        /// Get the "DISCOVERY/state" attribute as a property (1 = never tracked, 21 = tracking, 29 = stopped tracking, -1 = ?).
+        /// </summary>
+        public string DiscoveryState { get; private set; }
+
         // TODO KmlVessel: Not make lists public, better have a Add(method)
 
         /// <summary>
@@ -322,7 +327,7 @@ namespace KML
         /// <returns>A string to display this node</returns>
         public override string ToString()
         {
-            return Tag + BracketString(Name, Type, Situation);
+            return Tag + BracketString(Name, Type, Situation, DiscoveryStatePretty());
         }
 
         /// <summary>
@@ -422,6 +427,53 @@ namespace KML
                         }
                     }
                 }
+
+                // For DiscoveryState we want to know the state attrib in the DISCOVERY subnode of this vessel (SpaceObject only).
+                // So we can't do it among the other special attribs in Add(), but have to check later, here in Finalize()
+                if (Type.ToLower() == "spaceobject")
+                {
+                    KmlNode discovery = GetChildNode("DISCOVERY");
+                    if (discovery != null)
+                    {
+                        KmlAttrib state = discovery.GetAttrib("state");
+                        if (state != null)
+                        {
+                            DiscoveryState = state.Value;
+
+                            // Get notified when DiscoveryState changes
+                            state.AttribValueChanged += DiscoveryState_Changed;
+                            state.CanBeDeleted = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get the "DISCOVERY/state" attribute in pretty format (21 = Tracking, 29 = Stopped Tracking, others hidden).
+        /// </summary>
+        /// <returns></returns>
+        public string DiscoveryStatePretty()
+        {
+            if (DiscoveryState == "1")
+            {
+                return "NewDiscovery";
+            }
+            else if (DiscoveryState == "-1")
+            {
+                return "Visited";
+            }
+            else if (DiscoveryState == "29")
+            {
+                return "Tracking";
+            }
+            else if (DiscoveryState == "21")
+            {
+                return "StoppedTracking";
+            }
+            else
+            {
+                return ""; // don't show internal state numbers that we don't know
             }
         }
 
@@ -466,5 +518,12 @@ namespace KML
                 }
             }
         }
+
+        private void DiscoveryState_Changed(object sender, System.Windows.RoutedEventArgs e)
+        {
+            DiscoveryState = GetAttribWhereValueChanged(sender).Value;
+            InvokeToStringChanged();
+        }
+
     }
 }

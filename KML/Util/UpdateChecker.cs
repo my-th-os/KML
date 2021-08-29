@@ -9,8 +9,7 @@ namespace KML
     /// </summary>
     public class UpdateChecker
     {
-        // TODO GuiUpdateChecker: Change GET_URL to ".../releases/latest" once there is a non-pre-release release
-        private const string GET_URL = "https://api.github.com/repos/my-th-os/KML/releases";
+        private const string GET_URL = "https://api.github.com/repos/my-th-os/KML/releases/latest";
         // Without giving header info, we'll get "403 forbidden"
         private const string HEADER_KEY = "User-Agent";
         private const string HEADER_VALUE = "KML";
