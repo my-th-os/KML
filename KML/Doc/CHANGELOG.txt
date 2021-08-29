@@ -1,4 +1,8 @@
-Version 0.9 - in progress
+Version 0.9.1 - 2021-08-29
+- show discovery state for space objects - for Krazy1
+- CLI agrument support for "-vm=Debris" or "-vm=StoppedTracking" (only vessel, not tree view)
+
+Version 0.9 - 2021-03-05
 - CLI mode for basic editing and repairs
 - regular executable with GUI and CLI on demand (Windows)
 - separate executable with only CLI but Mono compatible (Linux, Mac)

@@ -1,4 +1,4 @@
-## KML - Kerbal Markup Lister v0.9 - 2021-03-05 (WIP)
+## KML - Kerbal Markup Lister v0.9.1 - 2021-08-29 (WIP)
 ### A persistence file editor for Kerbal Space Program
 KSP Forum: http://forum.kerbalspaceprogram.com/index.php?/topic/133971-win-kml-persistence-file-editor/
 
@@ -14,13 +14,8 @@ Any feedback, more testing, bug reports and suggestions are very welcome.
 ![](https://github.com/my-th-os/KML/blob/master/KML/Doc/KML-Kerbals.png?raw=true)
 
 ### New Features
-- CLI mode for basic editing and repairs
-- [KML_Windows.zip](https://github.com/my-th-os/KML/releases) with GUI and CLI on demand (Windows)
-- [KML_Mono.zip](https://github.com/my-th-os/KML/releases) with only CLI but Mono compatible (Linux, Mac)
-- repair broken ID references in contracts
-- change position of nodes (except parts) and attributes
-- no warning when kerbal EVA uses external command seat - thanks to Krazy1
-- tested with KSP 1.11.1
+- show discovery state for space objects - for Krazy1
+- CLI agrument to purge debris or asteroids stopped tracking
 
 ### Features 
 - open SFS and CRAFT files
@@ -33,6 +28,7 @@ Any feedback, more testing, bug reports and suggestions are very welcome.
 - display warnings about structural problems
 - search for nodes, attributes and their content 
 - adding, inserting and deleting nodes and attributes
+- change position of nodes (except parts) and attributes
 - copy & paste of nodes and attributes
 - deletion of parts will fix part indices and connections 
 - deletion of kerbals and vessels will fix crew assignment 
@@ -40,10 +36,12 @@ Any feedback, more testing, bug reports and suggestions are very welcome.
 - send kerbal home to astronaut complex 
 - send vessel to low kerbin orbit 
 - repair broken docking ports and grappling devices
+- repair broken ID references in contracts
 - refill part resources
 - change vessel flag in all its parts - for Enceos
 - list all GameData dirs used by vessel parts - for TheCardinal
-- tested with KSP 1.0 to 1.11 (newest KML version should still work with at least all these KSP versions) 
+- CLI mode for basic editing and repairs
+- tested with KSP 1.0 to 1.12 (newest KML version should still work with at least all these KSP versions) 
 
 ### TODO
 - identify add-on part connections (only a little KAS support for now)
@@ -88,7 +86,7 @@ The full Windows version [KML_Windows.zip](https://github.com/my-th-os/KML/relea
 includes the GUI and a CLI. To access the CLI, you just call it with any dashed argument.
 
 ```
-> ./KML.exe --help
+$ ./KML.exe --help
 KML: Kerbal Markup Lister 0.9 © 2021 Oliver Pola (Mythos)
 Use: KML [Opt] <save-file>
 Opt: --tree             | -t : List tree
@@ -112,13 +110,13 @@ Sel: < number | tag-start | name-start >[/Sel]
 What most users need, is to check for warnings (change path to KML.exe and *.sfs to your situation)
 
 ```
-> ./KML.exe saves/persistent.sfs --warnings
+$ ./KML.exe saves/test/persistent.sfs --warnings
 ```
 
 and then repair docking and contract problems automatically.
 
 ```
-> ./KML.exe saves/persistent.sfs --repair
+$ ./KML.exe saves/test/persistent.sfs --repair
 ```
 
 To learn more, check the [COMMANDLINE.md](https://github.com/my-th-os/KML/blob/master/KML/Doc/COMMANDLINE.md) introduction.

@@ -160,6 +160,21 @@ Tree in "saves/test/persistent.sfs"
 (saving) saves/test/persistent.sfs
 ```
 
+You can also use multiselect `-m` for some purge tasks.
+The vessel view `-v` offers the ability to select by vessel type or space object discovery state.
+In those cases you need to be explicit and type the full type/status.
+
+```
+$ ./KML.exe saves/test/persistent.sfs "-vm=Debris" --delete
+```
+
+```
+$ ./KML.exe saves/test/persistent.sfs "-vm=StoppedTracking" --delete
+```
+
+Keep in mind that this would also match your precious "Debris Collector Ship", since names only need to match at the start.
+So don't forget to check the output before you include the `--delete`.
+
 But deleting is a very harsh way to change things, you mostly want to edit some text.
 In the GUI you can change text in-place. Using the CLI we finally fall back to the text editor of your choice.
 But instead of dealing with that huge textfile that the save is, KML can break it down into smaller pieces.
