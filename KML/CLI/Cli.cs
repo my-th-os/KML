@@ -475,7 +475,8 @@ namespace KML
             {
                 if (selector.Length > 0)
                 {
-                    if (selector != i.ToString() && !vessels[i].Name.StartsWith(selector))
+                    if (selector != i.ToString() && !vessels[i].Name.StartsWith(selector)
+                        && !vessels[i].Type.Equals(selector) && !vessels[i].DiscoveryStatePretty().Equals(selector))
                     {
                         continue;
                     }
