@@ -165,11 +165,11 @@ The vessel view `-v` offers the ability to select by vessel type or space object
 In those cases you need to be explicit and type the full type/status.
 
 ```
-$ ./KML.exe saves/test/persistent.sfs "-vm=Debris" --delete
+$ ./KML.exe saves/test/persistent.sfs -vm=Debris --delete
 ```
 
 ```
-$ ./KML.exe saves/test/persistent.sfs "-vm=StoppedTracking" --delete
+$ ./KML.exe saves/test/persistent.sfs -vm=StoppedTracking --delete
 ```
 
 Keep in mind that this would also match your precious "Debris Collector Ship", since names only need to match at the start.
