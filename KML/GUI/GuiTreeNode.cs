@@ -55,6 +55,7 @@ namespace KML
         private MenuItem MenuSwitchView { get; set; }
         private MenuItem MenuMoveUp { get; set; }
         private MenuItem MenuMoveDown { get; set; }
+        private MenuItem TotalLineCount { get; set; }
 
         private static GuiIcons Icons = new GuiIcons16();
 
@@ -816,6 +817,13 @@ namespace KML
                 menu.Items.Add(m);
             }
 
+            // Display total line count
+            TotalLineCount = new MenuItem();
+            // TotalLineCount.Header = "(" + DataNode.TotalLineCount() + " lines total content)";
+            TotalLineCount.IsEnabled = false;
+            menu.Items.Add(new Separator());
+            menu.Items.Add(TotalLineCount);
+
             // Need to have a seperate menu for each item, even if it is empty.
             // If ContextMenu is null, the parent's contextmenu will be used (WTF).
             // Item[0] is the menu title, Item[1] a Seperator, both always created.
@@ -843,6 +851,10 @@ namespace KML
 
         private void ContextMenuUpdate(ContextMenu menu)
         {
+            // Recalculate total line count
+            TotalLineCount.Header = "(" + DataNode.TotalLineCount() + " lines total content)";
+
+            // Switch enabled/disabled and styles accordingly
             foreach (object o in menu.Items)
                 if (o is MenuItem)
                 {

@@ -371,6 +371,22 @@ namespace KML
             return false;
         }
 
+        /// <summary>
+        /// Counts all the lines contained within this node, including itself and those of child nodes
+        /// </summary>
+        /// <returns>The number of lines</returns>
+        public int TotalLineCount()
+        {
+            int count = 3; // the node itself with opening and closing brackets
+            count += Attribs.Count;
+            count += Unknown.Count;
+            foreach (var child in Children)
+            {
+                count += child.TotalLineCount();
+            }
+            return count;
+        }
+
         private KmlAttrib GetNextSibling(KmlAttrib attrib)
         {
             int index = Attribs.IndexOf(attrib);

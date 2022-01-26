@@ -1,3 +1,6 @@
+Version 0.9.2 - in progress
+- show total line count in node context menu - for flart
+
 Version 0.9.1 - 2021-08-29
 - show discovery state for space objects - for Krazy1
 - CLI agrument support for "-vm=Debris" or "-vm=StoppedTracking" (only vessel, not tree view)
