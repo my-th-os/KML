@@ -1,4 +1,4 @@
-Version 0.9.2 - in progress
+Version 0.9.2 - 2022-02-13
 - show total line count in node context menu - for flart
 
 Version 0.9.1 - 2021-08-29
