@@ -338,5 +338,15 @@ namespace KML
                 return null;
             }
         }
+
+        /// <summary>
+        /// Checks if the given IGuiManager is active.
+        /// </summary>
+        /// <param name="manager">The IGuiManager to check</param>
+        /// <returns>Whether manger is active or not</returns>
+        public bool IsActive(IGuiManager manager)
+        {
+            return GetActiveGuiManager() == manager;
+        }
     }
 }

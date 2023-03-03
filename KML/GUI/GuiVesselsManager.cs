@@ -52,8 +52,8 @@ namespace KML
 
             partGraphTimer = new DispatcherTimer(DispatcherPriority.Background);
             partGraphTimer.Tick += new EventHandler(partGraphTimer_Tick);
-            partGraphTimer.Interval = new TimeSpan(0, 0, 0, 0, 200);
-            partGraphTimer.Start();
+            partGraphTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+            // partGraphTimer.Start();
 
             // Replaced by pulling from partGraphTimer
             // TODO GuiVesselsManager: Delete the VesselsList Eventhandlers, if stay with DispatcherTimer
@@ -351,6 +351,8 @@ namespace KML
 
         private void partGraphTimer_Tick(object sender, EventArgs e)
         {
+            if (!Master.IsActive(this))
+                return;
             if ((VesselsList.SelectedItem as GuiVesselsNode) == PartGraphNode) 
                 return;
             PartGraphNode = (VesselsList.SelectedItem as GuiVesselsNode);
@@ -366,6 +368,8 @@ namespace KML
         {
             VesselsDetails.Children.Clear();
             PartGraphNode = null;
+            partGraphTimer.Stop();
+            partGraphTimer.Start();
             // PartGraph.DrawPartStructure(VesselsList.SelectedItem as GuiVesselsNode);
         }
 
