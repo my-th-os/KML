@@ -218,15 +218,23 @@ namespace KML
 
         private int CountTop(KmlPart part, KmlPart cameFrom)
         {
-            return CountTop(part, cameFrom, 0);
+            if (part == cameFrom)
+                return CountTop(part, new List<KmlPart>(), 0);
+            else
+                return CountTop(part, new List<KmlPart>() { cameFrom }, 0);
         }
 
-        private int CountTop(KmlPart part, KmlPart cameFrom, int overflow)
+        private int CountTop(KmlPart part, List<KmlPart> cameFrom, int overflow)
         {
             // A case was reported where this lead to a stack overflow.
             // Overflow exceptions are only caught in debug env, normal program just gets terminated.
             // To prevent this, stop calculation at some recursion depth.
-            if (overflow > 1000) return 1;
+            if (overflow > 1000) throw new OverflowException("Recursion too deep");
+
+            // Now having this technical termination, try to avoid it by logic
+            if (cameFrom.Contains(part))
+                return 0;
+            cameFrom.Add(part);
 
             int c = 1;
             if (part.AttachedPartsSurface.Count > 0)
@@ -234,7 +242,7 @@ namespace KML
                 c = 2;
                 foreach (KmlPart p in part.AttachedPartsSurface)
                 {
-                    if (p != cameFrom) c = Math.Max(c, CountTop(p, part, overflow + 1) + 1);
+                    c = Math.Max(c, CountTop(p, cameFrom, overflow + 1) + 1);
                 }
             }
             if (part.AttachedPartsBack.Count > 0)
@@ -242,40 +250,48 @@ namespace KML
                 c = Math.Max(c, 2);
                 foreach (KmlPart p in part.AttachedPartsBack)
                 {
-                    if (p != cameFrom) c = Math.Max(c, CountTop(p, part, overflow + 1) + 1);
+                    c = Math.Max(c, CountTop(p, cameFrom, overflow + 1) + 1);
                 }
             }
             foreach (KmlPart p in part.AttachedPartsFront)
             {
-                if (p != cameFrom) c = Math.Max(c, CountTop(p, part, overflow + 1) - 1);
+                c = Math.Max(c, CountTop(p, cameFrom, overflow + 1) - 1);
             }
             foreach (KmlPart p in part.AttachedPartsLeft)
             {
-                if (p != cameFrom) c = Math.Max(c, CountTop(p, part, overflow + 1));
+                c = Math.Max(c, CountTop(p, cameFrom, overflow + 1));
             }
             foreach (KmlPart p in part.AttachedPartsRight)
             {
-                if (p != cameFrom) c = Math.Max(c, CountTop(p, part, overflow + 1));
+                c = Math.Max(c, CountTop(p, cameFrom, overflow + 1));
             }
             if (part is KmlPartDock)
             {
                 KmlPart p = ((KmlPartDock)part).DockedPart;
-                if (p != null && p != cameFrom) c = Math.Max(c, CountTop(p, part, overflow + 1));
+                if (p != null) c = Math.Max(c, CountTop(p, cameFrom, overflow + 1));
             }
             return c;
         }
 
         private int CountBottom(KmlPart part, KmlPart cameFrom)
         {
-            return CountBottom(part, cameFrom, 0);
+            if (part == cameFrom)
+                return CountBottom(part, new List<KmlPart>(), 0);
+            else
+                return CountBottom(part, new List<KmlPart>() { cameFrom }, 0);
         }
 
-        private int CountBottom(KmlPart part, KmlPart cameFrom, int overflow)
+        private int CountBottom(KmlPart part, List<KmlPart> cameFrom, int overflow)
         {
             // A case was reported where this lead to a stack overflow.
             // Overflow exceptions are only caught in debug env, normal program just gets terminated.
             // To prevent this, stop calculation at some recursion depth.
-            if (overflow > 1000) return 1;
+            if (overflow > 1000) throw new OverflowException("Recursion too deep");
+
+            // Now having this technical termination, try to avoid it by logic
+            if (cameFrom.Contains(part))
+                return 0;
+            cameFrom.Add(part);
 
             int c = 1;
             if (part.AttachedPartsSurface.Count > 2)
@@ -283,7 +299,7 @@ namespace KML
                 c = 2;
                 foreach (KmlPart p in part.AttachedPartsSurface)
                 {
-                    if (p != cameFrom) c = Math.Max(c, CountBottom(p, part, overflow + 1) + 1);
+                    c = Math.Max(c, CountBottom(p, cameFrom, overflow + 1) + 1);
                 }
             }
             if (part.AttachedPartsFront.Count > 0)
@@ -291,25 +307,25 @@ namespace KML
                 c = Math.Max(c, 2);
                 foreach (KmlPart p in part.AttachedPartsFront)
                 {
-                    if (p != cameFrom) c = Math.Max(c, CountBottom(p, part, overflow + 1) + 1);
+                    c = Math.Max(c, CountBottom(p, cameFrom, overflow + 1) + 1);
                 }
             }
             foreach (KmlPart p in part.AttachedPartsBack)
             {
-                if (p != cameFrom) c = Math.Max(c, CountBottom(p, part, overflow + 1) - 1);
+                c = Math.Max(c, CountBottom(p, cameFrom, overflow + 1) - 1);
             }
             foreach (KmlPart p in part.AttachedPartsLeft)
             {
-                if (p != cameFrom) c = Math.Max(c, CountBottom(p, part, overflow + 1));
+                c = Math.Max(c, CountBottom(p, cameFrom, overflow + 1));
             }
             foreach (KmlPart p in part.AttachedPartsRight)
             {
-                if (p != cameFrom) c = Math.Max(c, CountBottom(p, part, overflow + 1));
+                c = Math.Max(c, CountBottom(p, cameFrom, overflow + 1));
             }
             if (part is KmlPartDock)
             {
                 KmlPart p = ((KmlPartDock)part).DockedPart;
-                if (p != null && p != cameFrom) c = Math.Max(c, CountBottom(p, part, overflow + 1));
+                if (p != null) c = Math.Max(c, CountBottom(p, cameFrom, overflow + 1));
             }
             return c;
         }
