@@ -1,4 +1,4 @@
-## KML - Kerbal Markup Lister v0.9.2 - 2022-02-13 (WIP)
+## KML - Kerbal Markup Lister v0.9.3 - 2023-03-03 (WIP)
 ### A persistence file editor for Kerbal Space Program
 KSP Forum: http://forum.kerbalspaceprogram.com/index.php?/topic/133971-win-kml-persistence-file-editor/
 
@@ -14,7 +14,7 @@ Any feedback, more testing, bug reports and suggestions are very welcome.
 ![](https://github.com/my-th-os/KML/blob/master/KML/Doc/KML-Kerbals.png?raw=true)
 
 ### New Features
-- show total line count in node context menu - for flart
+- bugfix part graph for vessels with cyclic attachments - thanks to Dryratt
 
 ### Features 
 - open SFS and CRAFT files
