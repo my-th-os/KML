@@ -1,4 +1,4 @@
-## KML - Kerbal Markup Lister v0.9.3 - 2023-03-03 (WIP)
+## KML - Kerbal Markup Lister v0.9.4 - 2023-04-21
 ### A persistence file editor for Kerbal Space Program
 KSP Forum: http://forum.kerbalspaceprogram.com/index.php?/topic/133971-win-kml-persistence-file-editor/
 
@@ -14,7 +14,9 @@ Any feedback, more testing, bug reports and suggestions are very welcome.
 ![](https://github.com/my-th-os/KML/blob/master/KML/Doc/KML-Kerbals.png?raw=true)
 
 ### New Features
-- bugfix part graph for vessels with cyclic attachments - thanks to Dryratt
+- CLI selected warning like `-ws=0` shows source node - for darthgently
+- CLI shows all sources nodes for each warning with multiselect `-wm=*`
+- GUI and CLI always name 2 nodes in warning message, even if it is about an attribute
 
 ### Features 
 - open SFS and CRAFT files
