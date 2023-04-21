@@ -43,17 +43,29 @@ namespace KML
             /// <returns>A display string</returns>
             public string ToString(bool withNewLine)
             {
-                StringBuilder s = new StringBuilder();
-                if (Source.Parent != null)
+                KmlNode node = Source.Parent;
+                if (Source is KmlNode)
                 {
-                    s.Append(Source.Parent.ToString());
+                    node = (KmlNode)Source;
+                }
+
+                StringBuilder s = new StringBuilder();
+                if (node.Parent != null)
+                {
+                    s.Append(node.Parent.ToString());
                     s.Append(" -> ");
                 }
                 else
                 {
                     s.Append("ROOT -> ");
                 }
-                s.Append(Source.ToString());
+                s.Append(node.ToString());
+                if (Source != node)
+                {
+                    s.Append(" -> ");
+                    s.Append(Source.ToString());
+                }
+
                 if (withNewLine)
                 {
                     s.Append(":\n");

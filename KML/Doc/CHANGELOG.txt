@@ -1,3 +1,6 @@
+Version 0.9.4 - 2023-04-21
+- GUI and CLI always name 2 nodes in warning message, even if it is about an attribute
+
 Version 0.9.3 - 2023-03-03
 - bugfix stack overflow in part graph for vessels with cyclic attachments - thanks to Dryratt
 
