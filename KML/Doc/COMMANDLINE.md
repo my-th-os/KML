@@ -52,6 +52,9 @@ $ ./KML.exe saves/test/persistent.sfs -k | grep "Jeb"
 KERBAL (Jebediah Kerman, Crew, Pilot, Available)
 ```
 
+When you see warnings in the CLI, you can't just double-click to navigate from a warning to the item it is about.
+To help you identifying the item, you can select the warning by its number like `-ws=0` and the item will be displayed below.
+You can even add that info to all warnings with multiselect `-wm=*`.
 
 ### Navigating the KML tree
 KML's main pupropse is to deal with the semi-structured text in the save file, that can be best represented in a tree.

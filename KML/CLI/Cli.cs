@@ -696,7 +696,7 @@ namespace KML
         private void ProcessWarnings()
         {
             // make a copy, in case of repairs the original list changes
-            List<Tuple<string, KmlItem>> warnings = new List<Tuple<string, KmlItem>>();
+            List<Tuple<string, KmlItem, KmlItem>> warnings = new List<Tuple<string, KmlItem, KmlItem>>();
 
             bool foundselection = false;
 
@@ -729,13 +729,17 @@ namespace KML
                         source = testsource;
                     }
                 }
-                warnings.Add(new Tuple<string, KmlItem>(msg.ToString(), source));
+                warnings.Add(new Tuple<string, KmlItem, KmlItem>(msg.ToString(), source, msg.Source));
             }
             for (int i = 0; i < warnings.Count; i++)
             {
                 if (selectors.Count > 0)
                 {
-                    if (selectors[0] != i.ToString())
+                    if (multiselect && selectors[0] == "*")
+                    {
+                        foundselection = true;
+                    }
+                    else if (selectors[0] != i.ToString())
                     {
                         continue;
                     }
@@ -773,6 +777,48 @@ namespace KML
                     }
                     // show repaired info in any case
                     WriteLineColor("(repaired) " + contract.ToString(), ConsoleColor.Green);
+                }
+                if (foundselection)
+                {
+                    KmlNode node = null;
+                    if (warning.Item3 is KmlNode)
+                    {
+                        node = (KmlNode)warning.Item3;
+                    }
+                    else if (warning.Item3 is KmlItem)
+                    {
+                        node = warning.Item3.Parent;
+                    }
+                    if (node != null)
+                    {
+                        WriteLine();
+                        if (node.Parent != null)
+                        {
+                            WriteLine(node.Parent.ToString());
+                        }
+                        else
+                        {
+                            WriteLine("ROOT");
+                        }
+                        WriteLine();
+                        WriteLine(node.ToString());
+                        WriteLine();
+                        foreach (var attrib in node.Attribs)
+                        {
+                            if (attrib == warning.Item3)
+                            {
+                                WriteLineColor(attrib.ToString(), ConsoleColor.Yellow);
+                            }
+                            else
+                            {
+                                WriteLine(attrib.ToString());
+                            }
+                        }
+                        if (node.Attribs.Count == 0)
+                        {
+                            WriteLine("(no attributes)");
+                        }
+                    }
                 }
             }
 

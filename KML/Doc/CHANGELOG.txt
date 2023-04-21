@@ -1,4 +1,6 @@
 Version 0.9.4 - 2023-04-21
+- CLI selected warning "-ws=0" shows source node - for darthgently
+- CLI shows all sources nodes for each warning with multiselect "-wm=*"
 - GUI and CLI always name 2 nodes in warning message, even if it is about an attribute
 
 Version 0.9.3 - 2023-03-03
