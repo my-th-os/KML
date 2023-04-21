@@ -107,6 +107,9 @@
     <Compile Include="..\KML\KML\Syntax.cs">
       <Link>KML\Syntax.cs</Link>
     </Compile>
+    <Compile Include="..\KML\Properties\AssemblyInfo_Shared.cs">
+      <Link>Properties\AssemblyInfo_Shared.cs</Link>
+    </Compile>
     <Compile Include="..\KML\Util\UpdateChecker.cs">
       <Link>Util\UpdateChecker.cs</Link>
     </Compile>
